@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 import './Contact.css';
 
 const Contact: React.FC = () => {
@@ -8,6 +10,9 @@ const Contact: React.FC = () => {
     subject: '',
     message: ''
   });
+  const [loading, setLoading] = useState(false);
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -16,11 +21,31 @@ const Contact: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [showToast, setShowToast] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Message sent! I\'ll respond within 24 hours.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setLoading(true);
+    
+    try {
+      await addDoc(collection(db, 'messages'), {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        timestamp: new Date(),
+        read: false
+      });
+      
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error) {
+      console.error('Error saving message:', error);
+      alert('Failed to send message. Please try again.');
+    }
+    
+    setLoading(false);
   };
 
   return (
@@ -31,7 +56,7 @@ const Contact: React.FC = () => {
         <div className="contact-info">
           <div className="info-card">
             <h3>📧 Email</h3>
-            <p>your.email@example.com</p>
+            <p>karmasudhir48@gmail.com</p>
           </div>
           <div className="info-card">
             <h3>📱 Phone</h3>
@@ -87,9 +112,17 @@ const Contact: React.FC = () => {
             onChange={handleChange}
             required
           ></textarea>
-          <button type="submit" className="btn">Send Message</button>
+          <button type="submit" className="btn" disabled={loading}>
+            {loading ? 'Sending...' : 'Send Message'}
+          </button>
         </form>
       </div>
+      
+      {showToast && (
+        <div className="toast">
+          ✅ Message sent successfully! I'll respond within 24 hours.
+        </div>
+      )}
     </div>
   );
 };

@@ -1,55 +1,40 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Skills.css';
 
-interface Skill {
-  name: string;
-  level: number;
-  category: string;
-}
-
 const Skills: React.FC = () => {
-  const skills: Skill[] = [
-    { name: 'React', level: 90, category: 'Frontend' },
-    { name: 'TypeScript', level: 85, category: 'Frontend' },
-    { name: 'JavaScript', level: 95, category: 'Frontend' },
-    { name: 'Node.js', level: 80, category: 'Backend' },
-    { name: 'Python', level: 75, category: 'Backend' },
-    { name: 'MongoDB', level: 70, category: 'Database' },
-    { name: 'AWS', level: 65, category: 'Cloud' },
-    { name: 'Docker', level: 60, category: 'DevOps' }
-  ];
+  const [isVisible, setIsVisible] = useState(false);
 
-  const categories = ['Frontend', 'Backend', 'Database', 'Cloud', 'DevOps'];
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
   return (
     <div className="skills-page">
-      <h1 className="section-title">Technical Skills</h1>
+      <h1 className="section-title">Work Experience</h1>
       
-      <div className="skills-categories">
-        {categories.map(category => (
-          <div key={category} className="skill-category">
-            <h3>{category}</h3>
-            <div className="category-skills">
-              {skills
-                .filter(skill => skill.category === category)
-                .map((skill, index) => (
-                  <div key={index} className="skill-card">
-                    <div className="skill-info">
-                      <span className="skill-name">{skill.name}</span>
-                      <span className="skill-level">{skill.level}%</span>
-                    </div>
-                    <div className="skill-bar">
-                      <div 
-                        className="skill-progress" 
-                        style={{ width: `${skill.level}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))
-              }
-            </div>
+      <div className={`experience-section ${isVisible ? 'animate-in' : ''}`}>
+        <div className="experience-list">
+          <div className="experience-item">
+            <h4>Frontend Developer - Starz Ventures Pvt Ltd</h4>
+            <p className="experience-period">2023 - Present</p>
+            <ul className="experience-points">
+              <li>Developed high-performance web applications using front-end technologies with responsive UI</li>
+              <li>Created and deployed a custom Serverless Middleware REST API on Google Cloud</li>
+              <li>Integrated multiple APIs to improve data flow and system reliability across the app</li>
+              <li>Managed Firebase Database to securely handle and sync client data in real time</li>
+              <li>Collaborated with teams to troubleshoot, optimize workflows, and deliver production-ready solutions</li>
+            </ul>
           </div>
-        ))}
+          <div className="experience-item">
+            <h4>Frontend Developer - Entrance1.com</h4>
+            <p className="experience-period">2022 - 2023</p>
+            <ul className="experience-points">
+              <li>Built responsive and user-friendly UI components using modern front-end technologies</li>
+              <li>Converted design mockups into clean, pixel-perfect web interfaces for improved UX</li>
+              <li>Optimized front-end performance by enhancing layouts and reducing load times</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );

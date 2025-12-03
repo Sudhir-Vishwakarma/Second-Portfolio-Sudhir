@@ -34,6 +34,9 @@ const About: React.FC = () => {
             <span className="skill-tag">MongoDB</span>
             <span className="skill-tag">MySQL</span>
             <span className="skill-tag">C/C++</span>
+            <span className="skill-tag">Google Cloud Server</span>
+            <span className="skill-tag">Middleware Serverless REST API</span>
+            <span className="skill-tag">API</span>
           </div>
         </div>
 
@@ -70,6 +73,8 @@ const About: React.FC = () => {
             </div>
           </div>
         </div>
+
+
 
         <div className={`certifications-section ${isVisible ? 'animate-in' : ''}`}>
           <h3>Certifications</h3>
