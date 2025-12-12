@@ -6,6 +6,7 @@ const Dashboard: React.FC = () => {
   const [currentText, setCurrentText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showResumeModal, setShowResumeModal] = useState(false);
   
   const texts = ['FRONT-END DEVELOPER', 'REACT/REDUX', 'NODEJS/FIREBASE'];
 
@@ -44,7 +45,7 @@ const Dashboard: React.FC = () => {
             <p className="title">A PASSIONATE <span className="highlight glow-text">{currentText}</span><span className="cursor">|</span></p>
             <p className="description">Front-End Developer with strong experience in React, TypeScript, and UI development. I build responsive, high-performance web applications with a focus on clean architecture and great user experience. Driven, focused, and always improving.</p>
             <div className="action-buttons">
-              <a href="/resume.pdf" download="Sudhir_Vishwakarma_Resume.pdf" className="cta-btn">DOWNLOAD CV</a>
+              <button className="cta-btn" onClick={() => setShowResumeModal(true)}>VIEW CV</button>
             </div>
             <div className="social-icons">
               <a href="https://www.facebook.com/sudhir.vishwakarma.792/" target="_blank" rel="noopener noreferrer" className="social-icon">
@@ -83,6 +84,30 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {showResumeModal && (
+        <div className="resume-modal" onClick={() => setShowResumeModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setShowResumeModal(false)}>×</button>
+            <div className="resume-header">
+              <h3>My Resume</h3>
+              <a href="/Sudhir-Profile2.pdf" download="Sudhir_Vishwakarma_Resume.pdf" className="download-btn">
+                Download PDF
+              </a>
+            </div>
+            <div className="pdf-viewer">
+              <iframe 
+                src="/Sudhir-Profile2.pdf#toolbar=1&navpanes=0&scrollbar=1" 
+                width="100%" 
+                height="600px"
+                title="Resume"
+              >
+                <p>Your browser does not support PDFs. <a href="/Sudhir-Profile2.pdf">Download the PDF</a>.</p>
+              </iframe>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
