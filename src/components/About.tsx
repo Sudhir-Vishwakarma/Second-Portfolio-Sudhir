@@ -3,10 +3,26 @@ import './About.css';
 
 const About: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [selectedCertificate, setSelectedCertificate] = useState<string | null>(null);
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  const certificates = [
+    { title: 'HTML5 Application Development Fundamentals', provider: 'Great Learning', image: '/Images/HTML.png' },
+    { title: 'Introduction to Programming Using JavaScript', provider: 'Great Learning', image: '/Images/Javascript.png' },
+    { title: 'Programming in CSS3', provider: 'Great Learning', image: '/Images/CSS.png' },
+    { title: 'ReactJS', provider: 'Great Learning', image: '/Images/Reactjs.png' }
+  ];
+
+  const openCertificate = (image: string) => {
+    setSelectedCertificate(image);
+  };
+
+  const closeCertificate = () => {
+    setSelectedCertificate(null);
+  };
 
   return (
     <div className="about-page">
@@ -79,46 +95,22 @@ const About: React.FC = () => {
         <div className={`certifications-section ${isVisible ? 'animate-in' : ''}`}>
           <h3>Certifications</h3>
           <div className="cert-list">
-            <div className="cert-item">
-              <div className="cert-content">
-                <h4>HTML5 Application Development Fundamentals</h4>
-                <p>Great Learning</p>
+            {certificates.map((cert, index) => (
+              <div key={index} className="cert-item">
+                <div className="cert-content">
+                  <h4>{cert.title}</h4>
+                  <p>{cert.provider}</p>
+                </div>
+                <div className="cert-actions">
+                  <button 
+                    className="cert-btn view-btn"
+                    onClick={() => openCertificate(cert.image)}
+                  >
+                    View
+                  </button>
+                </div>
               </div>
-              <div className="cert-actions">
-                <button className="cert-btn view-btn">View</button>
-                <button className="cert-btn download-btn">PDF</button>
-              </div>
-            </div>
-            <div className="cert-item">
-              <div className="cert-content">
-                <h4>Introduction to Programming Using JavaScript</h4>
-                <p>Great Learning</p>
-              </div>
-              <div className="cert-actions">
-                <button className="cert-btn view-btn">View</button>
-                <button className="cert-btn download-btn">PDF</button>
-              </div>
-            </div>
-            <div className="cert-item">
-              <div className="cert-content">
-                <h4>Programming in HTML5 with JavaScript and CSS3</h4>
-                <p>Great Learning</p>
-              </div>
-              <div className="cert-actions">
-                <button className="cert-btn view-btn">View</button>
-                <button className="cert-btn download-btn">PDF</button>
-              </div>
-            </div>
-            <div className="cert-item">
-              <div className="cert-content">
-                <h4>ReactJS</h4>
-                <p>Great Learning</p>
-              </div>
-              <div className="cert-actions">
-                <button className="cert-btn view-btn">View</button>
-                <button className="cert-btn download-btn">PDF</button>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -130,6 +122,15 @@ const About: React.FC = () => {
         <div className="shape shape-4"></div>
         <div className="shape shape-5"></div>
       </div>
+
+      {selectedCertificate && (
+        <div className="certificate-modal" onClick={closeCertificate}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeCertificate}>×</button>
+            <img src={selectedCertificate} alt="Certificate" className="certificate-image" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

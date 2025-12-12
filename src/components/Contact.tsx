@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '../firebase';
 import './Contact.css';
 
 const Contact: React.FC = () => {
@@ -10,9 +8,7 @@ const Contact: React.FC = () => {
     subject: '',
     message: ''
   });
-  const [loading, setLoading] = useState(false);
-
-
+  const [showToast, setShowToast] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -21,31 +17,15 @@ const Contact: React.FC = () => {
     });
   };
 
-  const [showToast, setShowToast] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     
-    try {
-      await addDoc(collection(db, 'messages'), {
-        name: formData.name,
-        email: formData.email,
-        subject: formData.subject,
-        message: formData.message,
-        timestamp: new Date(),
-        read: false
-      });
-      
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    } catch (error) {
-      console.error('Error saving message:', error);
-      alert('Failed to send message. Please try again.');
-    }
+    // Show toaster
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 4000);
     
-    setLoading(false);
+    // Clear form fields
+    setFormData({ name: '', email: '', subject: '', message: '' });
   };
 
   return (
@@ -60,15 +40,15 @@ const Contact: React.FC = () => {
           </div>
           <div className="info-card">
             <h3>📱 Phone</h3>
-            <p>+1 (555) 123-4567</p>
+            <p>+91 7710945924</p>
           </div>
           <div className="info-card">
             <h3>📍 Location</h3>
-            <p>Your City, Country</p>
+            <p>Mumbai, India</p>
           </div>
           <div className="info-card">
             <h3>🔗 LinkedIn</h3>
-            <p>linkedin.com/in/yourprofile</p>
+            <p>https://www.linkedin.com/in/sudhir-vishwakarma-6b660017b/</p>
           </div>
         </div>
         
@@ -112,8 +92,8 @@ const Contact: React.FC = () => {
             onChange={handleChange}
             required
           ></textarea>
-          <button type="submit" className="btn" disabled={loading}>
-            {loading ? 'Sending...' : 'Send Message'}
+          <button type="submit" className="btn">
+            Send Message
           </button>
         </form>
       </div>

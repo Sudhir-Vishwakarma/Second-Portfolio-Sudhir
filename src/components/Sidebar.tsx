@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { HiHome, HiUser, HiBriefcase, HiCollection, HiMail, HiLogout } from 'react-icons/hi';
-import { signOut } from 'firebase/auth';
-import { auth } from '../firebase';
+import { HiHome, HiUser, HiBriefcase, HiCollection, HiMail } from 'react-icons/hi';
 import './Sidebar.css';
 
 type ActiveSection = 'home' | 'about' | 'work' | 'projects' | 'contacts';
@@ -9,10 +7,9 @@ type ActiveSection = 'home' | 'about' | 'work' | 'projects' | 'contacts';
 interface SidebarProps {
   activeSection: ActiveSection;
   setActiveSection: (section: ActiveSection) => void;
-  onLogout: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, onLogout }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   
   const menuItems = [
@@ -22,15 +19,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, onLo
     { id: 'projects', label: 'Projects', icon: HiCollection },
     { id: 'contacts', label: 'Contacts', icon: HiMail }
   ];
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      onLogout();
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
 
   return (
     <aside 
@@ -49,14 +37,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection, setActiveSection, onLo
             <span className="nav-label">{item.label}</span>
           </button>
         ))}
-        
-        <button
-          className="nav-item logout-btn"
-          onClick={handleLogout}
-        >
-          <HiLogout className="nav-icon" />
-          <span className="nav-label">Logout</span>
-        </button>
       </nav>
     </aside>
   );

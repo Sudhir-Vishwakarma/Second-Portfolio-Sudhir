@@ -113,6 +113,9 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 3rem;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
 }
 
 .action-buttons {
