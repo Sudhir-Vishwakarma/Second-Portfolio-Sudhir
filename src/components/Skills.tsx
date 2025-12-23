@@ -16,7 +16,7 @@ const Skills: React.FC = () => {
         <div className="experience-list">
           <div className="experience-item">
             <h4>Frontend Developer - Starz Ventures Pvt Ltd</h4>
-            <p className="experience-period">2025 - Present</p>
+            <p className="experience-period">Mar 2025 - Dec 2025</p>
             <ul className="experience-points">
               <li>Developed high-performance web applications using front-end technologies with responsive UI</li>
               <li>Created and deployed a custom Serverless Middleware REST API on Google Cloud</li>
@@ -27,7 +27,7 @@ const Skills: React.FC = () => {
           </div>
           <div className="experience-item">
             <h4>Frontend Developer - Entrance1.com</h4>
-            <p className="experience-period">2019 - 2020</p>
+            <p className="experience-period">Nov 2023 - Dec 2024</p>
             <ul className="experience-points">
               <li>Built responsive and user-friendly UI components using modern front-end technologies</li>
               <li>Converted design mockups into clean, pixel-perfect web interfaces for improved UX</li>
