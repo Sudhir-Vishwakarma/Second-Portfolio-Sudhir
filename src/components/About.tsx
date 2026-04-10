@@ -31,7 +31,7 @@ const About: React.FC = () => {
       <div className="about-grid">
         <div className={`about-intro ${isVisible ? 'animate-in' : ''}`}>
           <h3>About Me</h3>
-          <p>Hello, I'm a Front-End UI Developer. Coding on React and dreaming on ReactJS+ more technologies. Help Companies to build complex Web Applications and want to serve 1,00,000+ users with React and Modern Technologies.</p>
+          <p>Results-driven developer with hands-on experience in building scalable web applications and CRM systems, including real-time chat, authentication, and multi-service integrations. Proven ability to integrate complex APIs, manage dynamic data flows, and deploy production-ready applications on live servers using secure remote access. Seeking to contribute to impactful, high-growth projects while continuously advancing in full-stack development and solving real-world problems at scale.</p>
         </div>
 
         <div className={`skills-section ${isVisible ? 'animate-in' : ''}`}>
@@ -46,6 +46,8 @@ const About: React.FC = () => {
             <span className="skill-tag">Bootstrap</span>
             <span className="skill-tag">Firebase</span>
             <span className="skill-tag">Git</span>
+            <span className="skill-tag">GitHub</span>
+            <span className="skill-tag">GitLab</span>
             <span className="skill-tag">PHP</span>
             <span className="skill-tag">MongoDB</span>
             <span className="skill-tag">MySQL</span>
@@ -53,6 +55,8 @@ const About: React.FC = () => {
             <span className="skill-tag">Google Cloud Server</span>
             <span className="skill-tag">Middleware Serverless REST API</span>
             <span className="skill-tag">API</span>
+            <span className="skill-tag">Strapi</span>
+            <span className="skill-tag">Linux</span>
           </div>
         </div>
 

@@ -15,6 +15,15 @@ const Skills: React.FC = () => {
       <div className={`experience-section ${isVisible ? 'animate-in' : ''}`}>
         <div className="experience-list">
           <div className="experience-item">
+            <h4>FullStack Developer - Realatte</h4>
+            <p className="experience-period">Feb 2026 - Apr 2026</p>
+            <ul className="experience-points">
+              <li>Built a web application using React and Next.js, integrated with Strapi for dynamic content management</li>
+              <li>Managed API integration and nested data flow for efficient frontend & CRM rendering</li>
+              <li>Deployed and maintained the app on a live server via Ubuntu terminal using SSH (root access)</li>
+            </ul>
+          </div>
+          <div className="experience-item">
             <h4>Frontend Developer - Starz Ventures Pvt Ltd</h4>
             <p className="experience-period">Mar 2025 - Dec 2025</p>
             <ul className="experience-points">
