@@ -8,13 +8,14 @@ const Dashboard: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showResumeModal, setShowResumeModal] = useState(false);
   
-  const texts = ['FULL-STACK DEVELOPER', 'REACT.JS/NEXT.JS', 'STRAPI/FIREBASE'];
+  
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
 
   useEffect(() => {
+    const texts = ['FULL-STACK DEVELOPER', 'REACT.JS/NEXT.JS', 'STRAPI/FIREBASE'];
     const timeout = setTimeout(() => {
       const current = texts[currentIndex];
       
@@ -33,7 +34,7 @@ const Dashboard: React.FC = () => {
     }, isDeleting ? 50 : 100);
 
     return () => clearTimeout(timeout);
-  }, [currentText, isDeleting, currentIndex, texts]);
+  }, [currentText, isDeleting, currentIndex]);
 
   return (
     <div className="dashboard">

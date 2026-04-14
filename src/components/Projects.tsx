@@ -14,7 +14,7 @@ interface Project {
 }
 
 const Projects: React.FC = () => {
-  const [filter, setFilter] = useState<string>('All');
+  // const [filter, setFilter] = useState<string>('All');
   const [isVisible, setIsVisible] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   
