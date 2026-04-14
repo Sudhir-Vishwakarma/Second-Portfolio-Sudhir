@@ -8,7 +8,7 @@ const Dashboard: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showResumeModal, setShowResumeModal] = useState(false);
   
-  const texts = ['FRONT-END DEVELOPER', 'REACT/REDUX', 'NODEJS/FIREBASE'];
+  const texts = ['FULL-STACK DEVELOPER', 'REACT.JS/NEXT.JS', 'STRAPI/FIREBASE'];
 
   useEffect(() => {
     setIsVisible(true);
@@ -43,7 +43,7 @@ const Dashboard: React.FC = () => {
             <span className="greeting">HELLO I'M</span>
             <h1 className="name">SUDHIR<br />VISHWAKARMA</h1>
             <p className="title">A PASSIONATE <span className="highlight glow-text">{currentText}</span><span className="cursor">|</span></p>
-            <p className="description">Front-End Developer with strong experience in React, TypeScript, and UI development. I build responsive, high-performance web applications with a focus on clean architecture and great user experience. Driven, focused, and always improving.</p>
+            <p className="description">A highly driven Front-End Engineer specializing in React.js and Next.js, focused on building scalable, production-grade applications that power real business ecosystems. Proven expertise in crafting advanced CRM platforms, integrating complex APIs, and deploying secure, high-performance solutions at scale. Committed to pushing technical boundaries, delivering impactful user experiences, and evolving into a full-stack leader who engineers products that drive measurable growth and innovation.</p>
             <div className="action-buttons">
               <button className="cta-btn" onClick={() => setShowResumeModal(true)}>VIEW CV</button>
             </div>

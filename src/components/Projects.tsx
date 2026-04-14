@@ -141,10 +141,46 @@ const Projects: React.FC = () => {
       demoUrl: 'https://kundali.starz.vip/'
     },
     {
+      title: 'Harmony Infra Ventures',
+      shortDescription: 'Real Estate Platform for Seamless Property Buying and Selling',
+      description: 'Engineered a high-performance real estate platform enabling seamless property buying and selling, leveraging Next.js and React for dynamic rendering, integrated with Strapi CMS and optimized APIs to deliver scalable listings and lightning-fast user experiences.',
+      technologies: ['Next.JS', 'React', 'MySQL', 'Strapi', ' API Integration ' , 'Webpack', 'Tailwind CSS'],
+      status: 'Completed',
+      type: 'Web App',
+      demoUrl: 'https://harmonyinfraventures.com/'
+    },
+    {
+      title: 'Darsh Group',
+      shortDescription: 'Online Property Marketplace for Efficient Buying and Selling Experience',
+      description: 'Developed a robust property marketplace focused on intuitive buying and selling journeys, utilizing MySQL-backed data architecture, efficient API integration, and Tailwind CSS for a modern, responsive interface with smooth user interactions.',
+      technologies: ['Next.JS', 'React', 'MySQL', 'Strapi', ' API Integration ' , 'Webpack', 'Tailwind CSS'],
+      status: 'Completed',
+      type: 'Web App',
+      demoUrl: 'https://www.darshgroup.co.in/'
+    },
+    {
+      title: 'Oriom Group',
+      shortDescription: 'Real Estate Platform for Seamless Property Buying and Selling',
+      description: 'Built a full-featured real estate web application with optimized property discovery and transaction flows, combining React-driven UI, Webpack optimization, and structured backend services to ensure performance, scalability, and clean data handling.',
+      technologies: ['Next.JS', 'React', 'MySQL', 'Strapi', ' API Integration ' , 'Webpack', 'Tailwind CSS'],
+      status: 'Completed',
+      type: 'Web App',
+      demoUrl: 'https://www.oriomgroup.com/'
+    },
+    {
+      title: 'Eeshanya',
+      shortDescription: 'End-to-End Real Estate Solution for Property Transactions and Listings',
+      description: 'Designed an end-to-end property trading platform emphasizing speed, usability, and scalability, powered by Next.js SSR capabilities, Strapi content management, and modular API architecture for efficient listing management and seamless user engagement.',
+      technologies: ['Next.JS', 'React', 'MySQL', 'Strapi', ' API Integration ' , 'Webpack', 'Tailwind CSS'],
+      status: 'Completed',
+      type: 'Web App',
+      demoUrl: 'https://www.eeshanya.com/'
+    },
+    {
       title: 'STARZAi CRM',
       shortDescription: 'Enterprise-grade multi-tenant CRM platform',
       description: 'Tech Stack: React (TypeScript), Vite, TailwindCSS, Firebase, Express.js, Google Cloud Run, Twilio, OpenAI. STARZ CRM is a full-scale, multi-tenant Customer Relationship Management platform built with a microservices architecture. It streamlines operations for clients and internal service teams through real-time analytics, automated workflows, and AI-powered tools. Key Highlights: Built a React + TypeScript front-end with a modular architecture, Context API state management, role-based routing, and an advanced theme system (light/dark mode). Developed backend microservices using Firebase Admin, OpenAI, and WhatsApp messaging, reminders, and data synchronization. Implemented Firebase Firestore as the primary database with phone-number-based authentication, OTP onboarding, and secure file storage. Architected a 20-role hierarchical user system (CEO → HR → BD → CS → Marketing → Design → Development), each with dedicated dashboards and permissions. Core Functional Modules: Dashboard & BI Analytics with real-time KPIs, lead scoring, revenue insights, interactive charts (Chart.js, Recharts). Lead & Customer Management with acquisition pipelines, segmentation (Basic/Advanced/Pro), CSV import/export. Campaign Suite with Meta Ads, WhatsApp automations, AI content creation, and landing page generator. Communication Tools including WhatsApp messaging, tasks, reminders, and Google Calendar event syncing. Project Management with Kanban board, task calendar, team performance tracking, and file approval workflows. AI Automation for content generation, analysis, and workflow automation using OpenAI. Engineering & Deployment: Frontend deployed on Vercel with optimized Vite builds. Backend services containerized with Docker and deployed on Google Cloud Run with CI/CD via Cloud Build. Ensured platform security with role-based access, SSL/TLS, CORS rules, and environment-based configuration.',
-      technologies: ['React', 'TypeScript', 'Firebase', 'Google Cloud', 'REST API'],
+      technologies: ['React', 'Next' , 'TypeScript', 'Firebase', 'Google Cloud', 'REST API'],
       status: 'Completed',
       type: 'Web App',
       demoUrl: 'https://crm.starz.vip',
@@ -154,12 +190,12 @@ const Projects: React.FC = () => {
       title: 'Shubhdhanam CRM',
       shortDescription: 'Financial CRM for loan management',
       description: 'Tech Stack: React (TypeScript), Vite, TailwindCSS, Firebase/Firestore, Chart.js, React Hook Form, ExcelJS, WhatsApp Webhooks. Shubhdhanam CRM is a full-scale financial CRM built for loan management, lead operations, pipeline tracking, and automated commission processing across multiple user roles, with real-time performance and strong data integrity. Key Highlights: Built a modular React + TypeScript frontend with real-time UI, secure routing, and mobile-first responsive layout. Developed a multi-role hierarchy (Admin → Coordinator → Partner → Agent → Telecaller → Connector → Customer Connector) with strict data isolation and RBAC. Implemented phone OTP login, partner codes, and admin-driven onboarding with Firebase Auth & Firestore. Designed end-to-end lead management with QR capture, bulk imports, deduplication, ownership tracking, and auto-assignment. Created a structured pipeline (Login Pending → Login → In Process → Underwriting → Approval → Disbursement/Rejection) with controlled transitions. Core Modules: Lead & Pipeline with multi-source leads, dedupe system, real-time updates, assignment flow, hierarchy visibility. Commission Engine with automated payouts with slabs, bonuses, thresholds, and live tracking for all role types. Analytics with dashboards featuring revenue trends, pipeline charts, source insights, and team performance. Communication including WhatsApp webhooks, internal chat, marketing banners, and QR-based lead pages. Data Ops with XLSX exports, document uploads, QR Code Lead Generation. Engineering & Architecture: Real-Time with Firestore listeners for instant pipeline, payout, dashboard updates. Secure with OTP login, RBAC, audit logs, and encrypted workflows. Optimized Frontend with Tailwind dark mode, reusable components, custom hooks, clean UI logic, Vite builds. Business Workflow: Lead Generation → Assignment → Pipeline Tracking → Deal Closure → Commission Calculation → Payouts.',
-      technologies: ['React', 'TypeScript', 'Tailwind CSS', 'Firebase', 'REST API'],
+      technologies: ['React', 'Next' , 'TypeScript', 'Tailwind CSS', 'Firebase', 'REST API'],
       status: 'Completed',
       type: 'Web App',
       demoUrl: 'https://crm.shubhdhanam.com/dashboard',
       featured: true
-    }
+    },
   ];
 
   const filteredProjects = projects.reverse();
