@@ -9,6 +9,8 @@ const Contact: React.FC = () => {
     message: ''
   });
   const [showToast, setShowToast] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -17,15 +19,31 @@ const Contact: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Show toaster
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 4000);
-    
-    // Clear form fields
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setSending(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not send your message. Please email me directly.');
+
+      // Show toaster
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 4000);
+
+      // Clear form fields
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not send your message. Please email me directly.');
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -92,8 +110,9 @@ const Contact: React.FC = () => {
             onChange={handleChange}
             required
           ></textarea>
-          <button type="submit" className="btn">
-            Send Message
+          {error && <p className="form-error">{error}</p>}
+          <button type="submit" className="btn" disabled={sending}>
+            {sending ? 'Sending...' : 'Send Message'}
           </button>
         </form>
       </div>
