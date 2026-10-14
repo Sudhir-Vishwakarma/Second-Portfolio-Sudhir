@@ -3,6 +3,9 @@ import { Project, descriptionParagraphs, projects } from '../../data/portfolio';
 import { FILTERS, ProjectFilter, filterProjects, topTech, visibleProjects } from '../projectFilter';
 import { SectionHeading } from '../SectionHeading';
 import { Sheet } from '../Sheet';
+import { ProjectGalaxy } from '../objects/ProjectGalaxy';
+import { ViewToggle } from '../objects/ViewToggle';
+import { useViewMode } from '../objects/useViewMode';
 import { SectionProps } from './registry';
 
 const ProjectDetails: React.FC<{ p: Project }> = ({ p }) => (
@@ -29,6 +32,7 @@ const ProjectDetails: React.FC<{ p: Project }> = ({ p }) => (
 );
 
 export const ProjectsSection: React.FC<SectionProps> = () => {
+  const [mode, setMode] = useViewMode('projects');
   const [filter, setFilter] = useState<ProjectFilter>('All');
   const [showAll, setShowAll] = useState(false);
   const [open, setOpen] = useState<Project | null>(null);
@@ -48,6 +52,7 @@ export const ProjectsSection: React.FC<SectionProps> = () => {
   return (
     <div>
       <SectionHeading kicker="My Projects" title="Project Galaxy" />
+      <ViewToggle mode={mode} onChange={setMode} label="Projects" />
       <div className="mb-filters" role="group" aria-label="Filter projects">
         {FILTERS.map((f) => (
           <button
@@ -64,37 +69,43 @@ export const ProjectsSection: React.FC<SectionProps> = () => {
         ))}
       </div>
 
-      <ul className="mb-projects" ref={listRef}>
-        {shown.map((p) => (
-          <li key={p.title} className="mb-card mb-project" data-reveal>
-            <h3 className="mb-project__title" tabIndex={-1}>
-              {p.title}
-              {p.featured && <span className="mb-star" role="img" aria-label="Featured">★</span>}
-            </h3>
-            <p className="mb-text">{p.shortDescription}</p>
-            <div className="mb-chips">
-              {topTech(p).map((t) => (
-                <span key={t} className="mb-chip">{t}</span>
-              ))}
-            </div>
-            <div className="mb-project__actions">
-              {p.demoUrl && <a className="mb-btn" aria-label={`Live demo: ${p.title}`} href={p.demoUrl} target="_blank" rel="noopener noreferrer">Live Demo</a>}
-              <button className="mb-btn mb-btn--ghost" aria-label={`Details: ${p.title}`} onClick={() => setOpen(p)}>Details</button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {mode === 'orbit' ? (
+        <ProjectGalaxy filter={filter} onDetails={setOpen} />
+      ) : (
+        <>
+          <ul className="mb-projects" ref={listRef}>
+            {shown.map((p) => (
+              <li key={p.title} className="mb-card mb-project" data-reveal>
+                <h3 className="mb-project__title" tabIndex={-1}>
+                  {p.title}
+                  {p.featured && <span className="mb-star" role="img" aria-label="Featured">★</span>}
+                </h3>
+                <p className="mb-text">{p.shortDescription}</p>
+                <div className="mb-chips">
+                  {topTech(p).map((t) => (
+                    <span key={t} className="mb-chip">{t}</span>
+                  ))}
+                </div>
+                <div className="mb-project__actions">
+                  {p.demoUrl && <a className="mb-btn" aria-label={`Live demo: ${p.title}`} href={p.demoUrl} target="_blank" rel="noopener noreferrer">Live Demo</a>}
+                  <button className="mb-btn mb-btn--ghost" aria-label={`Details: ${p.title}`} onClick={() => setOpen(p)}>Details</button>
+                </div>
+              </li>
+            ))}
+          </ul>
 
-      {list.length > shown.length && (
-        <button
-          className="mb-btn mb-btn--ghost mb-showall"
-          onClick={() => {
-            focusFrom.current = shown.length;
-            setShowAll(true);
-          }}
-        >
-          Show all {list.length}
-        </button>
+          {list.length > shown.length && (
+            <button
+              className="mb-btn mb-btn--ghost mb-showall"
+              onClick={() => {
+                focusFrom.current = shown.length;
+                setShowAll(true);
+              }}
+            >
+              Show all {list.length}
+            </button>
+          )}
+        </>
       )}
 
       <Sheet open={open !== null} onClose={() => setOpen(null)} label={open ? open.title : 'Project details'}>

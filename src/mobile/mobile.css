@@ -394,3 +394,14 @@
   font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
 }
 @media (orientation: landscape) and (max-height: 500px) { .mb-orbit-view .mb-orbit { width: min(100%, 360px, calc(100vh - 140px)); width: min(100%, 360px, calc(100dvh - 140px)); } }
+
+/* ---------- project galaxy ---------- */
+.mb-galaxy__hit { position: absolute; inset: 0; cursor: pointer; }
+.mb-galaxy__tag {
+  position: absolute; transform: translate(-50%, calc(-100% - 12px)); pointer-events: none; white-space: nowrap;
+  max-width: 60%; overflow: hidden; text-overflow: ellipsis;
+  padding: 3px 8px; border-radius: 999px; font-size: 0.7rem; background: rgba(8, 8, 14, 0.85); border: 1px solid var(--border);
+}
+.mb-galaxy__nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: -4px; }
+.mb-galaxy__nav .mb-btn { min-width: 44px; min-height: 44px; padding: 0 14px; }
+.mb-galaxy__count { font-size: 0.85rem; color: var(--muted); min-width: 56px; text-align: center; }
