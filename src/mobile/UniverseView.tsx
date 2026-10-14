@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { MOBILE_SECTIONS } from './sections';
 import { SECTION_COMPONENTS } from './sections/registry';
-import { LAST_INDEX } from './universePager';
+import { LAST_INDEX, PULL_THRESHOLD } from './universePager';
+import { useEdgePull } from './useEdgePull';
 import { ViewState } from './useUniversePager';
 import { useReveal } from './useReveal';
 import { Footer } from './sections/Footer';
@@ -23,6 +24,10 @@ export const UniverseView: React.FC<UniverseViewProps> = ({ index, state, anchor
   const Section = SECTION_COMPONENTS[section.id];
   const next = index < LAST_INDEX ? MOBILE_SECTIONS[index + 1] : null;
   useReveal(scrollRef);
+  const prev = index > 0 ? MOBILE_SECTIONS[index - 1] : null;
+  const pull = useEdgePull(scrollRef, (dir) => onTravel(dir, 'gesture'), state === 'active');
+  const pullTarget = pull > 0 ? next : pull < 0 ? prev : null;
+  const pullReady = Math.abs(pull) >= PULL_THRESHOLD;
 
   useEffect(() => {
     const root = scrollRef.current;
@@ -59,6 +64,11 @@ export const UniverseView: React.FC<UniverseViewProps> = ({ index, state, anchor
           </section>
         </div>
       </div>
+      {pullTarget && (
+        <div className={`mb-pull mb-pull--${pull > 0 ? 'bottom' : 'top'}${pullReady ? ' is-ready' : ''}`} style={{ opacity: Math.min(1, Math.abs(pull) / PULL_THRESHOLD) }} aria-hidden="true">
+          {pullReady ? `Release for ${pullTarget.label}` : `Pull for ${pullTarget.label}`} {pull > 0 ? '↓' : '↑'}
+        </div>
+      )}
     </div>
   );
 };
