@@ -1,4 +1,4 @@
-import { isFormField, insideScrollable } from './input';
+import { isFormField, insideScrollable, isActivatable } from './input';
 
 test('form fields swallow keys, other elements do not', () => {
   const input = document.createElement('input');
@@ -23,4 +23,16 @@ test('wheel inside an overflowing capture-scroll panel stays in the panel', () =
   Object.defineProperty(panel, 'scrollHeight', { value: 200, configurable: true });
   expect(insideScrollable(child)).toBe(false);
   expect(insideScrollable(document.body)).toBe(false);
+});
+
+test('buttons and links are activatable, plain elements are not', () => {
+  const button = document.createElement('button');
+  const link = document.createElement('a');
+  link.setAttribute('href', '#x');
+  const div = document.createElement('div');
+  document.body.append(button, link, div);
+  expect(isActivatable(button)).toBe(true);
+  expect(isActivatable(link)).toBe(true);
+  expect(isActivatable(div)).toBe(false);
+  expect(isActivatable(null)).toBe(false);
 });

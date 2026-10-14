@@ -7,6 +7,11 @@ export function isFormField(target: EventTarget | null): boolean {
   return !!el && typeof el.closest === 'function' && !!el.closest('input, textarea, select, [contenteditable="true"]');
 }
 
+export function isActivatable(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null;
+  return !!el && typeof el.closest === 'function' && !!el.closest('button, a[href], [role="button"], summary');
+}
+
 /** True when the target is inside a [data-capture-scroll] element that actually overflows. */
 export function insideScrollable(target: EventTarget | null): boolean {
   let el = target as HTMLElement | null;
@@ -33,6 +38,7 @@ export function useJourneyInput(): void {
         if (e.key === 'Escape') s.closeModal();
         return;
       }
+      if (e.key === ' ' && isActivatable(e.target)) return;
       if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
         e.preventDefault();
         s.go(1);
