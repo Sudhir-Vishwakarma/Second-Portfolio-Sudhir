@@ -124,6 +124,19 @@
 @keyframes mv-scroll { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
 @keyframes mv-stagger { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
 
+/* about — education timeline */
+.mv-timeline { list-style: none; margin: 0; padding: 0 0 0 20px; border-left: 1px solid rgba(96,165,250,0.4); }
+.mv-timeline li {
+  position: relative; display: flex; flex-direction: column; gap: 2px; padding: 0 0 18px 8px;
+  opacity: 0; animation: mv-stagger 0.6s ease both; animation-delay: calc(200ms + var(--i) * 250ms);
+}
+.mv-timeline li::before {
+  content: ''; position: absolute; left: -26px; top: 6px; width: 11px; height: 11px; border-radius: 50%;
+  background: #60a5fa; box-shadow: 0 0 12px #60a5fa;
+}
+.mv-timeline__years { font-size: 0.72rem; letter-spacing: 0.2em; color: #93c5fd; }
+.mv-timeline__place { color: rgba(255,255,255,0.65); font-size: 0.88rem; }
+
 /* home */
 .mv-typing { font-size: clamp(0.95rem, 1.6vw, 1.15rem); letter-spacing: 0.12em; margin-bottom: 14px; color: rgba(255,255,255,0.85); }
 .mv-typing__word { color: #ff9a3c; text-shadow: 0 0 18px rgba(255,122,0,0.6); font-weight: 700; }
