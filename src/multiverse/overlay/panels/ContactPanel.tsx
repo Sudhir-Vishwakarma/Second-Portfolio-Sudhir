@@ -31,7 +31,7 @@ export const ContactPanel: React.FC<PanelProps> = () => {
         </select>
         <textarea name="message" placeholder="Your Message" rows={4} value={form.message} onChange={handleChange} required aria-label="Your message" />
         {error && <p className="mv-form__error" role="alert">{error}</p>}
-        <button type="submit" className="mv-btn" disabled={sending}>{sending ? 'Transmitting…' : 'Send Message'}</button>
+        <button type="submit" className="mv-btn" disabled={sending}>{sending ? 'Sending…' : 'Send Message'}</button>
       </form>
       {showToast && <div className="mv-toast" role="status">✅ Message sent successfully! I'll respond within 24 hours.</div>}
     </div>
