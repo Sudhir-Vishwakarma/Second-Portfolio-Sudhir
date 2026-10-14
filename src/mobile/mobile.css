@@ -111,6 +111,7 @@
 .mb-solar { position: relative; width: 256px; height: 256px; margin: 8px auto 12px; display: grid; place-items: center; }
 .mb-solar__orbit {
   position: absolute; border-radius: 50%; border: 1px dashed rgba(255, 255, 255, 0.14);
+  transform: rotate(var(--start, 0deg));
   animation: mb-orbit linear infinite;
 }
 .mb-solar__planet {
@@ -129,12 +130,15 @@
   font-size: clamp(2.4rem, 11vw, 3.2rem); line-height: 0.98; margin: 0; letter-spacing: -0.02em;
   background: linear-gradient(120deg, #fff 30%, #ffb15c 60%, #ff6a00); -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.mb-typing { margin: 0; font-size: 0.95rem; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.85); min-height: 1.5em; }
-.mb-typing__word { color: #ff9a3c; font-weight: 700; text-shadow: 0 0 14px rgba(255, 122, 0, 0.55); }
+.mb-typing { margin: 0; font-size: 0.95rem; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.85); min-height: 3.3em; line-height: 1.6; }
+.mb-typing__word { display: inline-block; color: #ff9a3c; font-weight: 700; text-shadow: 0 0 14px rgba(255, 122, 0, 0.55); }
 .mb-typing__cursor { color: #ff9a3c; animation: mb-blink 1s steps(1) infinite; margin-left: 2px; }
 .mb-home__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
 .mb-socials--start { justify-content: flex-start; }
-@keyframes mb-orbit { to { transform: rotate(360deg); } }
+@keyframes mb-orbit {
+  from { transform: rotate(var(--start, 0deg)); }
+  to { transform: rotate(calc(var(--start, 0deg) + 360deg)); }
+}
 @keyframes mb-blink { 50% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
   .mb-solar__orbit, .mb-typing__cursor { animation: none; }

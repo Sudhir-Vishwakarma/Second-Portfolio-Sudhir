@@ -13,7 +13,8 @@ export const HomeSection: React.FC<SectionProps> = () => {
       <span className="mb-kicker" data-reveal>{profile.greeting}</span>
       <h1 className="mb-h1" data-reveal>{profile.firstName}<br />{profile.lastName}</h1>
       <p className="mb-typing" data-reveal>
-        {profile.titlePrefix} <span className="mb-typing__word">{word}</span>
+        {profile.titlePrefix}<br />
+        <span className="mb-typing__word">{word}</span>
         <span className="mb-typing__cursor" aria-hidden="true">|</span>
       </p>
       <p className="mb-text" data-reveal>{profile.bio}</p>
