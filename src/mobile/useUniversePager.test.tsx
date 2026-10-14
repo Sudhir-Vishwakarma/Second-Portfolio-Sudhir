@@ -125,7 +125,10 @@ test('a popstate for a sheet entry is ignored', async () => {
 
 test('keyboard/nav travel does nothing while a sheet is open, but history travel still works', async () => {
   await jump(1);
+  const sheet = document.createElement('div');
+  sheet.className = 'mb-sheet';
   await act(async () => {
+    document.body.appendChild(sheet);
     window.history.pushState({ mbSheet: true }, '', '#about');
   });
   await travel(3);
@@ -137,4 +140,17 @@ test('keyboard/nav travel does nothing while a sheet is open, but history travel
   await advance(1200);
   expect(pager.index).toBe(0);
   expect(UNIVERSE_ORDER[0]).toBe('home');
+  sheet.remove();
+});
+
+test('Forward onto a closed sheet entry does not lock travel', async () => {
+  await jump(1);
+  // The sheet was closed with Back, then Forward re-entered its { mbSheet } entry: no sheet is in the DOM.
+  await act(async () => {
+    window.history.pushState({ mbSheet: true }, '', '#about');
+    window.dispatchEvent(new PopStateEvent('popstate', { state: { mbSheet: true } }));
+  });
+  await jump(3);
+  expect(pager.index).toBe(3);
+  expect(window.location.hash).toBe('#work');
 });

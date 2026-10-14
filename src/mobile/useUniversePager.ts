@@ -47,7 +47,8 @@ export function useUniversePager(initialIndex: number, reducedMotion: boolean): 
     (target, opts = {}) => {
       const { push = true, source = 'nav' } = opts;
       const to = clampIndex(target);
-      if (source !== 'history' && window.history.state && window.history.state.mbSheet) return; // a sheet is open
+      // A sheet is open. Checked in the DOM: Forward can land on a closed sheet's stale { mbSheet } entry.
+      if (source !== 'history' && document.querySelector('.mb-sheet')) return;
       const now = performance.now();
       if (flight.current) {
         if (source === 'history') pending.current = to; // replay Back/Forward once this jump lands
