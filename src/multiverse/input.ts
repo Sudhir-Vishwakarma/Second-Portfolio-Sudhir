@@ -22,12 +22,17 @@ export function insideScrollable(target: EventTarget | null): boolean {
   return false;
 }
 
+/** True when a wheel/swipe starting on this target must not travel (form field or overflowing panel). */
+export function shouldIgnoreScroll(target: EventTarget | null): boolean {
+  return isFormField(target) || insideScrollable(target);
+}
+
 export function useJourneyInput(): void {
   useEffect(() => {
     const store = useJourney.getState;
 
     const onWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) < 20 || insideScrollable(e.target)) return;
+      if (Math.abs(e.deltaY) < 20 || shouldIgnoreScroll(e.target)) return;
       store().go(e.deltaY > 0 ? 1 : -1);
     };
 
@@ -60,7 +65,7 @@ export function useJourneyInput(): void {
     };
     const onTouchEnd = (e: TouchEvent) => {
       const dy = startY - e.changedTouches[0].clientY;
-      if (Math.abs(dy) > 40 && !insideScrollable(startTarget)) store().go(dy > 0 ? 1 : -1);
+      if (Math.abs(dy) > 40 && !shouldIgnoreScroll(startTarget)) store().go(dy > 0 ? 1 : -1);
     };
 
     window.addEventListener('wheel', onWheel, { passive: true });

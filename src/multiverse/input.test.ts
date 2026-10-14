@@ -1,4 +1,4 @@
-import { isFormField, insideScrollable, isActivatable } from './input';
+import { isFormField, insideScrollable, isActivatable, shouldIgnoreScroll } from './input';
 
 test('form fields swallow keys, other elements do not', () => {
   const input = document.createElement('input');
@@ -35,4 +35,13 @@ test('buttons and links are activatable, plain elements are not', () => {
   expect(isActivatable(link)).toBe(true);
   expect(isActivatable(div)).toBe(false);
   expect(isActivatable(null)).toBe(false);
+});
+
+test('wheel or swipe over a form field never travels', () => {
+  const textarea = document.createElement('textarea');
+  const div = document.createElement('div');
+  document.body.append(textarea, div);
+  expect(shouldIgnoreScroll(textarea)).toBe(true);
+  expect(shouldIgnoreScroll(div)).toBe(false);
+  expect(shouldIgnoreScroll(null)).toBe(false);
 });

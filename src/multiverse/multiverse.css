@@ -86,13 +86,16 @@
 .mv-panel {
   position: absolute; left: clamp(16px, 5vw, 72px); top: 96px; bottom: 96px;
   width: min(520px, 42vw); overflow-y: auto; padding-right: 8px;
-  display: flex; flex-direction: column; justify-content: center;
+  display: flex; flex-direction: column; justify-content: flex-start;
   opacity: 0; transform: translateY(12px); filter: blur(6px);
   transition: opacity 0.25s ease, transform 0.25s ease, filter 0.25s ease;
   scrollbar-width: thin; scrollbar-color: rgba(255,122,0,0.5) transparent;
 }
 .mv-panel.is-shown { opacity: 1; transform: none; filter: none; animation: mv-panel-in 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 .mv-panel > * { flex-shrink: 0; }
+/* centred when it fits, scrollable from the top when it overflows */
+.mv-panel > :first-child { margin-top: auto; }
+.mv-panel > :last-child { margin-bottom: auto; }
 
 /* shared typography */
 .mv-kicker { font-size: 0.72rem; letter-spacing: 0.32em; text-transform: uppercase; color: #ff9a3c; }
