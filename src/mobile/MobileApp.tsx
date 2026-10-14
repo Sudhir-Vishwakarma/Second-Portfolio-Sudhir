@@ -6,7 +6,8 @@ import { useReducedMotion } from './useReducedMotion';
 import { useReveal } from './useReveal';
 import { TopBar } from './TopBar';
 import { BottomNav } from './BottomNav';
-import { StarfieldCanvas } from './StarfieldCanvas';
+import { SpaceCanvas } from './SpaceCanvas';
+import { WarpState } from './universePager';
 import { WarpOverlay } from './WarpOverlay';
 import { Footer } from './sections/Footer';
 import './mobile.css';
@@ -25,6 +26,8 @@ const MobileApp: React.FC = () => {
   const reducedMotion = useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const [warpTo, setWarpTo] = useState<MobileSectionId | null>(null);
+  // Idle until the pager (Task 3) drives it.
+  const warpRef = useRef<WarpState>({ t0: null, from: '#ff7a00', to: '#ff7a00' });
   useReveal(rootRef);
 
   // Layout effects run before useActiveSection's passive hash-sync effect and before any scroll.
@@ -60,7 +63,7 @@ const MobileApp: React.FC = () => {
 
   return (
     <div className={`mb${reducedMotion ? ' is-reduced' : ''}`} ref={rootRef}>
-      <StarfieldCanvas reducedMotion={reducedMotion} />
+      <SpaceCanvas reducedMotion={reducedMotion} warpRef={warpRef} />
       <TopBar onHome={() => navigate('home')} />
       <main className="mb-main">
         {MOBILE_SECTIONS.map((s) => {
