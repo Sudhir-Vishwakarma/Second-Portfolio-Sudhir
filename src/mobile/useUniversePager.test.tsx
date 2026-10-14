@@ -75,9 +75,9 @@ test('Back before the swap travels to the popped universe without pushing the ta
   await travel(4);
   await advance(300);
   await pop('about');
-  await advance(900); // flight lands on projects (no push), then replays Back
+  await advance(1300); // black hole flight (1600 ms) lands on projects (no push), then replays Back
   expect(pager.index).toBe(4);
-  await advance(1200);
+  await advance(1600); // the replay 4 -> 1 is also a black hole jump
   expect(pager.index).toBe(1);
   expect(window.location.hash).toBe('#about');
   expect(pager.viewState).toBe('active');
@@ -153,4 +153,42 @@ test('Forward onto a closed sheet entry does not lock travel', async () => {
   await jump(3);
   expect(pager.index).toBe(3);
   expect(window.location.hash).toBe('#work');
+});
+
+test('far jumps use the black hole timeline; neighbours keep hyperspeed', async () => {
+  await travel(5);
+  expect(pager.jumpKind).toBe('blackhole');
+  expect(pager.warpRef.current.kind).toBe('blackhole');
+  await advance(799);
+  expect(pager.index).toBe(0);
+  await advance(1);
+  expect(pager.index).toBe(5);
+  expect(window.location.hash).toBe('#contact');
+  await advance(799);
+  expect(pager.viewState).toBe('arriving');
+  await advance(1);
+  expect(pager.viewState).toBe('active');
+  await travel(4);
+  expect(pager.jumpKind).toBe('hyperspeed');
+  expect(pager.warpRef.current.kind).toBe('hyperspeed');
+  await advance(750);
+  expect(pager.index).toBe(4);
+});
+
+test('map jumps use the black hole even to a neighbour', async () => {
+  await travel(1, { via: 'map' });
+  expect(pager.jumpKind).toBe('blackhole');
+  await advance(1600);
+  expect(pager.index).toBe(1);
+  expect(pager.viewState).toBe('active');
+});
+
+test('travel input during a black hole jump is ignored', async () => {
+  await travel(5);
+  await advance(300);
+  await travel(2);
+  await advance(1300);
+  expect(pager.index).toBe(5);
+  await advance(1000);
+  expect(pager.index).toBe(5);
 });

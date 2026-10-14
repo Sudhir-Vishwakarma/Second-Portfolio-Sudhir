@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { JumpKind } from './blackHole';
 import { MOBILE_SECTIONS } from './sections';
 import { SECTION_COMPONENTS } from './sections/registry';
 import { LAST_INDEX, PULL_THRESHOLD } from './universePager';
@@ -11,6 +12,8 @@ import { UniverseBackdrop } from './UniverseBackdrop';
 export interface UniverseViewProps {
   index: number;
   state: ViewState;
+  /** Effect of the current jump; drives the black hole leave/arrive classes. */
+  kind: JumpKind;
   /** In-universe anchor to scroll to on mount (deep links such as #certifications). */
   anchor: string | null;
   /** Move focus to the heading on mount (after a jump, not on first load). */
@@ -19,7 +22,7 @@ export interface UniverseViewProps {
 }
 
 /** One full-screen universe with its own scroll area. Remounted (keyed by index) for every jump. */
-export const UniverseView: React.FC<UniverseViewProps> = ({ index, state, anchor, focusHeading, onTravel }) => {
+export const UniverseView: React.FC<UniverseViewProps> = ({ index, state, kind, anchor, focusHeading, onTravel }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const section = MOBILE_SECTIONS[index];
   const Section = SECTION_COMPONENTS[section.id];
@@ -46,7 +49,7 @@ export const UniverseView: React.FC<UniverseViewProps> = ({ index, state, anchor
   const leaving = state === 'leaving';
   return (
     <div
-      className={`mb-universe is-${state}`}
+      className={`mb-universe is-${state}${kind === 'blackhole' && state !== 'active' ? ' is-blackhole' : ''}`}
       style={{ '--accent': section.accent } as React.CSSProperties}
       aria-hidden={leaving ? true : undefined}
       {...((leaving ? { inert: '' } : {}) as Record<string, string>)}

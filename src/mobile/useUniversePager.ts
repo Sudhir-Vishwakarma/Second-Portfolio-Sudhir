@@ -1,14 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { BH_MS, BH_SWAP_MS, JumpKind, jumpKind as pickJumpKind } from './blackHole';
 import { FADE_MS, SETTLE_MS, SWAP_MS, UNIVERSE_ORDER, WARP_MS, WarpState, accentOf, clampIndex, universeForHash } from './universePager';
 
 export type ViewState = 'active' | 'leaving' | 'arriving';
 export type TravelSource = 'nav' | 'button' | 'gesture' | 'history';
-type TravelTo = (target: number, opts?: { push?: boolean; source?: TravelSource }) => void;
+export interface TravelOptions { push?: boolean; source?: TravelSource; via?: 'map' }
+type TravelTo = (target: number, opts?: TravelOptions) => void;
 
 export interface UniversePager {
   index: number;
   viewState: ViewState;
   arrivals: number;
+  /** Effect of the current (or last) jump. */
+  jumpKind: JumpKind;
   warpRef: React.MutableRefObject<WarpState>;
   travelTo: TravelTo;
 }
@@ -20,6 +24,7 @@ export function useUniversePager(initialIndex: number, reducedMotion: boolean): 
   const [index, setIndex] = useState(initialIndex);
   const [viewState, setViewState] = useState<ViewState>('active');
   const [arrivals, setArrivals] = useState(0);
+  const [jumpKind, setJumpKind] = useState<JumpKind>('hyperspeed');
   const warpRef = useRef<WarpState>({ t0: null, from: accentOf(initialIndex), to: accentOf(initialIndex), kind: 'hyperspeed' });
   const indexRef = useRef(initialIndex);
   const flight = useRef<Flight | null>(null);
@@ -45,7 +50,7 @@ export function useUniversePager(initialIndex: number, reducedMotion: boolean): 
 
   const travelTo = useCallback<TravelTo>(
     (target, opts = {}) => {
-      const { push = true, source = 'nav' } = opts;
+      const { push = true, source = 'nav', via } = opts;
       const to = clampIndex(target);
       // A sheet is open. Checked in the DOM: Forward can land on a closed sheet's stale { mbSheet } entry.
       if (source !== 'history' && document.querySelector('.mb-sheet')) return;
@@ -56,9 +61,12 @@ export function useUniversePager(initialIndex: number, reducedMotion: boolean): 
       }
       if (to === indexRef.current) return;
       if (source === 'gesture' && now - settledAt.current < SETTLE_MS) return;
-      const swapAt = reducedMotion ? FADE_MS / 2 : SWAP_MS;
-      const doneAt = reducedMotion ? FADE_MS : WARP_MS;
-      if (!reducedMotion) warpRef.current = { t0: now, from: accentOf(indexRef.current), to: accentOf(to), kind: 'hyperspeed' };
+      // Reduced motion: every jump is the same short fade, whatever its distance.
+      const kind: JumpKind = reducedMotion ? 'hyperspeed' : pickJumpKind({ from: indexRef.current, to, via });
+      const swapAt = reducedMotion ? FADE_MS / 2 : kind === 'blackhole' ? BH_SWAP_MS : SWAP_MS;
+      const doneAt = reducedMotion ? FADE_MS : kind === 'blackhole' ? BH_MS : WARP_MS;
+      if (!reducedMotion) warpRef.current = { t0: now, from: accentOf(indexRef.current), to: accentOf(to), kind };
+      setJumpKind(kind);
       const swap = () => {
         const f = flight.current;
         if (!f || !f.swap) return;
@@ -102,5 +110,5 @@ export function useUniversePager(initialIndex: number, reducedMotion: boolean): 
     };
   }, [finish]);
 
-  return { index, viewState, arrivals, warpRef, travelTo };
+  return { index, viewState, arrivals, jumpKind, warpRef, travelTo };
 }

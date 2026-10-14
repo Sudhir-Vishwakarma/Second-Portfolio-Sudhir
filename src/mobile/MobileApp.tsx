@@ -50,6 +50,7 @@ const MobileApp: React.FC = () => {
         key={index}
         index={index}
         state={pager.viewState}
+        kind={pager.jumpKind}
         anchor={pager.arrivals === 0 && initial ? initial.anchor : null}
         focusHeading={pager.arrivals > 0}
         onTravel={onTravel}
