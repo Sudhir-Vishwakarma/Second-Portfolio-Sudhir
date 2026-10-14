@@ -196,3 +196,21 @@
   opacity: 0; animation: mv-stagger 0.6s ease both; animation-delay: calc(150ms + var(--i) * 110ms);
 }
 .mv-bullets li::marker { color: #ff7a00; }
+
+/* projects */
+.mv-legend { list-style: none; padding: 0; margin: 4px 0 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 0.8rem; color: rgba(255,255,255,0.75); }
+.mv-legend span { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; box-shadow: 0 0 8px currentColor; }
+.mv-list { list-style: none; margin: 14px 0 0; padding: 0 6px 0 0; max-height: 46vh; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+.mv-list button {
+  width: 100%; text-align: left; display: grid; grid-template-columns: 12px 1fr; column-gap: 10px; row-gap: 2px;
+  padding: 10px 12px; border-radius: 12px; cursor: pointer; color: #fff;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); transition: border-color 0.2s, background 0.2s;
+}
+.mv-list button:hover { border-color: #ff7a00; background: rgba(255,122,0,0.1); }
+.mv-list__dot { width: 9px; height: 9px; border-radius: 50%; margin-top: 6px; grid-row: span 2; }
+.mv-list strong { font-size: 0.9rem; }
+.mv-list em { font-style: normal; font-size: 0.76rem; color: rgba(255,255,255,0.6); }
+.mv-modal--sheet { place-items: stretch end; }
+.mv-modal--sheet .mv-modal__box { width: min(560px, 94vw); max-height: none; height: 100%; border-radius: 18px 0 0 18px; animation: mv-sheet 0.4s cubic-bezier(0.2,0.8,0.2,1) both; }
+.mv-detail__badges, .mv-detail__tech { margin: 6px 0 14px; }
+@keyframes mv-sheet { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }

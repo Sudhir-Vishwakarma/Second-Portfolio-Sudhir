@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useJourney } from '../store';
 import { CvModal } from './modals/CvModal';
 import { CertificateModal } from './modals/CertificateModal';
+import { ProjectDetail } from './modals/ProjectDetail';
 
 export const ModalHost: React.FC = () => {
   const modal = useJourney((s) => s.modal);
@@ -22,6 +23,10 @@ export const ModalHost: React.FC = () => {
       break;
     case 'certificate':
       body = <CertificateModal index={modal.index} />;
+      break;
+    case 'project':
+      body = <ProjectDetail index={modal.index} />;
+      sheet = true;
       break;
     default:
       return null;

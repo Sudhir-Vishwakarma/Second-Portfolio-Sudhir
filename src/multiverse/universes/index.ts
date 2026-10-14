@@ -6,6 +6,7 @@ import { AboutUniverse } from './AboutUniverse';
 import { SkillsUniverse } from './SkillsUniverse';
 import { CertificationsUniverse } from './CertificationsUniverse';
 import { WorkUniverse } from './WorkUniverse';
+import { ProjectsUniverse } from './ProjectsUniverse';
 
 export interface UniverseProps {
   /** Camera is in this universe: enable labels and pointer interaction. */
@@ -20,6 +21,6 @@ export const UNIVERSE_COMPONENTS: Record<UniverseId, React.FC<UniverseProps>> = 
   skills: SkillsUniverse,
   certifications: CertificationsUniverse,
   work: WorkUniverse,
-  projects: makeBasicUniverse('projects'),
+  projects: ProjectsUniverse,
   contact: makeBasicUniverse('contact'),
 };
