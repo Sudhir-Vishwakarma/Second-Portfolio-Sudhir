@@ -1,3 +1,4 @@
+import type { JumpKind } from './blackHole';
 import { MOBILE_SECTIONS, MobileSectionId, sectionForHash } from './sections';
 
 export const UNIVERSE_ORDER: MobileSectionId[] = MOBILE_SECTIONS.map((s) => s.id);
@@ -47,7 +48,7 @@ export function wheelStep(
 
 export type WarpPhase = 'idle' | 'launch' | 'hyperspace' | 'arrival';
 export interface WarpFrame { phase: WarpPhase; speed: number; streak: number; flash: number; mix: number; done: boolean }
-export interface WarpState { t0: number | null; from: string; to: string }
+export interface WarpState { t0: number | null; from: string; to: string; kind: JumpKind }
 
 /** Hyperspeed timeline for elapsed ms since the jump started. */
 export function warpFrame(t: number): WarpFrame {

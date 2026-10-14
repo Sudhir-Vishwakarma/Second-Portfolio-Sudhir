@@ -20,7 +20,7 @@ export function useUniversePager(initialIndex: number, reducedMotion: boolean): 
   const [index, setIndex] = useState(initialIndex);
   const [viewState, setViewState] = useState<ViewState>('active');
   const [arrivals, setArrivals] = useState(0);
-  const warpRef = useRef<WarpState>({ t0: null, from: accentOf(initialIndex), to: accentOf(initialIndex) });
+  const warpRef = useRef<WarpState>({ t0: null, from: accentOf(initialIndex), to: accentOf(initialIndex), kind: 'hyperspeed' });
   const indexRef = useRef(initialIndex);
   const flight = useRef<Flight | null>(null);
   const settledAt = useRef(-Infinity);
@@ -58,7 +58,7 @@ export function useUniversePager(initialIndex: number, reducedMotion: boolean): 
       if (source === 'gesture' && now - settledAt.current < SETTLE_MS) return;
       const swapAt = reducedMotion ? FADE_MS / 2 : SWAP_MS;
       const doneAt = reducedMotion ? FADE_MS : WARP_MS;
-      if (!reducedMotion) warpRef.current = { t0: now, from: accentOf(indexRef.current), to: accentOf(to) };
+      if (!reducedMotion) warpRef.current = { t0: now, from: accentOf(indexRef.current), to: accentOf(to), kind: 'hyperspeed' };
       const swap = () => {
         const f = flight.current;
         if (!f || !f.swap) return;
