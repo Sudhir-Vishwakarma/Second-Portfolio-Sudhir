@@ -13,10 +13,15 @@ export const Loader: React.FC = () => {
   const [gone, setGone] = useState(false);
 
   useEffect(() => {
+    if (gone) return;
     const start = performance.now();
-    const id = setInterval(() => setElapsed(performance.now() - start), 100);
+    const id = setInterval(() => {
+      const e = performance.now() - start;
+      setElapsed(e);
+      if (e >= TIMEOUT_MS) clearInterval(id);
+    }, 100);
     return () => clearInterval(id);
-  }, []);
+  }, [gone]);
 
   const assetsDone = !active && (total === 0 || progress >= 100);
   const ready = (assetsDone && elapsed >= WARMUP_MS) || elapsed >= TIMEOUT_MS;

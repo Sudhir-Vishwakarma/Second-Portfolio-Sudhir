@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Preload } from '@react-three/drei';
+import { PerformanceMonitor, Preload } from '@react-three/drei';
 import { CameraRig } from './camera/CameraRig';
 import { Starfield } from './fx/Starfield';
 import { Hyperspace } from './fx/Hyperspace';
@@ -49,10 +49,27 @@ const Multiverse: React.FC<MultiverseProps> = ({ onFail }) => {
   useJourneyInput();
   useHashSync();
 
+  const [dpr, setDpr] = useState(1.75);
+  const [bloom, setBloom] = useState(true);
+  const dprRef = useRef(1.75);
+  const decline = useCallback(() => {
+    if (dprRef.current > 1) {
+      dprRef.current = 1;
+      setDpr(1);
+    } else {
+      setBloom(false);
+    }
+  }, []);
+  const fallback = useCallback(() => {
+    dprRef.current = 1;
+    setDpr(1);
+    setBloom(false);
+  }, []);
+
   return (
     <div className="mv">
       <Canvas
-        dpr={[1, 1.75]}
+        dpr={dpr}
         camera={{ fov: 55, near: 0.1, far: 1200 }}
         gl={{ antialias: false, powerPreference: 'high-performance' }}
         onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', () => { if (alive.current) onFail(); })}
@@ -62,7 +79,8 @@ const Multiverse: React.FC<MultiverseProps> = ({ onFail }) => {
         <Starfield />
         <Hyperspace />
         <World />
-        <PostFX bloom />
+        <PostFX bloom={bloom} />
+        <PerformanceMonitor onDecline={decline} onFallback={fallback} flipflops={3} />
         <Preload all />
       </Canvas>
       <UiLayer />
