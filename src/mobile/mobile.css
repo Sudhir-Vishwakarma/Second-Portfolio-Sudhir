@@ -9,22 +9,28 @@
   --radius: 16px;
   --gutter: 20px;
   --nav-h: 64px;
+  /* Side padding that also clears the notch in landscape (viewport-fit=cover). */
+  --pad-l: max(var(--gutter), env(safe-area-inset-left));
+  --pad-r: max(var(--gutter), env(safe-area-inset-right));
+  --col: 680px; /* content column cap for tablets */
   position: relative;
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
   font-family: 'Ubuntu', -apple-system, 'Segoe UI', Roboto, sans-serif;
-  overflow-x: hidden;
+  overflow-x: hidden; /* fallback for browsers without clip */
+  overflow-x: clip; /* clip, not hidden: .mb must not become a scroll container */
   overflow-wrap: anywhere;
 }
 .mb *, .mb *::before, .mb *::after { box-sizing: border-box; }
 .mb :focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 3px; border-radius: 6px; }
-.mb a { color: inherit; }
+.mb a:not(.mb-btn) { color: inherit; } /* link buttons take their colour from .mb-btn / .mb-btn--ghost */
 
 .mb-main {
   position: relative;
   z-index: 1;
-  padding: calc(64px + env(safe-area-inset-top)) var(--gutter) calc(var(--nav-h) + 32px + env(safe-area-inset-bottom));
+  max-width: var(--col); margin-inline: auto;
+  padding: calc(64px + env(safe-area-inset-top)) var(--pad-r) calc(var(--nav-h) + 32px + env(safe-area-inset-bottom)) var(--pad-l);
 }
 .mb-section { scroll-margin-top: calc(72px + env(safe-area-inset-top)); padding: 8px 0 72px; position: relative; }
 #certifications { scroll-margin-top: calc(72px + env(safe-area-inset-top)); }
@@ -33,7 +39,8 @@
 .mb-topbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 20;
   display: flex; align-items: center;
-  padding: calc(10px + env(safe-area-inset-top)) var(--gutter) 10px;
+  /* The inline padding lines the monogram up with .mb-main's centred column. */
+  padding: calc(10px + env(safe-area-inset-top)) max(var(--pad-r), calc((100% - var(--col)) / 2 + var(--pad-r))) 10px max(var(--pad-l), calc((100% - var(--col)) / 2 + var(--pad-l)));
   background: rgba(0, 0, 4, 0.78); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -47,7 +54,7 @@
 .mb-heading { position: relative; margin-bottom: 20px; }
 .mb-heading::before {
   content: ''; position: absolute; left: -40px; top: -40px; width: 220px; height: 160px; z-index: -1;
-  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent, #ff7a00) 35%, transparent), transparent);
+  background: radial-gradient(closest-side, rgba(255, 122, 0, 0.3), transparent);
   filter: blur(8px); pointer-events: none;
 }
 .mb-kicker { font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent, #ff9a3c); }
@@ -59,10 +66,11 @@
 .mb-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   min-height: 44px; padding: 0 20px; border-radius: 999px;
-  background: var(--accent-brand); color: #fff; border: 1px solid var(--accent-brand);
+  /* Dark text on the brand orange: ~7:1 (white was ~2.6:1). */
+  background: var(--accent-brand); color: #1a0b00; border: 1px solid var(--accent-brand);
   font: inherit; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.03em; text-decoration: none; cursor: pointer;
+  white-space: normal; text-align: center;
 }
-.mb-btn { white-space: nowrap; }
 @media (max-width: 359px) { .mb-btn { padding: 0 12px; font-size: 0.85rem; letter-spacing: 0.01em; } }
 .mb-btn--ghost { background: transparent; color: #ffb15c; }
 .mb-btn:disabled { opacity: 0.6; }
@@ -74,8 +82,10 @@
 /* ---------- bottom nav ---------- */
 .mb-nav {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
-  display: grid; grid-template-columns: repeat(6, 1fr);
+  display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));
   height: calc(var(--nav-h) + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);
+  /* Full-width bar; the items are capped at 560 px and centred on tablets. */
+  padding-left: max(var(--pad-l), calc((100% - 560px) / 2)); padding-right: max(var(--pad-r), calc((100% - 560px) / 2));
   background: rgba(8, 8, 14, 0.82); border-top: 1px solid var(--border);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
 }
@@ -95,10 +105,11 @@
   color: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.04);
 }
 .mb-footer__classic { color: var(--muted); font-size: 0.85rem; min-height: 44px; display: inline-flex; align-items: center; }
-.mb-footer__copy { color: rgba(255, 255, 255, 0.45); font-size: 0.75rem; margin: 0; }
+.mb-footer__copy { color: rgba(255, 255, 255, 0.5); font-size: 0.75rem; margin: 0; }
 
 /* ---------- space effects ---------- */
-.mb-stars { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+/* 100% of the viewport box, not 100vh (iOS's large viewport); a positioned canvas would otherwise keep its intrinsic size. */
+.mb-stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 .mb-warp { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 40; pointer-events: none; }
 
 /* reveal-on-scroll */
@@ -136,7 +147,7 @@
 .mb-typing { margin: 0; font-size: 0.95rem; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.85); min-height: 3.3em; line-height: 1.6; }
 .mb-typing__word { display: inline-block; color: #ff9a3c; font-weight: 700; text-shadow: 0 0 14px rgba(255, 122, 0, 0.55); }
 .mb-typing__cursor { color: #ff9a3c; animation: mb-blink 1s steps(1) infinite; margin-left: 2px; }
-.mb-home__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+.mb-home__actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 8px; }
 .mb-socials--start { justify-content: flex-start; }
 @keyframes mb-orbit {
   from { transform: rotate(var(--start, 0deg)); }
@@ -149,7 +160,7 @@
 
 /* ---------- about ---------- */
 .mb-h3 { font-size: 1.05rem; margin: 32px 0 14px; letter-spacing: 0.02em; }
-.mb-timeline { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); }
+.mb-timeline { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 1px solid rgba(255, 255, 255, 0.25); }
 .mb-timeline > li { position: relative; display: flex; flex-direction: column; gap: 2px; padding: 0 0 20px 10px; }
 .mb-timeline > li::before {
   content: ''; position: absolute; left: -24px; top: 6px; width: 11px; height: 11px; border-radius: 50%;
@@ -164,21 +175,22 @@
 .mb-cert .mb-btn { flex-shrink: 0; }
 
 /* ---------- sheet ---------- */
-.mb-sheet { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 4, 0.7); display: flex; align-items: flex-end; animation: mb-fade 0.25s ease both; }
+.mb-sheet { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 4, 0.7); display: flex; align-items: flex-end; animation: mb-fade 0.25s ease both; overscroll-behavior: contain; }
 .mb-sheet__panel {
-  position: relative; width: 100%; max-height: 88vh; display: flex; flex-direction: column;
+  position: relative; width: 100%; max-height: calc(100% - 48px - env(safe-area-inset-top)); display: flex; flex-direction: column;
   background: #0e0c16; border: 1px solid var(--border); border-radius: 20px 20px 0 0;
-  padding: 0 var(--gutter) calc(20px + env(safe-area-inset-bottom));
+  padding: 0 var(--pad-r) calc(20px + env(safe-area-inset-bottom)) var(--pad-l);
   animation: mb-slide-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both; transition: transform 0.15s ease;
 }
 .mb-sheet--full .mb-sheet__panel { max-height: none; height: 100%; border-radius: 0; padding-top: env(safe-area-inset-top); }
-.mb-sheet__handle { display: flex; justify-content: center; padding: 10px 0 6px; touch-action: none; }
+.mb-sheet__handle { display: flex; justify-content: center; padding: 14px 0 13px; touch-action: none; } /* >= 32 px touch strip */
 .mb-sheet__handle span { width: 44px; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.25); }
 .mb-sheet__close {
-  position: absolute; top: calc(8px + env(safe-area-inset-top)); right: 12px; width: 44px; height: 44px; border-radius: 50%;
+  position: absolute; top: 8px; right: 12px; width: 44px; height: 44px; border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.06); color: #fff; font-size: 1.4rem;
 }
-.mb-sheet__body { overflow-y: auto; padding-top: 12px; -webkit-overflow-scrolling: touch; }
+.mb-sheet--full .mb-sheet__close { top: calc(8px + env(safe-area-inset-top)); }
+.mb-sheet__body { overflow-y: auto; overscroll-behavior: contain; padding-top: 12px; -webkit-overflow-scrolling: touch; }
 .mb-cert-viewer { display: flex; flex-direction: column; gap: 14px; align-items: center; padding-top: 32px; }
 .mb-cert-viewer h3 { margin: 0; text-align: center; font-size: 1rem; padding: 0 44px; }
 .mb-cert-viewer img { max-width: 100%; border-radius: 10px; background: #fff; }
@@ -208,12 +220,12 @@
 .mb-filters { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 12px; margin: 0 calc(var(--gutter) * -1); padding-left: var(--gutter); padding-right: var(--gutter); scrollbar-width: none; }
 .mb-filters::-webkit-scrollbar { display: none; }
 .mb-filter { min-height: 44px; min-width: 44px; justify-content: center; flex-shrink: 0; font: inherit; font-size: 0.85rem; cursor: pointer; }
-.mb-filter.is-active { background: color-mix(in srgb, var(--accent) 25%, transparent); border-color: var(--accent); color: #fff; }
+.mb-filter.is-active { background: rgba(255, 255, 255, 0.16); border-color: var(--accent); color: #fff; }
 .mb-projects { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
 .mb-project { display: flex; flex-direction: column; gap: 10px; }
 .mb-project__title { margin: 0; font-size: 1.05rem; display: flex; gap: 8px; align-items: baseline; }
 .mb-star { color: #fcd34d; font-size: 0.9rem; }
-.mb-project__actions, .mb-details__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+.mb-project__actions, .mb-details__actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 4px; }
 .mb-showall { width: 100%; margin-top: 16px; }
 .mb-details { display: flex; flex-direction: column; gap: 12px; padding-bottom: 8px; }
 .mb-details .mb-h2 { padding-right: 48px; }
@@ -238,8 +250,17 @@
 .mb-form input:focus, .mb-form select:focus, .mb-form textarea:focus { outline: none; border-color: var(--accent-brand); box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.25); }
 .mb-form__error { color: #ff6b6b; font-size: 0.85rem; margin: 0; }
 .mb-toast {
-  position: fixed; left: var(--gutter); right: var(--gutter); bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom)); z-index: 45;
+  position: fixed; left: var(--pad-l); right: var(--pad-r); bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom)); z-index: 45;
+  max-width: 640px; margin-inline: auto;
   padding: 14px 16px; border-radius: 12px; background: #047857; color: #fff; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   animation: mb-slide-up 0.3s ease both;
 }
 @media (prefers-reduced-motion: reduce) { .mb-beam { animation: none; opacity: 0; } .mb-toast { animation: none; } }
+
+/* color-mix() accents. The plain rgba rules above are the fallback: these declarations use var(), so an unsupported
+   color-mix() would make them invalid at computed-value time (property unset) instead of falling back. Hence @supports. */
+@supports (color: color-mix(in srgb, red 50%, transparent)) {
+  .mb-heading::before { background: radial-gradient(closest-side, color-mix(in srgb, var(--accent, #ff7a00) 35%, transparent), transparent); }
+  .mb-timeline { border-left-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+  .mb-filter.is-active { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+}

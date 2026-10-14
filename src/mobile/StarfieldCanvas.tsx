@@ -32,10 +32,13 @@ export const StarfieldCanvas: React.FC<{ reducedMotion: boolean }> = ({ reducedM
     };
 
     const resize = () => {
-      // iOS fires resize repeatedly as the URL bar shows/hides; only reallocate on a real change.
-      if (w === window.innerWidth && h === window.innerHeight) return;
-      w = window.innerWidth;
-      h = window.innerHeight;
+      // Size from the element's own box (CSS fills the viewport). iOS fires resize as the toolbar shows/hides,
+      // changing only the height by well under 120 px; skip those so the stars don't reallocate and jump.
+      const cw = canvas.clientWidth;
+      const ch = canvas.clientHeight;
+      if (cw === w && Math.abs(ch - h) < 120) return;
+      w = cw;
+      h = ch;
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);

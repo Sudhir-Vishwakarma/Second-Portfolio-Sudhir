@@ -60,12 +60,17 @@ export const Sheet: React.FC<SheetProps> = ({ open, onClose, label, variant = 'b
     panel.current.style.transform = '';
     if (dy > 80) requestClose();
   };
+  // The OS can cancel a drag (incoming call, gesture takeover); snap back without closing.
+  const onTouchCancel = () => {
+    touchY.current = null;
+    if (panel.current) panel.current.style.transform = '';
+  };
 
   // Portal to the .mb root: .mb-main is a z-index:1 stacking context that would otherwise keep the sheet under the top bar and bottom nav.
   return createPortal(
     <div className={`mb-sheet mb-sheet--${variant}`} role="dialog" aria-modal="true" aria-label={label} onClick={requestClose}>
       <div className="mb-sheet__panel" ref={panel} onClick={(e) => e.stopPropagation()}>
-        <div className="mb-sheet__handle" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+        <div className="mb-sheet__handle" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd} onTouchCancel={onTouchCancel}>
           <span />
         </div>
         <button ref={closeBtn} className="mb-sheet__close" aria-label="Close" onClick={requestClose}>×</button>
