@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { MOBILE_SECTIONS, MobileSectionId, sectionForHash } from './sections';
 import { SECTION_COMPONENTS } from './sections/registry';
 import { useActiveSection } from './useActiveSection';
@@ -14,7 +14,8 @@ import './mobile.css';
 const IDS = MOBILE_SECTIONS.map((s) => s.id);
 
 export function scrollToAnchor(anchor: string, smooth: boolean): void {
-  document.getElementById(anchor)?.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' });
+  // 'instant' beats any inherited `scroll-behavior: smooth`; TS 4.9's DOM lib lacks it, hence the cast.
+  document.getElementById(anchor)?.scrollIntoView({ behavior: smooth ? 'smooth' : ('instant' as ScrollBehavior), block: 'start' });
 }
 
 const MobileApp: React.FC = () => {
@@ -25,6 +26,19 @@ const MobileApp: React.FC = () => {
   const rootRef = useRef<HTMLDivElement>(null);
   const [warpTo, setWarpTo] = useState<MobileSectionId | null>(null);
   useReveal(rootRef);
+
+  // Layout effects run before useActiveSection's passive hash-sync effect and before any scroll.
+  useLayoutEffect(() => {
+    // index.css smooth-scrolls <html> for the classic site; jumps here (warp midpoint, reduced motion) must be instant.
+    const root = document.documentElement;
+    const prevBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    // A reload or Forward onto a stale sheet entry would leave mbSheet set with no sheet open, blocking hash sync.
+    if (window.history.state && window.history.state.mbSheet) window.history.replaceState(null, '');
+    return () => {
+      root.style.scrollBehavior = prevBehavior;
+    };
+  }, []);
 
   // Deep link on first load.
   useEffect(() => {
