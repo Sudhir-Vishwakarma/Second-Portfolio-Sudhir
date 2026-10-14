@@ -143,3 +143,42 @@
 @media (prefers-reduced-motion: reduce) {
   .mb-solar__orbit, .mb-typing__cursor { animation: none; }
 }
+
+/* ---------- about ---------- */
+.mb-h3 { font-size: 1.05rem; margin: 32px 0 14px; letter-spacing: 0.02em; }
+.mb-timeline { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); }
+.mb-timeline li { position: relative; display: flex; flex-direction: column; gap: 2px; padding: 0 0 20px 10px; }
+.mb-timeline li::before {
+  content: ''; position: absolute; left: -24px; top: 6px; width: 11px; height: 11px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 12px var(--accent);
+}
+.mb-timeline__years { font-size: 0.72rem; letter-spacing: 0.18em; color: var(--accent); }
+.mb-timeline__place { color: var(--muted); font-size: 0.88rem; }
+.mb-certs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.mb-cert { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; }
+.mb-cert strong { display: block; font-size: 0.92rem; }
+.mb-cert span { font-size: 0.8rem; color: var(--muted); }
+.mb-cert .mb-btn { flex-shrink: 0; }
+
+/* ---------- sheet ---------- */
+.mb-sheet { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 4, 0.7); display: flex; align-items: flex-end; animation: mb-fade 0.25s ease both; }
+.mb-sheet__panel {
+  position: relative; width: 100%; max-height: 88vh; display: flex; flex-direction: column;
+  background: #0e0c16; border: 1px solid var(--border); border-radius: 20px 20px 0 0;
+  padding: 0 var(--gutter) calc(20px + env(safe-area-inset-bottom));
+  animation: mb-slide-up 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both; transition: transform 0.15s ease;
+}
+.mb-sheet--full .mb-sheet__panel { max-height: none; height: 100%; border-radius: 0; padding-top: env(safe-area-inset-top); }
+.mb-sheet__handle { display: flex; justify-content: center; padding: 10px 0 6px; touch-action: none; }
+.mb-sheet__handle span { width: 44px; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.25); }
+.mb-sheet__close {
+  position: absolute; top: calc(8px + env(safe-area-inset-top)); right: 12px; width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.06); color: #fff; font-size: 1.4rem;
+}
+.mb-sheet__body { overflow-y: auto; padding-top: 12px; -webkit-overflow-scrolling: touch; }
+.mb-cert-viewer { display: flex; flex-direction: column; gap: 14px; align-items: center; padding-top: 32px; }
+.mb-cert-viewer h3 { margin: 0; text-align: center; font-size: 1rem; padding: 0 44px; }
+.mb-cert-viewer img { max-width: 100%; border-radius: 10px; background: #fff; }
+@keyframes mb-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes mb-slide-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .mb-sheet, .mb-sheet__panel { animation: none; } }
