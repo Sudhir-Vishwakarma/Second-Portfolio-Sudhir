@@ -6,6 +6,7 @@ import { Starfield } from './fx/Starfield';
 import { Hyperspace } from './fx/Hyperspace';
 import { PostFX } from './fx/PostFX';
 import { World } from './world/World';
+import { SceneLights } from './fx/SceneLights';
 import { useJourney } from './store';
 import { stepForHash } from './journey';
 import { useJourneyInput } from './input';
@@ -79,6 +80,7 @@ const Multiverse: React.FC<MultiverseProps> = ({ onFail }) => {
         onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', () => { if (alive.current) onFail(); })}
       >
         <color attach="background" args={['#000004']} />
+        <SceneLights />
         <CameraRig />
         <Starfield />
         <Hyperspace />

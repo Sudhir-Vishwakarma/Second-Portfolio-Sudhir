@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
-import { UNIVERSES, UniverseId, WARMUP_MS, universeAtZ, universeIndex, universeOf, universeOrigin } from '../journey';
+import { UNIVERSES, UniverseId, WARMUP_MS, universeAtZ, universeOrigin } from '../journey';
 import { useJourney } from '../store';
 import { UNIVERSE_COMPONENTS } from '../universes';
 import { Portal } from '../fx/Portal';
@@ -30,7 +30,6 @@ const UniverseSlot: React.FC<SlotProps> = ({ id, index, active, warm }) => {
 
 export const World: React.FC = () => {
   const cameraU = useJourney((s) => s.cameraUniverse);
-  const targetU = useJourney((s) => universeIndex(universeOf(s.step)));
   const [warm, setWarm] = useState(true);
 
   useEffect(() => {
@@ -40,11 +39,10 @@ export const World: React.FC = () => {
 
   return (
     <>
-      {UNIVERSES.map((id, n) =>
-        warm || Math.abs(n - cameraU) <= 1 || Math.abs(n - targetU) <= 1 ? (
-          <UniverseSlot key={id} id={id} index={n} active={!warm && n === cameraU} warm={warm} />
-        ) : null
-      )}
+      {/* every slot stays mounted so travelling never compiles new GPU programs; visibility is per frame */}
+      {UNIVERSES.map((id, n) => (
+        <UniverseSlot key={id} id={id} index={n} active={!warm && n === cameraU} warm={warm} />
+      ))}
     </>
   );
 };

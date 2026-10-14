@@ -42,6 +42,7 @@ const GalaxyDust: React.FC = () => {
     g.setAttribute('color', new THREE.BufferAttribute(col, 3));
     return g;
   }, []);
+  useEffect(() => () => geo.dispose(), [geo]);
   return (
     <points geometry={geo}>
       <pointsMaterial size={0.35} map={glowTexture} vertexColors transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />

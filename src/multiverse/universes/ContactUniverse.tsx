@@ -36,8 +36,6 @@ export const ContactUniverse: React.FC<UniverseProps> = () => {
   return (
     <>
       <Nebula palette={palette} radius={65} />
-      <ambientLight intensity={0.35} />
-      <pointLight position={[6, 8, 10]} intensity={200} distance={60} color={palette.atmos} />
       <group scale={1.5}>
       {/* tower */}
       <mesh position={[0, -2.2, 0]}>

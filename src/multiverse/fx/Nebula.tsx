@@ -1,5 +1,5 @@
 // fx/Nebula.tsx — swirl of glowing points plus soft colour clouds
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { glowTexture } from './glow';
@@ -32,6 +32,7 @@ export const Nebula: React.FC<NebulaProps> = ({ palette, radius = 60, count = 40
     g.setAttribute('color', new THREE.BufferAttribute(col, 3));
     return g;
   }, [palette, radius, count, thickness]);
+  useEffect(() => () => geo.dispose(), [geo]);
 
   useFrame((_, dt) => {
     points.current.rotation.y += dt * 0.02;

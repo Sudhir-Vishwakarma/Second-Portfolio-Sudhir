@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
@@ -18,6 +18,8 @@ export const CertificationsUniverse: React.FC<UniverseProps> = ({ active, previe
   const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
   const box = useMemo(() => new THREE.BoxGeometry(3.2, 2.2, 0.08), []);
   const edges = useMemo(() => new THREE.EdgesGeometry(box), [box]);
+  useEffect(() => () => box.dispose(), [box]);
+  useEffect(() => () => edges.dispose(), [edges]);
 
   useFrame((state, dt) => {
     uniforms.uTime.value = state.clock.elapsedTime;
@@ -27,8 +29,6 @@ export const CertificationsUniverse: React.FC<UniverseProps> = ({ active, previe
   return (
     <>
       <Nebula palette={palette} radius={65} />
-      <ambientLight intensity={0.35} />
-      <pointLight intensity={300} distance={50} color="#fcd34d" />
       <mesh>
         <sphereGeometry args={[2.2, 64, 64]} />
         <shaderMaterial args={[sunShader]} uniforms={uniforms} toneMapped={false} />

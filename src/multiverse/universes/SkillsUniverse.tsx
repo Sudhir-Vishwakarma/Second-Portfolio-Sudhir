@@ -64,8 +64,6 @@ export const SkillsUniverse: React.FC<UniverseProps> = ({ active, preview }) => 
   return (
     <>
       <Nebula palette={palette} radius={75} />
-      <ambientLight intensity={0.3} />
-      <pointLight position={[0, 0, 0]} intensity={250} distance={60} color={palette.atmos} />
       <group ref={core}>
         <mesh>
           <icosahedronGeometry args={[2.6, 0]} />
