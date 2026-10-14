@@ -214,3 +214,24 @@
 .mv-modal--sheet .mv-modal__box { width: min(560px, 94vw); max-height: none; height: 100%; border-radius: 18px 0 0 18px; animation: mv-sheet 0.4s cubic-bezier(0.2,0.8,0.2,1) both; }
 .mv-detail__badges, .mv-detail__tech { margin: 6px 0 14px; }
 @keyframes mv-sheet { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* contact */
+.mv-contact { list-style: none; padding: 0; margin: 0 0 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 18px; font-size: 0.88rem; }
+.mv-contact span { display: block; font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: #6ee7b7; }
+.mv-contact a { color: #fff; text-decoration: none; }
+.mv-contact a:hover { color: #ff9a3c; }
+.mv-form { display: flex; flex-direction: column; gap: 10px; }
+.mv-form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mv-form input, .mv-form select, .mv-form textarea {
+  width: 100%; padding: 11px 13px; border-radius: 10px; font: inherit; font-size: 0.88rem; color: #fff;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.16); transition: border-color 0.2s, box-shadow 0.2s;
+}
+.mv-form select option { background: #111; }
+.mv-form input:focus, .mv-form select:focus, .mv-form textarea:focus { outline: none; border-color: #ff7a00; box-shadow: 0 0 0 3px rgba(255,122,0,0.2); }
+.mv-form textarea { resize: vertical; }
+.mv-form .mv-btn { align-self: flex-start; }
+.mv-form__error { color: #ff6b6b; font-size: 0.85rem; margin: 0; }
+.mv-toast {
+  position: fixed; top: 84px; right: 24px; z-index: 45; padding: 14px 18px; border-radius: 12px;
+  background: rgba(16,185,129,0.9); color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.4); animation: mv-pop 0.35s ease both;
+}
