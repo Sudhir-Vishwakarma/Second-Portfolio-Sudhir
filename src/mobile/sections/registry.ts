@@ -3,14 +3,16 @@ import { MobileSection, MobileSectionId } from '../sections';
 import { GenericSection } from './GenericSection';
 import { HomeSection } from './HomeSection';
 import { AboutSection } from './AboutSection';
+import { SkillsSection } from './SkillsSection';
+import { WorkSection } from './WorkSection';
 
 export interface SectionProps { section: MobileSection }
 
 export const SECTION_COMPONENTS: Record<MobileSectionId, React.FC<SectionProps>> = {
   home: HomeSection,
   about: AboutSection,
-  skills: GenericSection,
-  work: GenericSection,
+  skills: SkillsSection,
+  work: WorkSection,
   projects: GenericSection,
   contact: GenericSection,
 };

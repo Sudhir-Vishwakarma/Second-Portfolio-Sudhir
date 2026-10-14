@@ -182,3 +182,22 @@
 @keyframes mb-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes mb-slide-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .mb-sheet, .mb-sheet__panel { animation: none; } }
+
+/* ---------- skills ---------- */
+.mb-skill-group { margin-bottom: 18px; }
+.mb-skill-group__title { display: flex; align-items: center; gap: 8px; font-size: 0.74rem; letter-spacing: 0.2em; text-transform: uppercase; margin: 0 0 10px; color: rgba(255, 255, 255, 0.85); }
+.mb-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.mb-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---------- work ---------- */
+.mb-jobs > li.mb-job { padding-bottom: 28px; }
+.mb-job__role { margin: 4px 0 0; font-size: 1.05rem; }
+.mb-job__company { margin: 2px 0 10px; color: #ffb15c; font-size: 0.9rem; }
+.mb-bullets { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
+.mb-bullets li { padding: 0; }
+.mb-bullets li::before { display: none; }
+.mb-bullets li::marker { color: var(--accent); }
+.mb-link {
+  margin-top: 8px; min-height: 44px; padding: 0; background: none; border: 0;
+  color: var(--accent); font: inherit; font-size: 0.88rem; font-weight: 600; text-align: left; cursor: pointer;
+}
