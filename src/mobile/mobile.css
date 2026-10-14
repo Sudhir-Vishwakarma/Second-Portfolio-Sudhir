@@ -110,7 +110,6 @@
 /* ---------- space effects ---------- */
 /* 100% of the viewport box, not 100vh (iOS's large viewport); a positioned canvas would otherwise keep its intrinsic size. */
 .mb-stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-.mb-warp { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 40; pointer-events: none; }
 
 /* reveal-on-scroll */
 .mb [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -264,3 +263,25 @@
   .mb-timeline { border-left-color: color-mix(in srgb, var(--accent) 45%, transparent); }
   .mb-filter.is-active { background: color-mix(in srgb, var(--accent) 25%, transparent); }
 }
+
+/* ---------- universe pager ---------- */
+.mb--pager { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
+.mb-universe { position: fixed; inset: 0; z-index: 1; will-change: transform, opacity; }
+.mb-universe__scroll {
+  position: absolute; inset: 0; overflow-y: auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch;
+  z-index: 1;
+}
+.mb-universe .mb-section { padding-bottom: 0; }
+.mb-universe.is-leaving {
+  opacity: 0; transform: scale(0.92); filter: blur(6px); pointer-events: none;
+  transition: opacity 0.35s ease-in, transform 0.35s ease-in, filter 0.35s ease-in;
+}
+.mb-universe.is-arriving { animation: mb-arrive 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes mb-arrive { from { opacity: 0; transform: scale(1.08); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+.mb.is-reduced .mb-universe.is-leaving { transform: none; filter: none; transition: opacity 0.12s linear; }
+.mb.is-reduced .mb-universe.is-arriving { animation: mb-fade 0.12s linear both; }
+@media (prefers-reduced-motion: reduce) {
+  .mb-universe.is-leaving { transform: none; filter: none; transition: opacity 0.12s linear; }
+  .mb-universe.is-arriving { animation: mb-fade 0.12s linear both; }
+}
+.mb-next { width: 100%; margin: 28px 0 8px; }
