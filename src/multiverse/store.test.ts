@@ -51,3 +51,10 @@ test('setCameraUniverse, fireBeam and setBooted', () => {
   S().setBooted();
   expect(S()).toMatchObject({ cameraUniverse: 3, beamAt: 1234, booted: true });
 });
+
+test('reset clears booted so a remounted multiverse waits for its loader', () => {
+  S().setBooted();
+  expect(S().booted).toBe(true);
+  S().reset(2);
+  expect(S().booted).toBe(false);
+});

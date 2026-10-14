@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export interface ContactForm { name: string; email: string; subject: string; message: string }
 export const EMPTY_FORM: ContactForm = { name: '', email: '', subject: '', message: '' };
@@ -26,6 +26,17 @@ export function useContactForm(onSent?: () => void) {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const [showToast, setShowToast] = useState(false);
+  const inFlight = useRef(false);
+  const mounted = useRef(true);
+  const toastTimer = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      clearTimeout(toastTimer.current);
+    };
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -34,13 +45,22 @@ export function useContactForm(onSent?: () => void) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (inFlight.current) return; // a second submit while sending is ignored
+    inFlight.current = true;
     setSending(true);
     setError('');
     const result = await submitContact(form);
+    inFlight.current = false;
+    if (!mounted.current) {
+      // unmounted mid-send: no state or timers to touch, but still report the send
+      if (result.ok) onSent?.();
+      return;
+    }
     setSending(false);
     if (result.ok) {
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 4000);
+      clearTimeout(toastTimer.current);
+      toastTimer.current = setTimeout(() => setShowToast(false), 4000);
       setForm(EMPTY_FORM);
       onSent?.();
     } else {

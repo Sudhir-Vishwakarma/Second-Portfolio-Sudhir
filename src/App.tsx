@@ -21,7 +21,9 @@ const App: React.FC = () => {
   }, []);
 
   if (forcedClassic || failed || hash === CLASSIC_HASH) {
-    return <ClassicApp initialSection={classicSectionFor(hash)} />;
+    // The multiverse moves the hash with pushState (no hashchange), so a fallback reads the live URL.
+    const sectionHash = failed && hash !== CLASSIC_HASH ? window.location.hash : hash;
+    return <ClassicApp initialSection={classicSectionFor(sectionHash)} />;
   }
 
   return (

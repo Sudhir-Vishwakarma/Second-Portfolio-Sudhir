@@ -74,6 +74,7 @@ export const useJourney = create<JourneyState>((set, get) => ({
       arrivedAt: -Infinity,
       cameraUniverse: universeIndex(universeOf(to)),
       modal: null,
+      booted: false,
     });
   },
 }));
