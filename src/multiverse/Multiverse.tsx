@@ -33,6 +33,9 @@ const UiLayer: React.FC = () => {
 
 interface MultiverseProps { onFail: () => void }
 
+// Start at the device ratio clamped to [1, 1.75], as the old dpr={[1, 1.75]} range did.
+const initialDpr = Math.min(Math.max(window.devicePixelRatio || 1, 1), 1.75);
+
 const Multiverse: React.FC<MultiverseProps> = ({ onFail }) => {
   // Start at the universe named in the URL (before the first frame renders).
   useState(() => {
@@ -48,10 +51,11 @@ const Multiverse: React.FC<MultiverseProps> = ({ onFail }) => {
   }, []);
   useJourneyInput();
   useHashSync();
+  const booted = useJourney((s) => s.booted);
 
-  const [dpr, setDpr] = useState(1.75);
+  const [dpr, setDpr] = useState(initialDpr);
   const [bloom, setBloom] = useState(true);
-  const dprRef = useRef(1.75);
+  const dprRef = useRef(initialDpr);
   const decline = useCallback(() => {
     if (dprRef.current > 1) {
       dprRef.current = 1;
@@ -80,7 +84,7 @@ const Multiverse: React.FC<MultiverseProps> = ({ onFail }) => {
         <Hyperspace />
         <World />
         <PostFX bloom={bloom} />
-        <PerformanceMonitor onDecline={decline} onFallback={fallback} flipflops={3} />
+        {booted && <PerformanceMonitor onDecline={decline} onFallback={fallback} flipflops={3} />}
         <Preload all />
       </Canvas>
       <UiLayer />
