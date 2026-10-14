@@ -1,9 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { MOBILE_SECTIONS, MobileSectionId, sectionForHash } from './sections';
 import { SECTION_COMPONENTS } from './sections/registry';
 import { useActiveSection } from './useActiveSection';
+import { useReducedMotion } from './useReducedMotion';
+import { useReveal } from './useReveal';
 import { TopBar } from './TopBar';
 import { BottomNav } from './BottomNav';
+import { StarfieldCanvas } from './StarfieldCanvas';
+import { WarpOverlay } from './WarpOverlay';
 import { Footer } from './sections/Footer';
 import './mobile.css';
 
@@ -17,6 +21,10 @@ const MobileApp: React.FC = () => {
   // Captured before useActiveSection's first effect mirrors the default section into the hash.
   const [initialHash] = useState(() => window.location.hash);
   const active = useActiveSection(IDS);
+  const reducedMotion = useReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [warpTo, setWarpTo] = useState<MobileSectionId | null>(null);
+  useReveal(rootRef);
 
   // Deep link on first load.
   useEffect(() => {
@@ -26,10 +34,19 @@ const MobileApp: React.FC = () => {
     return () => cancelAnimationFrame(raf);
   }, [initialHash]);
 
-  const navigate = useCallback((id: MobileSectionId) => scrollToAnchor(id, false), []);
+  const navigate = useCallback(
+    (id: MobileSectionId) => {
+      if (reducedMotion) scrollToAnchor(id, false);
+      else setWarpTo(id);
+    },
+    [reducedMotion]
+  );
+
+  const warpAccent = MOBILE_SECTIONS.find((s) => s.id === warpTo)?.accent ?? '#ff7a00';
 
   return (
-    <div className="mb">
+    <div className={`mb${reducedMotion ? ' is-reduced' : ''}`} ref={rootRef}>
+      <StarfieldCanvas reducedMotion={reducedMotion} />
       <TopBar onHome={() => navigate('home')} />
       <main className="mb-main">
         {MOBILE_SECTIONS.map((s) => {
@@ -43,6 +60,13 @@ const MobileApp: React.FC = () => {
         <Footer />
       </main>
       <BottomNav active={active} onSelect={navigate} />
+      {warpTo && (
+        <WarpOverlay
+          accent={warpAccent}
+          onMidpoint={() => scrollToAnchor(warpTo, false)}
+          onDone={() => setWarpTo(null)}
+        />
+      )}
     </div>
   );
 };

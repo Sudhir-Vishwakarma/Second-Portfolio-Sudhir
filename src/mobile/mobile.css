@@ -93,3 +93,15 @@
 }
 .mb-footer__classic { color: var(--muted); font-size: 0.85rem; min-height: 44px; display: inline-flex; align-items: center; }
 .mb-footer__copy { color: rgba(255, 255, 255, 0.45); font-size: 0.75rem; margin: 0; }
+
+/* ---------- space effects ---------- */
+.mb-stars { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+.mb-warp { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 40; pointer-events: none; }
+
+/* reveal-on-scroll */
+.mb [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.mb [data-reveal].is-revealed { opacity: 1; transform: none; }
+.mb.is-reduced [data-reveal] { transform: none; transition: opacity 0.3s ease; }
+@media (prefers-reduced-motion: reduce) {
+  .mb [data-reveal] { transform: none; transition: opacity 0.3s ease; }
+}
