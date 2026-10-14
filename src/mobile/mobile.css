@@ -363,7 +363,12 @@
 /* ---------- multiverse map ---------- */
 .mb-map { display: flex; flex-direction: column; gap: 6px; padding: 28px 0 8px; }
 .mb-map__space { width: min(100%, 520px, max(300px, calc(100vh - 230px))); width: min(100%, 520px, max(300px, calc(100dvh - 230px))); }
-.mb-map__here { font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: #ffb15c; }
+.mb-map__here { position: relative; z-index: 1; font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: #ffb15c; background: rgba(5, 3, 10, 0.85); padding: 1px 6px; border-radius: 999px; }
+@media (orientation: landscape) and (max-height: 500px) {
+  .mb-map { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 24px; align-items: center; padding-top: 8px; }
+  .mb-map > .mb-kicker, .mb-map > .mb-h2, .mb-map > .mb-text { grid-column: 1; }
+  .mb-map__space { grid-column: 2; grid-row: 1 / span 3; width: min(520px, calc(100vh - 72px)); width: min(520px, calc(100dvh - 72px)); margin: 0; }
+}
 .mb-map__node[aria-current='true'] .mb-orbit__glyph { filter: drop-shadow(0 0 10px var(--glow, #ffffff)); animation: mb-here 1.8s ease-in-out infinite; }
 @keyframes mb-here { 50% { transform: scale(1.12); } }
 @media (prefers-reduced-motion: reduce) { .mb-map__node[aria-current='true'] .mb-orbit__glyph { animation: none; } }

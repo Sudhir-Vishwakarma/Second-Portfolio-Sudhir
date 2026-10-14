@@ -70,7 +70,7 @@ const MobileApp: React.FC = () => {
   return (
     <div className={`mb mb--pager${reducedMotion ? ' is-reduced' : ''}`}>
       <SpaceCanvas reducedMotion={reducedMotion} warpRef={pager.warpRef} />
-      <TopBar onHome={() => travelTo(0)} onMap={() => setMapOpen(true)} />
+      <TopBar onHome={() => travelTo(0)} onMap={() => { if (pager.viewState === 'active') setMapOpen(true); }} />
       <UniverseView
         key={index}
         index={index}
