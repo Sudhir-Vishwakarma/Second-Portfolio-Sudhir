@@ -11,7 +11,6 @@ export const ContactSection: React.FC<SectionProps> = () => {
     <div className="mb-contact">
       <div className="mb-contact__head">
         <SectionHeading kicker="Contact" title="Let's Connect" />
-        {beam > 0 && <span key={beam} className="mb-beam" aria-hidden="true" />}
       </div>
       <ul className="mb-contact__rows">
         <li data-reveal><a className="mb-card mb-row" href={`mailto:${profile.email}`}><span>Email</span>{profile.email}</a></li>
@@ -34,6 +33,7 @@ export const ContactSection: React.FC<SectionProps> = () => {
         <label>Your Message<textarea name="message" rows={5} value={form.message} onChange={handleChange} required /></label>
         {error && <p className="mb-form__error" role="alert">{error}</p>}
         <button type="submit" className="mb-btn" disabled={sending}>{sending ? 'Sending…' : 'Send Message'}</button>
+        {beam > 0 && <span key={beam} className="mb-beam" aria-hidden="true" />}
       </form>
       {showToast && <div className="mb-toast" role="status">✅ Message sent successfully! I'll respond within 24 hours.</div>}
     </div>

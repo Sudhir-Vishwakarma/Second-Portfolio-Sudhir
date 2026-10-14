@@ -217,9 +217,8 @@
 .mb-details .mb-h2 { padding-right: 48px; }
 
 /* ---------- contact ---------- */
-.mb-contact__head { position: relative; }
 .mb-beam {
-  position: absolute; left: 24px; bottom: 100%; width: 3px; height: 0; border-radius: 3px;
+  position: absolute; left: 24px; bottom: 22px; z-index: 2; pointer-events: none; width: 3px; height: 0; border-radius: 3px;
   background: linear-gradient(0deg, var(--accent), transparent); box-shadow: 0 0 12px var(--accent);
   animation: mb-beam 1.4s ease-out forwards;
 }
@@ -227,18 +226,18 @@
 .mb-contact__rows { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 10px; }
 .mb-row { display: flex; flex-direction: column; gap: 2px; min-height: 44px; padding: 12px 16px; text-decoration: none; font-size: 0.95rem; }
 .mb-row span { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
-.mb-form { display: flex; flex-direction: column; gap: 14px; }
+.mb-form { position: relative; display: flex; flex-direction: column; gap: 14px; }
 .mb-form label { display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; color: var(--muted); }
 .mb-form input, .mb-form select, .mb-form textarea {
   width: 100%; min-height: 44px; padding: 11px 13px; border-radius: 10px; font: inherit; font-size: 16px; color: #fff;
   background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.16);
 }
-.mb-form select option { background: #111; }
+.mb-form select option { background: #111; color: #fff; }
 .mb-form input:focus, .mb-form select:focus, .mb-form textarea:focus { outline: none; border-color: var(--accent-brand); box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.25); }
 .mb-form__error { color: #ff6b6b; font-size: 0.85rem; margin: 0; }
 .mb-toast {
   position: fixed; left: var(--gutter); right: var(--gutter); bottom: calc(var(--nav-h) + 16px + env(safe-area-inset-bottom)); z-index: 45;
-  padding: 14px 16px; border-radius: 12px; background: rgba(16, 185, 129, 0.95); color: #fff; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  padding: 14px 16px; border-radius: 12px; background: #047857; color: #fff; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   animation: mb-slide-up 0.3s ease both;
 }
-@media (prefers-reduced-motion: reduce) { .mb-beam { animation: none; opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .mb-beam { animation: none; opacity: 0; } .mb-toast { animation: none; } }
