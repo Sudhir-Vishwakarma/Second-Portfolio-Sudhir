@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { experience } from '../data/portfolio';
 import './Skills.css';
 
 const Skills: React.FC = () => {
@@ -14,53 +15,23 @@ const Skills: React.FC = () => {
 
       <div className={`experience-section ${isVisible ? 'animate-in' : ''}`}>
         <div className="experience-list">
-          <div className="experience-item">
-            <div className="exp-left">
-              <h4>FullStack Developer - Realatte</h4>
+          {experience.map((job) => (
+            <div key={job.company} className="experience-item">
+              <div className="exp-left">
+                <h4>{job.role} - {job.company}</h4>
+              </div>
+              <div className="exp-middle">
+                <p>{job.start} - {job.end}</p>
+              </div>
+              <div className="exp-right">
+                <ul>
+                  {job.bullets.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="exp-middle">
-              <p>Feb 2026 - Apr 2026</p>
-            </div>
-            <div className="exp-right">
-              <ul>
-                <li>Built a web application using React and Next.js, integrated with Strapi for dynamic content management</li>
-                <li>Managed API integration and nested data flow for efficient frontend & CRM rendering</li>
-                <li>Deployed and maintained the app on a live server via Ubuntu terminal using SSH (root access)</li>
-              </ul>
-            </div>
-          </div>
-          <div className="experience-item">
-            <div className="exp-left">
-              <h4>Frontend Developer - Starz Ventures Pvt Ltd</h4>
-            </div>
-            <div className="exp-middle">
-              <p>Mar 2025 - Dec 2025</p>
-            </div>
-            <div className="exp-right">
-              <ul>
-                <li>Developed high-performance web applications using front-end technologies with responsive UI</li>
-                <li>Created and deployed a custom Serverless Middleware REST API on Google Cloud</li>
-                <li>Integrated multiple APIs to improve data flow and system reliability across the app</li>
-                <li>Managed Firebase Database to securely handle and sync client data in real time</li>
-                <li>Collaborated with teams to troubleshoot, optimize workflows, and deliver production-ready solutions</li>
-              </ul>
-            </div>
-          </div>
-          <div className="experience-item">
-            <div className="exp-left">
-              <h4>Frontend Developer - Entrance1.com</h4>
-            </div>
-            <div className="exp-middle">
-              <p>Nov 2023 - Dec 2024</p>
-            </div>
-            <div className="exp-right">
-              <ul>
-                <li>Built responsive and user-friendly UI components using modern front-end technologies</li>
-                <li>Converted design mockups into clean, pixel-perfect web interfaces for improved UX</li>
-                <li>Optimized front-end performance by enhancing layouts and reducing load times</li>
-              </ul>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
