@@ -39,7 +39,7 @@
 /* ---------- top bar ---------- */
 .mb-topbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 20;
-  display: flex; align-items: center;
+  display: flex; align-items: center; justify-content: space-between;
   /* The inline padding lines the monogram up with .mb-main's centred column. */
   padding: calc(10px + env(safe-area-inset-top)) max(var(--pad-r), calc((100% - var(--col)) / 2 + var(--pad-r))) 10px max(var(--pad-l), calc((100% - var(--col)) / 2 + var(--pad-l)));
   background: rgba(0, 0, 4, 0.78); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -331,3 +331,40 @@
 }
 .mb-universe.is-arriving.is-blackhole { animation: mb-emerge 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 @keyframes mb-emerge { from { opacity: 0; transform: scale(0.6) rotate(-25deg); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+
+/* ---------- map button ---------- */
+.mb-mapbtn {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 0 14px;
+  border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.06);
+  color: #fff; font: inherit; font-size: 0.85rem; cursor: pointer;
+}
+.mb-mapbtn svg { width: 20px; height: 20px; color: #ffb15c; }
+
+/* ---------- object stages (map, orbit views, heroes) ---------- */
+.mb-orbit { position: relative; width: min(100%, 360px); aspect-ratio: 1 / 1; margin: 8px auto 16px; touch-action: pan-y; }
+.mb-orbit__art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.mb-orbit__ring { position: absolute; inset: 0; pointer-events: none; animation: mb-spin var(--period, 60s) linear infinite; }
+.mb-orbit__node {
+  position: absolute; transform: translate(-50%, -50%); min-width: 44px; min-height: 44px; padding: 2px;
+  display: grid; place-items: center; border: 0; border-radius: 50%; background: none; color: #fff;
+  font: inherit; cursor: pointer; pointer-events: auto;
+}
+.mb-orbit__upright { display: grid; justify-items: center; gap: 2px; }
+.mb-orbit__ring .mb-orbit__upright { animation: mb-spin-rev var(--period, 60s) linear infinite; }
+.mb-orbit__glyph { display: block; overflow: visible; }
+.mb-orbit__node.is-selected .mb-orbit__glyph { filter: drop-shadow(0 0 8px var(--glow, #ffffff)); }
+.mb-orbit__label { font-size: 0.7rem; letter-spacing: 0.06em; white-space: nowrap; color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 3px #000; }
+.mb-orbit.is-held .mb-orbit__ring, .mb-orbit.is-held .mb-orbit__upright,
+.mb-orbit:focus-within .mb-orbit__ring, .mb-orbit:focus-within .mb-orbit__upright { animation-play-state: paused; }
+@keyframes mb-spin-rev { to { transform: rotate(-360deg); } }
+@media (prefers-reduced-motion: reduce) { .mb-orbit__ring, .mb-orbit__ring .mb-orbit__upright { animation: none; } }
+.mb.is-reduced .mb-orbit__ring, .mb.is-reduced .mb-orbit__ring .mb-orbit__upright { animation: none; }
+
+/* ---------- multiverse map ---------- */
+.mb-map { display: flex; flex-direction: column; gap: 6px; padding: 28px 0 8px; }
+.mb-map__space { width: min(100%, 520px, max(300px, calc(100vh - 230px))); width: min(100%, 520px, max(300px, calc(100dvh - 230px))); }
+.mb-map__here { font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase; color: #ffb15c; }
+.mb-map__node[aria-current='true'] .mb-orbit__glyph { filter: drop-shadow(0 0 10px var(--glow, #ffffff)); animation: mb-here 1.8s ease-in-out infinite; }
+@keyframes mb-here { 50% { transform: scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .mb-map__node[aria-current='true'] .mb-orbit__glyph { animation: none; } }
+.mb.is-reduced .mb-map__node[aria-current='true'] .mb-orbit__glyph { animation: none; }

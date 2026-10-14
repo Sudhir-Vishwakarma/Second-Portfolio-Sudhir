@@ -1,4 +1,4 @@
-import React, { useCallback, useLayoutEffect, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { MobileSectionId } from './sections';
 import { UNIVERSE_ORDER, nextIndex, prevIndex, universeForHash } from './universePager';
 import { useUniversePager } from './useUniversePager';
@@ -7,6 +7,8 @@ import { TopBar } from './TopBar';
 import { BottomNav } from './BottomNav';
 import { SpaceCanvas } from './SpaceCanvas';
 import { UniverseView } from './UniverseView';
+import { Sheet, closeTopSheet } from './Sheet';
+import { MultiverseMap } from './map/MultiverseMap';
 import './mobile.css';
 
 const MobileApp: React.FC = () => {
@@ -42,10 +44,33 @@ const MobileApp: React.FC = () => {
   );
   const onSelect = useCallback((id: MobileSectionId) => travelTo(UNIVERSE_ORDER.indexOf(id)), [travelTo]);
 
+  const [mapOpen, setMapOpen] = useState(false);
+  // Universe picked on the map. Travel starts only after the map's sheet has closed AND left the DOM:
+  // the pager ignores non-history travel while a .mb-sheet is mounted.
+  const mapTarget = useRef<number | null>(null);
+  const mapClosing = useRef(false);
+  const closeMap = useCallback(() => setMapOpen(false), []);
+  useEffect(() => {
+    if (mapOpen) return;
+    mapClosing.current = false;
+    const target = mapTarget.current;
+    mapTarget.current = null;
+    if (target !== null) travelTo(target, { via: 'map' });
+  }, [mapOpen, travelTo]);
+  const onPick = useCallback(
+    (i: number) => {
+      if (mapClosing.current) return; // a second tap while the map is closing must not go Back twice
+      mapClosing.current = true;
+      mapTarget.current = i === index ? null : i;
+      closeTopSheet(closeMap);
+    },
+    [index, closeMap]
+  );
+
   return (
     <div className={`mb mb--pager${reducedMotion ? ' is-reduced' : ''}`}>
       <SpaceCanvas reducedMotion={reducedMotion} warpRef={pager.warpRef} />
-      <TopBar onHome={() => travelTo(0)} />
+      <TopBar onHome={() => travelTo(0)} onMap={() => setMapOpen(true)} />
       <UniverseView
         key={index}
         index={index}
@@ -56,6 +81,9 @@ const MobileApp: React.FC = () => {
         onTravel={onTravel}
       />
       <BottomNav active={UNIVERSE_ORDER[index]} onSelect={onSelect} />
+      <Sheet open={mapOpen} onClose={closeMap} label="Multiverse map" variant="full">
+        <MultiverseMap current={index} onPick={onPick} />
+      </Sheet>
     </div>
   );
 };

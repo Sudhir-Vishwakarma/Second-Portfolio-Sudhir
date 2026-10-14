@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
+/** Close the open sheet through history when it owns the top entry, so Back, ✕ and in-sheet actions behave the same. */
+export function closeTopSheet(onClose: () => void) {
+  if (window.history.state && window.history.state.mbSheet) window.history.back();
+  else onClose();
+}
+
 interface SheetProps {
   open: boolean;
   onClose: () => void;
@@ -16,10 +22,9 @@ export const Sheet: React.FC<SheetProps> = ({ open, onClose, label, variant = 'b
   onCloseRef.current = onClose;
   const touchY = useRef<number | null>(null);
 
-  // Close through history when we own the top entry, so Back and ✕ behave the same.
+  // Close through history when we own the top entry.
   const requestClose = useCallback(() => {
-    if (window.history.state && window.history.state.mbSheet) window.history.back();
-    else onCloseRef.current();
+    closeTopSheet(() => onCloseRef.current());
   }, []);
 
   useEffect(() => {
