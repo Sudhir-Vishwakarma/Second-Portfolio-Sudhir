@@ -373,3 +373,23 @@
 @keyframes mb-here { 50% { transform: scale(1.12); } }
 @media (prefers-reduced-motion: reduce) { .mb-map__node[aria-current='true'] .mb-orbit__glyph { animation: none; } }
 .mb.is-reduced .mb-map__node[aria-current='true'] .mb-orbit__glyph { animation: none; }
+
+/* ---------- orbit | list ---------- */
+.mb-viewtoggle {
+  display: inline-flex; gap: 4px; padding: 4px; margin: 0 0 12px; border-radius: 999px;
+  border: 1px solid var(--border); background: rgba(255, 255, 255, 0.04);
+}
+.mb-viewtoggle button {
+  min-height: 44px; min-width: 76px; padding: 0 16px; border-radius: 999px; border: 0; background: none;
+  color: var(--muted); font: inherit; font-size: 0.85rem; cursor: pointer;
+}
+.mb-viewtoggle button[aria-pressed='true'] { background: rgba(255, 255, 255, 0.14); color: #fff; box-shadow: inset 0 0 0 1px var(--accent); }
+.mb-orbit-view { display: grid; gap: 16px; }
+@media (min-width: 700px), (orientation: landscape) and (min-width: 560px) {
+  .mb-orbit-view { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+}
+.mb-orbit-panel { position: relative; z-index: 1; }
+.mb-orbit__core-label {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, 26px); pointer-events: none;
+  font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+}

@@ -3,7 +3,7 @@ import { INITIAL_WHEEL, WheelState, edgeState, travelDirection, wheelStep } from
 
 export function isGestureExempt(target: EventTarget | null): boolean {
   const el = target as Element | null;
-  return !!el && typeof el.closest === 'function' && !!el.closest('input, textarea, select, .mb-sheet, .mb-filters');
+  return !!el && typeof el.closest === 'function' && !!el.closest('input, textarea, select, .mb-sheet, .mb-filters, .mb-orbit');
 }
 
 /**
