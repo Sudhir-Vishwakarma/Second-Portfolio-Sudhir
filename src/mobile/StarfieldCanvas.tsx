@@ -17,14 +17,6 @@ export const StarfieldCanvas: React.FC<{ reducedMotion: boolean }> = ({ reducedM
     let h = 0;
     const stars: Star[] = Array.from({ length: STAR_COUNT }, () => ({ x: Math.random(), y: Math.random(), z: Math.random(), tw: Math.random() * Math.PI * 2 }));
 
-    const resize = () => {
-      w = window.innerWidth;
-      h = window.innerHeight;
-      canvas.width = Math.round(w * dpr);
-      canvas.height = Math.round(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-
     const draw = (t: number) => {
       ctx.clearRect(0, 0, w, h);
       for (const s of stars) {
@@ -37,6 +29,17 @@ export const StarfieldCanvas: React.FC<{ reducedMotion: boolean }> = ({ reducedM
         ctx.fill();
       }
       ctx.globalAlpha = 1;
+    };
+
+    const resize = () => {
+      // iOS fires resize repeatedly as the URL bar shows/hides; only reallocate on a real change.
+      if (w === window.innerWidth && h === window.innerHeight) return;
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = Math.round(w * dpr);
+      canvas.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (reducedMotion) draw(0); // resizing clears the canvas; the animated branch redraws next frame
     };
 
     let raf = 0;

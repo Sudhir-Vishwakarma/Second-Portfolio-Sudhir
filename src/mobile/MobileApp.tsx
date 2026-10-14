@@ -62,6 +62,7 @@ const MobileApp: React.FC = () => {
       <BottomNav active={active} onSelect={navigate} />
       {warpTo && (
         <WarpOverlay
+          key={warpTo}
           accent={warpAccent}
           onMidpoint={() => scrollToAnchor(warpTo, false)}
           onDone={() => setWarpTo(null)}
