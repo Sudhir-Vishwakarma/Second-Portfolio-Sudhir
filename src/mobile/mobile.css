@@ -1,0 +1,95 @@
+/* ---------- tokens + base ---------- */
+.mb {
+  --bg: #000004;
+  --accent-brand: #ff7a00;
+  --text: #f5f5f5;
+  --muted: rgba(255, 255, 255, 0.72);
+  --card: rgba(255, 255, 255, 0.04);
+  --border: rgba(255, 255, 255, 0.1);
+  --radius: 16px;
+  --gutter: 20px;
+  --nav-h: 64px;
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Ubuntu', -apple-system, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+  overflow-wrap: anywhere;
+}
+.mb *, .mb *::before, .mb *::after { box-sizing: border-box; }
+.mb :focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 3px; border-radius: 6px; }
+.mb a { color: inherit; }
+
+.mb-main {
+  position: relative;
+  z-index: 1;
+  padding: calc(64px + env(safe-area-inset-top)) var(--gutter) calc(var(--nav-h) + 32px + env(safe-area-inset-bottom));
+}
+.mb-section { scroll-margin-top: calc(72px + env(safe-area-inset-top)); padding: 8px 0 72px; position: relative; }
+#certifications { scroll-margin-top: calc(72px + env(safe-area-inset-top)); }
+
+/* ---------- top bar ---------- */
+.mb-topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+  display: flex; align-items: center;
+  padding: calc(10px + env(safe-area-inset-top)) var(--gutter) 10px;
+  background: linear-gradient(180deg, rgba(0, 0, 4, 0.85), rgba(0, 0, 4, 0));
+}
+.mb-mono {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid rgba(255, 154, 60, 0.6); background: rgba(255, 122, 0, 0.1);
+  color: #ffb15c; font-weight: 700; letter-spacing: 0.05em; font-size: 0.85rem;
+}
+
+/* ---------- section heading ---------- */
+.mb-heading { position: relative; margin-bottom: 20px; }
+.mb-heading::before {
+  content: ''; position: absolute; left: -40px; top: -40px; width: 220px; height: 160px; z-index: -1;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent, #ff7a00) 35%, transparent), transparent);
+  filter: blur(8px); pointer-events: none;
+}
+.mb-kicker { font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent, #ff9a3c); }
+.mb-h2 { font-size: 1.6rem; line-height: 1.2; margin: 6px 0 0; letter-spacing: -0.01em; }
+.mb-text { color: var(--muted); font-size: 0.95rem; line-height: 1.65; margin: 0; }
+
+/* ---------- shared building blocks ---------- */
+.mb-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
+.mb-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 44px; padding: 0 20px; border-radius: 999px;
+  background: var(--accent-brand); color: #fff; border: 1px solid var(--accent-brand);
+  font: inherit; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.03em; text-decoration: none; cursor: pointer;
+}
+.mb-btn--ghost { background: transparent; color: #ffb15c; }
+.mb-btn:disabled { opacity: 0.6; }
+.mb-chip {
+  display: inline-flex; align-items: center; min-height: 32px; padding: 4px 12px; border-radius: 999px;
+  font-size: 0.8rem; background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.14); color: rgba(255, 255, 255, 0.9);
+}
+
+/* ---------- bottom nav ---------- */
+.mb-nav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(8, 8, 14, 0.82); border-top: 1px solid var(--border);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+}
+.mb-nav__item {
+  min-width: 44px; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  background: none; border: 0; color: rgba(255, 255, 255, 0.55); font: inherit; font-size: 0.66rem; letter-spacing: 0.02em; cursor: pointer;
+  transition: color 0.25s ease;
+}
+.mb-nav__item.is-active { color: var(--accent); }
+.mb-nav__item.is-active svg { filter: drop-shadow(0 0 6px var(--accent)); }
+
+/* ---------- footer ---------- */
+.mb-footer { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 8px 0 16px; text-align: center; }
+.mb-socials { display: flex; gap: 12px; justify-content: center; }
+.mb-social {
+  width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+  color: rgba(255, 255, 255, 0.85); border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.04);
+}
+.mb-footer__classic { color: var(--muted); font-size: 0.85rem; min-height: 44px; display: inline-flex; align-items: center; }
+.mb-footer__copy { color: rgba(255, 255, 255, 0.45); font-size: 0.75rem; margin: 0; }

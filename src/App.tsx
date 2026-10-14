@@ -1,14 +1,16 @@
 import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import ClassicApp from './ClassicApp';
-import { CLASSIC_HASH, classicSectionFor, detectEnv, shouldUseClassic } from './routing/mode';
+import { CLASSIC_HASH, chooseMode, classicSectionFor, detectEnv } from './routing/mode';
 import { ErrorBoundary } from './routing/ErrorBoundary';
 
 const Multiverse = lazy(() => import('./multiverse/Multiverse'));
+const MobileApp = lazy(() => import('./mobile/MobileApp'));
 
 const App: React.FC = () => {
   const [hash, setHash] = useState(window.location.hash);
   const [failed, setFailed] = useState(false);
-  const forcedClassic = useMemo(() => shouldUseClassic(detectEnv()), []);
+  // Device capability is decided once; only #classic is hash-driven.
+  const deviceMode = useMemo(() => chooseMode(detectEnv(), ''), []);
 
   useEffect(() => {
     const onNav = () => setHash(window.location.hash);
@@ -20,8 +22,10 @@ const App: React.FC = () => {
     };
   }, []);
 
-  if (forcedClassic || failed || hash === CLASSIC_HASH) {
-    // The multiverse moves the hash with pushState (no hashchange), so a fallback reads the live URL.
+  const mode = failed || hash === CLASSIC_HASH ? 'classic' : deviceMode;
+
+  if (mode === 'classic') {
+    // The multiverse and mobile sites move the hash without hashchange events, so a fallback reads the live URL.
     const sectionHash = failed && hash !== CLASSIC_HASH ? window.location.hash : hash;
     return <ClassicApp initialSection={classicSectionFor(sectionHash)} />;
   }
@@ -29,7 +33,7 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary onError={() => setFailed(true)}>
       <Suspense fallback={<div className="mv-boot" />}>
-        <Multiverse onFail={() => setFailed(true)} />
+        {mode === 'mobile' ? <MobileApp /> : <Multiverse onFail={() => setFailed(true)} />}
       </Suspense>
     </ErrorBoundary>
   );

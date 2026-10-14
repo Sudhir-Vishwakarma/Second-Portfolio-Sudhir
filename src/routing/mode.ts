@@ -9,14 +9,13 @@ export interface DeviceEnv {
 export const CLASSIC_HASH = '#classic';
 export type ClassicSection = 'home' | 'about' | 'work' | 'projects' | 'contacts';
 
-export function shouldUseClassic(env: DeviceEnv): boolean {
-  return (
-    !env.webgl2 ||
-    env.reducedMotion ||
-    env.width < 768 ||
-    env.coarsePointer ||
-    (env.deviceMemory !== undefined && env.deviceMemory < 4)
-  );
+export type AppMode = 'classic' | 'mobile' | 'multiverse';
+
+export function chooseMode(env: DeviceEnv, hash: string): AppMode {
+  if (hash === CLASSIC_HASH) return 'classic';
+  if (env.width < 768 || env.coarsePointer) return 'mobile';
+  if (!env.webgl2 || env.reducedMotion || (env.deviceMemory !== undefined && env.deviceMemory < 4)) return 'classic';
+  return 'multiverse';
 }
 
 export function detectEnv(): DeviceEnv {
