@@ -1,7 +1,7 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
-import { Html } from '@react-three/drei';
+import { Html, useCursor } from '@react-three/drei';
 import { easing } from 'maath';
 import { sunShader } from '../fx/shaders';
 import { GlowSprite } from '../fx/GlowSprite';
@@ -50,6 +50,11 @@ const OrbitingPlanet: React.FC<{ def: OrbitDef; index: number; active: boolean; 
   const [hovered, setHovered] = useState(false);
   const interactive = active && !preview;
 
+  useCursor(hovered && interactive);
+  useEffect(() => {
+    if (!interactive) setHovered(false);
+  }, [interactive]);
+
   useFrame((state) => {
     pivot.current.rotation.y = index * 1.7 + state.clock.elapsedTime * def.speed;
   });
@@ -73,23 +78,20 @@ const OrbitingPlanet: React.FC<{ def: OrbitDef; index: number; active: boolean; 
               if (!interactive) return;
               e.stopPropagation();
               setHovered(true);
-              document.body.style.cursor = 'pointer';
             }}
-            onPointerOut={() => {
-              setHovered(false);
-              document.body.style.cursor = '';
-            }}
+            onPointerOut={() => setHovered(false)}
             onClick={(e) => {
               if (!interactive) return;
               e.stopPropagation();
-              document.body.style.cursor = '';
               useJourney.getState().jump(firstStepOf(def.universe));
             }}
           />
           {interactive && (
-            <Html center position={[0, def.size + 0.9, 0]} className="mv-label" style={{ transform: hovered ? 'scale(1.15)' : undefined }}>
-              {UNIVERSE_LABELS[def.universe]}
-              {hovered && <small>{def.tagline}</small>}
+            <Html center position={[0, def.size + 0.9, 0]} className="mv-label">
+              <span className="mv-label__inner" style={{ display: 'inline-block', transform: hovered ? 'scale(1.15)' : 'none', transition: 'transform 0.2s' }}>
+                {UNIVERSE_LABELS[def.universe]}
+                {hovered && <small>{def.tagline}</small>}
+              </span>
             </Html>
           )}
         </group>
