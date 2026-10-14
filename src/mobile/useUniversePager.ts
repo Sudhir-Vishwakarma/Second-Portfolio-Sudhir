@@ -66,7 +66,8 @@ export function useUniversePager(initialIndex: number, reducedMotion: boolean): 
         setViewState('arriving');
         setArrivals((n) => n + 1);
         const id = UNIVERSE_ORDER[to];
-        if (push) window.history.pushState({ mbUniverse: id }, '', `#${id}`);
+        // A Back/Forward pop during this flight already moved history; pushing now would desync URL and stack.
+        if (push && pending.current === null) window.history.pushState({ mbUniverse: id }, '', `#${id}`);
       };
       flight.current = { startedAt: now, doneAt, swap, timers: [] };
       flight.current.timers.push(window.setTimeout(swap, swapAt), window.setTimeout(finish, doneAt));
