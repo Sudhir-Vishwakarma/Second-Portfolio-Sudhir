@@ -39,7 +39,6 @@ export const SkillSystem: React.FC = () => {
                   <svg className="mb-orbit__glyph" width="30" height="30" viewBox="-15 -15 30 30" aria-hidden="true">
                     <Planet r={9} color={SKILL_COLORS[g]} ring={g === 'Cloud & DevOps'} />
                   </svg>
-                  {g === selected && <span className="mb-orbit__label">{g}</span>}
                 </span>
               </button>
             </div>

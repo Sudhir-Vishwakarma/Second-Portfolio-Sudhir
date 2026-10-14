@@ -393,3 +393,4 @@
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, 26px); pointer-events: none;
   font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
 }
+@media (orientation: landscape) and (max-height: 500px) { .mb-orbit-view .mb-orbit { width: min(100%, 360px, calc(100vh - 140px)); width: min(100%, 360px, calc(100dvh - 140px)); } }
