@@ -14,6 +14,7 @@ import { Progress } from './overlay/Progress';
 import { ScrollHint } from './overlay/ScrollHint';
 import { Loader } from './overlay/Loader';
 import { Panels } from './overlay/Panels';
+import { ModalHost } from './overlay/ModalHost';
 import { useHashSync } from './useHashSync';
 import './multiverse.css';
 
@@ -25,6 +26,7 @@ const UiLayer: React.FC = () => {
       <Panels />
       <Progress />
       <ScrollHint />
+      <ModalHost />
     </div>
   );
 };

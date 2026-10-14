@@ -1,6 +1,7 @@
 import React from 'react';
 import { UniverseId } from '../journey';
 import { makeBasicUniverse } from './BasicUniverse';
+import { HomeUniverse } from './HomeUniverse';
 
 export interface UniverseProps {
   /** Camera is in this universe: enable labels and pointer interaction. */
@@ -10,7 +11,7 @@ export interface UniverseProps {
 }
 
 export const UNIVERSE_COMPONENTS: Record<UniverseId, React.FC<UniverseProps>> = {
-  home: makeBasicUniverse('home'),
+  home: HomeUniverse,
   about: makeBasicUniverse('about'),
   skills: makeBasicUniverse('skills'),
   certifications: makeBasicUniverse('certifications'),
