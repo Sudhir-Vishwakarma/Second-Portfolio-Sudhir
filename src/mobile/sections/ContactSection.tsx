@@ -4,6 +4,9 @@ import { useContactForm } from '../../hooks/contact';
 import { SectionHeading } from '../SectionHeading';
 import { SectionProps } from './registry';
 
+// Display handle from the profile URL: its last non-empty path segment.
+const linkedinHandle = profile.linkedinUrl.split('/').filter(Boolean).pop() ?? 'LinkedIn';
+
 export const ContactSection: React.FC<SectionProps> = () => {
   const [beam, setBeam] = useState(0);
   const { form, sending, error, showToast, handleChange, handleSubmit } = useContactForm(() => setBeam((n) => n + 1));
@@ -16,7 +19,7 @@ export const ContactSection: React.FC<SectionProps> = () => {
         <li data-reveal><a className="mb-card mb-row" href={`mailto:${profile.email}`}><span>Email</span>{profile.email}</a></li>
         <li data-reveal><a className="mb-card mb-row" href={`tel:${profile.phone.replace(/\s/g, '')}`}><span>Phone</span>{profile.phone}</a></li>
         <li data-reveal><div className="mb-card mb-row"><span>Location</span>{profile.location}</div></li>
-        <li data-reveal><a className="mb-card mb-row" href={profile.linkedinUrl} target="_blank" rel="noopener noreferrer"><span>LinkedIn</span>sudhir-vishwakarma</a></li>
+        <li data-reveal><a className="mb-card mb-row" href={profile.linkedinUrl} target="_blank" rel="noopener noreferrer"><span>LinkedIn</span>{linkedinHandle}</a></li>
       </ul>
       <form className="mb-form mb-card" onSubmit={handleSubmit} data-reveal>
         <label>Your Name<input type="text" name="name" value={form.name} onChange={handleChange} required autoComplete="name" /></label>
@@ -35,7 +38,10 @@ export const ContactSection: React.FC<SectionProps> = () => {
         <button type="submit" className="mb-btn" disabled={sending}>{sending ? 'Sending…' : 'Send Message'}</button>
         {beam > 0 && <span key={beam} className="mb-beam" aria-hidden="true" />}
       </form>
-      {showToast && <div className="mb-toast" role="status">✅ Message sent successfully! I'll respond within 24 hours.</div>}
+      {/* Always mounted so screen readers are already watching the region when the toast text appears. */}
+      <div role="status" aria-live="polite" className="mb-toast-region">
+        {showToast && <div className="mb-toast">✅ Message sent successfully! I'll respond within 24 hours.</div>}
+      </div>
     </div>
   );
 };

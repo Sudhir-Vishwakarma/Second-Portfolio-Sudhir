@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Project, descriptionParagraphs, projects } from '../../data/portfolio';
 import { FILTERS, ProjectFilter, filterProjects, topTech, visibleProjects } from '../projectFilter';
 import { SectionHeading } from '../SectionHeading';
@@ -34,6 +34,16 @@ export const ProjectsSection: React.FC<SectionProps> = () => {
   const [open, setOpen] = useState<Project | null>(null);
   const list = useMemo(() => filterProjects(projects, filter), [filter]);
   const shown = visibleProjects(list, showAll);
+  const listRef = useRef<HTMLUListElement>(null);
+  // Index of the first card revealed by "Show all"; focus moves there once it has rendered.
+  const focusFrom = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!showAll || focusFrom.current === null) return;
+    const title = listRef.current?.children[focusFrom.current]?.querySelector<HTMLElement>('.mb-project__title');
+    focusFrom.current = null;
+    title?.focus();
+  }, [showAll]);
 
   return (
     <div>
@@ -54,10 +64,10 @@ export const ProjectsSection: React.FC<SectionProps> = () => {
         ))}
       </div>
 
-      <ul className="mb-projects">
+      <ul className="mb-projects" ref={listRef}>
         {shown.map((p) => (
           <li key={p.title} className="mb-card mb-project" data-reveal>
-            <h3 className="mb-project__title">
+            <h3 className="mb-project__title" tabIndex={-1}>
               {p.title}
               {p.featured && <span className="mb-star" role="img" aria-label="Featured">★</span>}
             </h3>
@@ -76,7 +86,13 @@ export const ProjectsSection: React.FC<SectionProps> = () => {
       </ul>
 
       {list.length > shown.length && (
-        <button className="mb-btn mb-btn--ghost mb-showall" onClick={() => setShowAll(true)}>
+        <button
+          className="mb-btn mb-btn--ghost mb-showall"
+          onClick={() => {
+            focusFrom.current = shown.length;
+            setShowAll(true);
+          }}
+        >
           Show all {list.length}
         </button>
       )}
