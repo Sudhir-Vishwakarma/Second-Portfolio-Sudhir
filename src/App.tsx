@@ -1,67 +1,35 @@
-import React, { Suspense, lazy, useEffect, useState } from 'react';
-import Sidebar from './components/Sidebar';
-import Dashboard from './components/Dashboard';
-import About from './components/About';
-import Projects from './components/Projects';
-import Skills from './components/Skills';
-import Contact from './components/Contact';
-import './App.css';
+import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import ClassicApp from './ClassicApp';
+import { CLASSIC_HASH, classicSectionFor, detectEnv, shouldUseClassic } from './routing/mode';
+import { ErrorBoundary } from './routing/ErrorBoundary';
 
-// Prototype 3D "multiverse" experience at /#lab (loaded only when visited)
-const Lab = lazy(() => import('./lab/Lab'));
-
-type ActiveSection = 'home' | 'about' | 'work' | 'projects' | 'contacts';
+const Multiverse = lazy(() => import('./multiverse/Multiverse'));
 
 const App: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<ActiveSection>('home');
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isLab, setIsLab] = useState(window.location.hash === '#lab');
+  const [hash, setHash] = useState(window.location.hash);
+  const [failed, setFailed] = useState(false);
+  const forcedClassic = useMemo(() => shouldUseClassic(detectEnv()), []);
 
   useEffect(() => {
-    const onHash = () => setIsLab(window.location.hash === '#lab');
-    window.addEventListener('hashchange', onHash);
-    return () => window.removeEventListener('hashchange', onHash);
+    const onNav = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', onNav);
+    window.addEventListener('popstate', onNav);
+    return () => {
+      window.removeEventListener('hashchange', onNav);
+      window.removeEventListener('popstate', onNav);
+    };
   }, []);
 
-  const handleSectionChange = (section: ActiveSection) => {
-    if (section === activeSection) return;
-    
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setActiveSection(section);
-      setTimeout(() => setIsTransitioning(false), 50);
-    }, 100);
-  };
-
-  const renderContent = () => {
-    switch (activeSection) {
-      case 'home': return <Dashboard />;
-      case 'about': return <About />;
-      case 'work': return <Skills />;
-      case 'projects': return <Projects />;
-      case 'contacts': return <Contact />;
-      default: return <Dashboard />;
-    }
-  };
-
-  if (isLab) {
-    return (
-      <Suspense fallback={<div style={{ position: 'fixed', inset: 0, background: '#000' }} />}>
-        <Lab />
-      </Suspense>
-    );
+  if (forcedClassic || failed || hash === CLASSIC_HASH) {
+    return <ClassicApp initialSection={classicSectionFor(hash)} />;
   }
 
   return (
-    <div className="app-container">
-      <Sidebar 
-        activeSection={activeSection} 
-        setActiveSection={handleSectionChange}
-      />
-      <main className={`main-content ${isTransitioning ? 'genie-out' : 'genie-in'}`}>
-        {renderContent()}
-      </main>
-    </div>
+    <ErrorBoundary onError={() => setFailed(true)}>
+      <Suspense fallback={<div className="mv-boot" />}>
+        <Multiverse onFail={() => setFailed(true)} />
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 

@@ -91,3 +91,8 @@
   box-shadow: 0 4px 12px rgba(255, 122, 0, 0.4);
 }
 
+.mv-boot {
+  position: fixed;
+  inset: 0;
+  background: #000004;
+}
