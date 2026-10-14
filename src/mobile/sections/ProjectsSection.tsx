@@ -59,7 +59,7 @@ export const ProjectsSection: React.FC<SectionProps> = () => {
           <li key={p.title} className="mb-card mb-project" data-reveal>
             <h3 className="mb-project__title">
               {p.title}
-              {p.featured && <span className="mb-star" aria-label="Featured">★</span>}
+              {p.featured && <span className="mb-star" role="img" aria-label="Featured">★</span>}
             </h3>
             <p className="mb-text">{p.shortDescription}</p>
             <div className="mb-chips">
@@ -68,8 +68,8 @@ export const ProjectsSection: React.FC<SectionProps> = () => {
               ))}
             </div>
             <div className="mb-project__actions">
-              {p.demoUrl && <a className="mb-btn" href={p.demoUrl} target="_blank" rel="noopener noreferrer">Live Demo</a>}
-              <button className="mb-btn mb-btn--ghost" onClick={() => setOpen(p)}>Details</button>
+              {p.demoUrl && <a className="mb-btn" aria-label={`Live demo: ${p.title}`} href={p.demoUrl} target="_blank" rel="noopener noreferrer">Live Demo</a>}
+              <button className="mb-btn mb-btn--ghost" aria-label={`Details: ${p.title}`} onClick={() => setOpen(p)}>Details</button>
             </div>
           </li>
         ))}
