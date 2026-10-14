@@ -6,6 +6,7 @@ import { HomePanel } from './HomePanel';
 import { AboutPanel } from './AboutPanel';
 import { SkillsPanel } from './SkillsPanel';
 import { CertificationsPanel } from './CertificationsPanel';
+import { WorkPanel } from './WorkPanel';
 
 export interface PanelProps { universe: UniverseId; beat: string }
 
@@ -14,7 +15,7 @@ export const PANELS: Record<UniverseId, React.FC<PanelProps>> = {
   about: AboutPanel,
   skills: SkillsPanel,
   certifications: CertificationsPanel,
-  work: GenericPanel,
+  work: WorkPanel,
   projects: GenericPanel,
   contact: GenericPanel,
 };
