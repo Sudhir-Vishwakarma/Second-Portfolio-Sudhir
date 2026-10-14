@@ -47,6 +47,7 @@ export function useUniversePager(initialIndex: number, reducedMotion: boolean): 
     (target, opts = {}) => {
       const { push = true, source = 'nav' } = opts;
       const to = clampIndex(target);
+      if (source !== 'history' && window.history.state && window.history.state.mbSheet) return; // a sheet is open
       const now = performance.now();
       if (flight.current) {
         if (source === 'history') pending.current = to; // replay Back/Forward once this jump lands

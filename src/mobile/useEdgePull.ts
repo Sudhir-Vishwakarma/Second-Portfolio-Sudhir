@@ -30,6 +30,7 @@ export function useEdgePull(scrollRef: RefObject<HTMLElement>, onTravel: (dir: '
     const onStart = (e: TouchEvent) => {
       if (e.touches.length !== 1 || isGestureExempt(e.target)) {
         start = null;
+        show(0);
         return;
       }
       start = { y: e.touches[0].clientY, ...edgeState(el.scrollTop, el.clientHeight, el.scrollHeight) };
@@ -64,6 +65,7 @@ export function useEdgePull(scrollRef: RefObject<HTMLElement>, onTravel: (dir: '
     el.addEventListener('wheel', onWheel, { passive: true });
     return () => {
       cancelAnimationFrame(raf);
+      setPull(0);
       el.removeEventListener('touchstart', onStart);
       el.removeEventListener('touchmove', onMove);
       el.removeEventListener('touchend', onEnd);

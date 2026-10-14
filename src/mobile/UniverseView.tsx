@@ -58,7 +58,7 @@ export const UniverseView: React.FC<UniverseViewProps> = ({ index, state, anchor
             <Section section={section} />
             {next ? (
               <button className="mb-btn mb-btn--ghost mb-next" onClick={() => onTravel('next', 'button')}>
-                Next: {next.label} ↓
+                Next: {next.label} <span aria-hidden="true">↓</span>
               </button>
             ) : (
               <Footer />

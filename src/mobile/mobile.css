@@ -24,6 +24,7 @@
 }
 .mb *, .mb *::before, .mb *::after { box-sizing: border-box; }
 .mb :focus-visible { outline: 2px solid var(--accent-brand); outline-offset: 3px; border-radius: 6px; }
+.mb-universe [tabindex="-1"]:focus { outline: none; } /* programmatic heading focus after a jump; headings are not interactive */
 .mb a:not(.mb-btn) { color: inherit; } /* link buttons take their colour from .mb-btn / .mb-btn--ghost */
 
 .mb-main {
@@ -299,7 +300,7 @@
 /* ---------- universe backdrops ---------- */
 .mb-backdrop { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
 .mb-backdrop__nebula {
-  position: absolute; width: 140vmax; height: 140vmax; border-radius: 50%; filter: blur(40px);
+  position: absolute; width: 140vmax; height: 140vmax; border-radius: 50%;
   background: radial-gradient(closest-side, rgba(255, 122, 0, 0.35), transparent);
   animation: mb-drift 24s ease-in-out infinite alternate;
 }

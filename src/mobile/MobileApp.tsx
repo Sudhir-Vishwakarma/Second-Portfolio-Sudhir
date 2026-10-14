@@ -21,10 +21,18 @@ const MobileApp: React.FC = () => {
     const root = document.documentElement;
     const prevBehavior = root.style.scrollBehavior;
     root.style.scrollBehavior = 'auto';
+    // Keep the browser's pull-to-refresh from beating the "pull for previous universe" gesture.
+    const body = document.body;
+    const prevRootOverscroll = root.style.overscrollBehaviorY;
+    const prevBodyOverscroll = body.style.overscrollBehaviorY;
+    root.style.overscrollBehaviorY = 'none';
+    body.style.overscrollBehaviorY = 'none';
     // A reload or Forward onto a stale sheet entry would leave mbSheet set with no sheet open.
     if (window.history.state && window.history.state.mbSheet) window.history.replaceState(null, '');
     return () => {
       root.style.scrollBehavior = prevBehavior;
+      root.style.overscrollBehaviorY = prevRootOverscroll;
+      body.style.overscrollBehaviorY = prevBodyOverscroll;
     };
   }, []);
 
