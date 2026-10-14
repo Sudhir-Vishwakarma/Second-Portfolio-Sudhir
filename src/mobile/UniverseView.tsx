@@ -6,6 +6,7 @@ import { useEdgePull } from './useEdgePull';
 import { ViewState } from './useUniversePager';
 import { useReveal } from './useReveal';
 import { Footer } from './sections/Footer';
+import { UniverseBackdrop } from './UniverseBackdrop';
 
 export interface UniverseViewProps {
   index: number;
@@ -50,6 +51,7 @@ export const UniverseView: React.FC<UniverseViewProps> = ({ index, state, anchor
       aria-hidden={leaving ? true : undefined}
       {...((leaving ? { inert: '' } : {}) as Record<string, string>)}
     >
+      <UniverseBackdrop id={section.id} />
       <div className="mb-universe__scroll" ref={scrollRef} data-universe={section.id}>
         <div className="mb-main">
           <section id={section.id} className="mb-section" aria-label={section.label}>
