@@ -125,7 +125,7 @@ mobile/
 - **About:**
   - the summary card
   - the Education vertical timeline (4 items, glowing dots)
-  - Certifications as 4 compact cards. **View** opens Sheet full-screen with the image, or opens the PDF in a new tab when `resolveCertificateSource` returns `pdf`.
+  - Certifications as 4 compact cards. **View** opens Sheet full-screen with the certificate image. When `resolveCertificateSource` returns `pdf`, the sheet also shows an **Open PDF** link (new tab). Opening a tab directly after the async check would be blocked as a popup.
 - **Skills:** the 5 group headings, each with a colour dot, and skill chips.
 - **Work:**
   - a vertical timeline with 3 entries, each showing role, company and `start – end`
