@@ -172,3 +172,7 @@
 .mv-doc__img { display: block; max-width: 100%; max-height: 72vh; margin: 0 auto; border-radius: 10px; }
 @keyframes mv-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes mv-pop { from { opacity: 0; transform: translateY(16px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+/* skills */
+.mv-skill-group { margin-bottom: 12px; }
+.mv-skill-group h3 { font-size: 0.74rem; letter-spacing: 0.22em; text-transform: uppercase; margin: 0 0 8px; }
