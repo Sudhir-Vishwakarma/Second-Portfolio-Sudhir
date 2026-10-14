@@ -62,19 +62,20 @@ export const StarfieldCanvas: React.FC<{ reducedMotion: boolean }> = ({ reducedM
     };
     const start = () => {
       cancelAnimationFrame(raf);
+      if (w === 0) resize(); // a visibility change can cancel the deferred first sizing
       last = performance.now();
       raf = requestAnimationFrame(tick);
     };
     const onVisibility = () => (document.hidden ? cancelAnimationFrame(raf) : start());
 
-    resize();
+    // First sizing waits for the first frame: reading clientWidth during React's commit would force a
+    // full-page layout inside that task (measurably longer blocking time on load).
+    raf = requestAnimationFrame(() => {
+      resize(); // the first call always sizes (w is 0), and draws when motion is reduced
+      if (!reducedMotion) start();
+    });
     window.addEventListener('resize', resize);
-    if (reducedMotion) {
-      draw(0);
-    } else {
-      start();
-      document.addEventListener('visibilitychange', onVisibility);
-    }
+    if (!reducedMotion) document.addEventListener('visibilitychange', onVisibility);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
