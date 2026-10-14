@@ -235,3 +235,11 @@
   position: fixed; top: 84px; right: 24px; z-index: 45; padding: 14px 18px; border-radius: 12px;
   background: rgba(16,185,129,0.9); color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.4); animation: mv-pop 0.35s ease both;
 }
+
+/* accessibility: visible focus everywhere, and comfortable reading widths */
+.mv-nav button:focus-visible, .mv-progress__dot:focus-visible, .mv-btn:focus-visible, .mv-list button:focus-visible { outline: 2px solid #ff9a3c; outline-offset: 3px; }
+.mv-panel .mv-text { max-width: 60ch; }
+@media (max-height: 720px) {
+  .mv-panel { top: 80px; bottom: 70px; }
+  .mv-h1 { font-size: clamp(2rem, 4.4vw, 3.4rem); }
+}

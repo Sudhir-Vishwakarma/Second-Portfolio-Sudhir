@@ -49,7 +49,7 @@ const GalaxyDust: React.FC = () => {
   );
 };
 
-const Star: React.FC<{ index: number; interactive: boolean }> = ({ index, interactive }) => {
+const Star: React.FC<{ index: number; interactive: boolean; wasDragged: () => boolean }> = ({ index, interactive, wasDragged }) => {
   const p = projects[index];
   const color = CONSTELLATION_COLORS[p.constellation];
   const bright = useMemo(() => new THREE.Color(color).multiplyScalar(3), [color]);
@@ -77,7 +77,7 @@ const Star: React.FC<{ index: number; interactive: boolean }> = ({ index, intera
         }}
         onPointerOut={() => setHovered(false)}
         onClick={(e) => {
-          if (!interactive) return;
+          if (!interactive || wasDragged()) return;
           e.stopPropagation();
           useJourney.getState().openModal({ kind: 'project', index });
         }}
@@ -99,19 +99,25 @@ const Star: React.FC<{ index: number; interactive: boolean }> = ({ index, intera
 
 export const ProjectsUniverse: React.FC<UniverseProps> = ({ active, preview }) => {
   const galaxy = useRef<THREE.Group>(null!);
-  const drag = useRef({ down: false, x: 0, target: 0 });
+  const drag = useRef({ down: false, x: 0, startX: 0, startY: 0, moved: false, target: 0 });
   const interactive = active && !preview;
+  const wasDragged = () => drag.current.moved;
 
   useEffect(() => {
     if (!interactive) return;
+    const state = drag.current;
     const onDown = (e: PointerEvent) => {
       if ((e.target as HTMLElement).tagName !== 'CANVAS') return;
       drag.current.down = true;
       drag.current.x = e.clientX;
+      drag.current.startX = e.clientX;
+      drag.current.startY = e.clientY;
+      drag.current.moved = false;
     };
     const onMove = (e: PointerEvent) => {
       if (!drag.current.down) return;
       const d = drag.current;
+      if (Math.hypot(e.clientX - d.startX, e.clientY - d.startY) > 5) d.moved = true;
       d.target = THREE.MathUtils.clamp(d.target + (e.clientX - d.x) * 0.004, -0.8, 0.8);
       d.x = e.clientX;
     };
@@ -121,10 +127,13 @@ export const ProjectsUniverse: React.FC<UniverseProps> = ({ active, preview }) =
     window.addEventListener('pointerdown', onDown);
     window.addEventListener('pointermove', onMove);
     window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
     return () => {
       window.removeEventListener('pointerdown', onDown);
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
+      state.down = false;
     };
   }, [interactive]);
 
@@ -145,7 +154,7 @@ export const ProjectsUniverse: React.FC<UniverseProps> = ({ active, preview }) =
         <Line key={c} points={pts} color={CONSTELLATION_COLORS[c]} lineWidth={1} transparent opacity={0.25} />
       ))}
       {projects.map((p, i) => (
-        <Star key={p.title} index={i} interactive={interactive} />
+        <Star key={p.title} index={i} interactive={interactive} wasDragged={wasDragged} />
       ))}
       {interactive &&
         CONSTELLATIONS.map((c) => (

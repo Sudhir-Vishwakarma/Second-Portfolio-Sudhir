@@ -38,10 +38,11 @@ export const ContactUniverse: React.FC<UniverseProps> = () => {
       <Nebula palette={palette} radius={65} />
       <ambientLight intensity={0.35} />
       <pointLight position={[6, 8, 10]} intensity={200} distance={60} color={palette.atmos} />
+      <group scale={1.5}>
       {/* tower */}
       <mesh position={[0, -2.2, 0]}>
         <cylinderGeometry args={[0.35, 0.8, 9, 16]} />
-        <meshStandardMaterial color="#1f2937" metalness={0.8} roughness={0.3} emissive={palette.a} emissiveIntensity={0.3} />
+        <meshStandardMaterial color="#1f2937" metalness={0.8} roughness={0.3} emissive={palette.a} emissiveIntensity={0.7} />
       </mesh>
       <mesh position={[0, 1.8, 0]} rotation-x={Math.PI / 2}>
         <torusGeometry args={[1.6, 0.08, 12, 64]} />
@@ -51,7 +52,7 @@ export const ContactUniverse: React.FC<UniverseProps> = () => {
       <group ref={dish} position={DISH}>
         <mesh rotation={[-Math.PI / 3, 0, 0]}>
           <sphereGeometry args={[2.2, 32, 16, 0, Math.PI * 2, 0, Math.PI / 3]} />
-          <meshStandardMaterial color="#d1d5db" metalness={0.7} roughness={0.25} side={THREE.DoubleSide} />
+          <meshStandardMaterial color="#d1d5db" metalness={0.7} roughness={0.25} emissive="#34d399" emissiveIntensity={0.25} side={THREE.DoubleSide} />
         </mesh>
         <mesh position={[0, 0.9, -0.5]}>
           <sphereGeometry args={[0.18, 16, 16]} />
@@ -74,6 +75,7 @@ export const ContactUniverse: React.FC<UniverseProps> = () => {
           <cylinderGeometry args={[0.12, 0.7, 220, 16, 1, true]} />
           <meshBasicMaterial ref={beamMat} color={[1.2, 3, 2.2]} transparent blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
         </mesh>
+      </group>
       </group>
     </>
   );
