@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { certifications } from '../../../data/portfolio';
-import { CertificateSource, resolveCertificateSource } from '../certificateSource';
+import { CertificateSource, resolveCertificateSource } from '../../../data/certificateSource';
 
 export const CertificateModal: React.FC<{ index: number }> = ({ index }) => {
   const cert = certifications[index];

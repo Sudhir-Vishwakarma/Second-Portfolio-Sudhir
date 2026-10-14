@@ -1,4 +1,4 @@
-import { Certification } from '../../data/portfolio';
+import { Certification } from './portfolio';
 
 export interface CertificateSource { kind: 'pdf' | 'image'; url: string }
 
