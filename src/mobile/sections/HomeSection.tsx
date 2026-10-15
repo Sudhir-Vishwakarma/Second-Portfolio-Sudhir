@@ -3,13 +3,16 @@ import { profile } from '../../data/portfolio';
 import { useTypewriter } from '../../hooks/typewriter';
 import SocialIcons from '../../components/SocialIcons';
 import { SolarHero } from '../SolarHero';
+import { ObjectStage } from '../objects/ObjectStage';
 import { SectionProps } from './registry';
 
 export const HomeSection: React.FC<SectionProps> = () => {
   const word = useTypewriter(profile.typingWords);
   return (
     <div className="mb-home">
-      <SolarHero />
+      <ObjectStage className="mb-solar-stage">
+        <SolarHero />
+      </ObjectStage>
       <span className="mb-kicker" data-reveal>{profile.greeting}</span>
       <h1 className="mb-h1" data-reveal>{profile.firstName}<br />{profile.lastName}</h1>
       <p className="mb-typing" data-reveal>

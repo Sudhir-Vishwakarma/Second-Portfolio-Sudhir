@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { profile } from '../../data/portfolio';
 import { useContactForm } from '../../hooks/contact';
 import { SectionHeading } from '../SectionHeading';
+import { Beacon } from '../objects/Beacon';
 import { SectionProps } from './registry';
 
 // Display handle from the profile URL: its last non-empty path segment.
@@ -14,6 +15,7 @@ export const ContactSection: React.FC<SectionProps> = () => {
     <div className="mb-contact">
       <div className="mb-contact__head">
         <SectionHeading kicker="Contact" title="Let's Connect" />
+        <Beacon signal={beam} />
       </div>
       <ul className="mb-contact__rows">
         <li data-reveal><a className="mb-card mb-row" href={`mailto:${profile.email}`}><span>Email</span>{profile.email}</a></li>

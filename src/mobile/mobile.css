@@ -306,13 +306,6 @@
 }
 .mb-backdrop__nebula--a { top: -70vmax; right: -80vmax; opacity: 0.6; }
 .mb-backdrop__nebula--b { bottom: -80vmax; left: -90vmax; opacity: 0.35; animation-duration: 32s; }
-.mb-backdrop__object {
-  position: absolute; width: 140px; height: 140px; opacity: 0.5; color: var(--accent);
-  top: calc(84px + env(safe-area-inset-top)); right: max(12px, calc((100% - var(--col)) / 2));
-}
-.mb-spin { animation: mb-spin 40s linear infinite; }
-.mb-spin--slow { animation-duration: 90s; }
-.mb-pulse { animation: mb-pulse 2.4s ease-out infinite; transform-origin: 0 0; }
 @keyframes mb-drift { from { transform: translate(0, 0); } to { transform: translate(-6vmax, 4vmax); } }
 @keyframes mb-spin { to { transform: rotate(360deg); } }
 @keyframes mb-pulse { from { transform: scale(0.6); opacity: 0.9; } to { transform: scale(1.6); opacity: 0; } }
@@ -320,9 +313,9 @@
   .mb-backdrop__nebula { background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 45%, transparent), transparent); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mb-backdrop__nebula, .mb-spin, .mb-pulse { animation: none; }
+  .mb-backdrop__nebula { animation: none; }
 }
-.mb.is-reduced .mb-backdrop__nebula, .mb.is-reduced .mb-spin, .mb.is-reduced .mb-pulse { animation: none; }
+.mb.is-reduced .mb-backdrop__nebula { animation: none; }
 
 /* ---------- black hole jump ---------- */
 .mb-universe.is-leaving.is-blackhole {
@@ -410,3 +403,28 @@
 .mb-orbit-panel.mb-jobs { list-style: none; margin: 0; }
 .mb-origin__panel { display: flex; flex-direction: column; gap: 4px; }
 .mb-card + .mb-viewtoggle { margin-top: 20px; }
+
+/* ---------- hero reactions ---------- */
+.mb-orbit {
+  transform: translateY(var(--hero-y, 0px)) perspective(900px)
+    rotateX(calc(var(--hero-rx, 0deg) + var(--hero-drx, 0deg))) rotateY(var(--hero-dry, 0deg));
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.mb-orbit.is-dragging { transition: none; }
+.mb-hero__ripple {
+  position: absolute; width: 24px; height: 24px; margin: -12px 0 0 -12px; border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.7); pointer-events: none; animation: mb-ripple 0.8s ease-out forwards;
+}
+@keyframes mb-ripple { to { transform: scale(9); opacity: 0; } }
+.mb-solar-stage { width: 256px; margin: 8px auto 12px; }
+.mb-solar-stage .mb-solar { margin: 0; }
+.mb-beacon { width: min(100%, 200px); margin: 4px auto 12px; }
+.mb-beacon__lamp { width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 0 16px 6px var(--accent); }
+.mb-beacon__pulse {
+  position: absolute; left: 50%; top: 30%; width: 44%; aspect-ratio: 1 / 1; transform: translate(-50%, -50%);
+  border-radius: 50%; border: 2px solid var(--accent); pointer-events: none; animation: mb-beacon-pulse 1.6s ease-out forwards;
+}
+@keyframes mb-beacon-pulse { from { transform: translate(-50%, -50%) scale(0.4); opacity: 1; } to { transform: translate(-50%, -50%) scale(2.2); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .mb-orbit { transform: none; transition: none; } .mb-beacon__pulse { animation: none; opacity: 0; } }
+.mb.is-reduced .mb-orbit { transform: none; transition: none; }
+.mb.is-reduced .mb-beacon__pulse { animation: none; opacity: 0; }
