@@ -13,7 +13,7 @@ export const BEAM_MS = 2500;
 const DISH: [number, number, number] = [0, 3.4, 0];
 const origin = universeOrigin('contact');
 // A low sun off to the right: long shadows on the lunar surface, Earth half-lit.
-const SUN: Vec3 = [origin[0] + 90, origin[1] + 40, origin[2] + 45];
+const SUN: Vec3 = [origin[0] + 120, origin[1] + 10, origin[2] - 60];
 
 export const ContactUniverse: React.FC<UniverseProps> = () => {
   const dish = useRef<THREE.Group>(null!);
@@ -40,9 +40,9 @@ export const ContactUniverse: React.FC<UniverseProps> = () => {
   return (
     <>
       {/* lunar surface: the top of a huge Moon, the dish stands on it */}
-      <RealPlanet radius={60} map="moon" bump={2.5} tilt={0} spin={0} lightPos={SUN} position={[0, -70, 0]} fallback={PALETTES.certifications} />
+      <RealPlanet radius={60} map="moon" bump={1.0} tilt={Math.PI / 2} spin={0} lightPos={SUN} position={[0, -70, 0]} fallback={PALETTES.certifications} />
       {/* Earth rising behind the dish */}
-      <RealEarth radius={10} lightPos={SUN} position={[-26, 4, -80]} spin={0.03} fallback={PALETTES.about} />
+      <RealEarth radius={10} lightPos={SUN} position={[-26, -26, -80]} spin={0.03} fallback={PALETTES.about} />
       <group scale={1.5}>
         <RadioDish dishRef={dish} dishPos={DISH} />
         <group ref={lights}>
