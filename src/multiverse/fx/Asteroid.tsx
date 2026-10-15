@@ -34,7 +34,7 @@ const useRock = (seed: number, radius: number) => {
     displaceRock(pos.array as Float32Array, seed, 0.32);
     g.computeVertexNormals();
     // Seam-free planar UVs from each vertex's direction, offset per rock so rocks show different patches.
-    const off = (seed * 0.137) % 0.3;
+    const off = ((seed * 0.137) % 0.3) * 0.5; // keeps u, v within [0.15, 1.0] (the shared map clamps at its edges)
     const uv = new Float32Array(pos.count * 2);
     for (let i = 0; i < pos.count; i++) {
       const r = Math.hypot(pos.getX(i), pos.getY(i), pos.getZ(i)) || 1;
