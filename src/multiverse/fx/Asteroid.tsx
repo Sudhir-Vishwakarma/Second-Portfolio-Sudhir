@@ -33,15 +33,13 @@ const useRock = (seed: number, radius: number) => {
     const pos = g.attributes.position;
     displaceRock(pos.array as Float32Array, seed, 0.32);
     g.computeVertexNormals();
-    // Spherical UVs from each vertex's direction, so the lunar map wraps the lumpy shape.
+    // Seam-free planar UVs from each vertex's direction, offset per rock so rocks show different patches.
+    const off = (seed * 0.137) % 0.3;
     const uv = new Float32Array(pos.count * 2);
     for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i);
-      const y = pos.getY(i);
-      const z = pos.getZ(i);
-      const r = Math.hypot(x, y, z) || 1;
-      uv[i * 2] = 0.5 + Math.atan2(z, x) / (2 * Math.PI);
-      uv[i * 2 + 1] = 0.5 + Math.asin(y / r) / Math.PI;
+      const r = Math.hypot(pos.getX(i), pos.getY(i), pos.getZ(i)) || 1;
+      uv[i * 2] = 0.5 + 0.35 * (pos.getX(i) / r) + off;
+      uv[i * 2 + 1] = 0.5 + 0.35 * (pos.getY(i) / r) + off;
     }
     g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     return g;
