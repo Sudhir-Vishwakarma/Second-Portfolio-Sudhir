@@ -65,6 +65,7 @@ export const RealSun: React.FC<{ radius: number; ignite?: boolean }> = ({ radius
     <WithTextures fallback={<ProceduralSun radius={radius} ignite={ignite} />}>
       <SunBody radius={radius} ignite={ignite} />
     </WithTextures>
-    <GlowSprite color={CORONA} scale={radius * 5} />
+    <GlowSprite color={CORONA} scale={radius * 2.4} />
+    <GlowSprite color={CORONA} scale={radius * 4} opacity={0.22} />
   </group>
 );

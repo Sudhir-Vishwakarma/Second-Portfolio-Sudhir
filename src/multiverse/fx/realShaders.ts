@@ -158,7 +158,7 @@ void main(){
   float water=smoothstep(0.02,0.1,day.b-max(day.r,day.g))*(1.0-smoothstep(0.3,0.5,lum(day)));
   vec3 V=normalize(cameraPosition-vWorldPos);
   vec3 H=normalize(L+V);
-  float glint=pow(max(dot(N,H),0.0),70.0)*water*step(0.0,ndl)*0.8;
+  float glint=pow(max(dot(N,H),0.0),32.0)*water*smoothstep(0.0,0.3,ndl)*0.3;
   vec3 col=mix(night*vec3(1.0,0.8,0.55)*1.8,dayCol,smoothstep(-0.15,0.15,ndl))+vec3(1.0,0.96,0.88)*glint;
   float rim=rimOf(N);
   col+=uAtmos*rim*(0.9*smoothstep(-0.25,0.45,ndl)+uHover*1.2);
