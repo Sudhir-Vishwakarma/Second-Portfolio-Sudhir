@@ -405,3 +405,8 @@
 .mb-galaxy__nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: -4px; }
 .mb-galaxy__nav .mb-btn { min-width: 44px; min-height: 44px; padding: 0 14px; }
 .mb-galaxy__count { font-size: 0.85rem; color: var(--muted); min-width: 56px; text-align: center; }
+
+/* ---------- career path & origin system ---------- */
+.mb-orbit-panel.mb-jobs { list-style: none; margin: 0; }
+.mb-origin__panel { display: flex; flex-direction: column; gap: 4px; }
+.mb-card + .mb-viewtoggle { margin-top: 20px; }

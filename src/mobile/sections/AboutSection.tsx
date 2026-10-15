@@ -3,6 +3,9 @@ import { aboutSummary, certifications, education } from '../../data/portfolio';
 import { CertificateSource, resolveCertificateSource } from '../../data/certificateSource';
 import { SectionHeading } from '../SectionHeading';
 import { Sheet } from '../Sheet';
+import { OriginSystem } from '../objects/OriginSystem';
+import { ViewToggle } from '../objects/ViewToggle';
+import { useViewMode } from '../objects/useViewMode';
 import { SectionProps } from './registry';
 
 const CertificateViewer: React.FC<{ index: number }> = ({ index }) => {
@@ -28,11 +31,17 @@ const CertificateViewer: React.FC<{ index: number }> = ({ index }) => {
 
 export const AboutSection: React.FC<SectionProps> = () => {
   const [openCert, setOpenCert] = useState<number | null>(null);
+  const [mode, setMode] = useViewMode('about');
   return (
     <div>
       <SectionHeading kicker="About" title="About Me" />
       <p className="mb-card mb-text" data-reveal>{aboutSummary}</p>
 
+      <ViewToggle mode={mode} onChange={setMode} label="About" />
+      {mode === 'orbit' ? (
+        <OriginSystem onViewCert={setOpenCert} />
+      ) : (
+        <>
       <h3 className="mb-h3" data-reveal>Education</h3>
       <ol className="mb-timeline">
         {education.map((e) => (
@@ -56,6 +65,8 @@ export const AboutSection: React.FC<SectionProps> = () => {
           </li>
         ))}
       </ul>
+        </>
+      )}
 
       <Sheet
         open={openCert !== null}
