@@ -29,7 +29,7 @@ The desktop multiverse doesn't look realistic. Today's planets are code-drawn bl
 |---|---|
 | Style | Photoreal, like NASA (not cinematic sci-fi) |
 | Imagery | Free planet maps from Solar System Scope (CC BY 4.0, based on NASA data), downloaded only after the owner approves the exact file list |
-| Resolution | 2K maps; Home uses 1K copies (it shows many small planets at once) |
+| Resolution | 2K maps, one shared set (≈5.5 MB): a body that appears in several universes reuses the same file (revised during planning; the earlier 1K-copies idea would have added bytes, see §5) |
 | Colour identity | Each universe keeps its feel through which real bodies and sky orientation it shows, not through coloured haze |
 
 ## 3. Universe mapping
@@ -47,18 +47,20 @@ The desktop multiverse doesn't look realistic. Today's planets are code-drawn bl
 ## 4. Architecture
 
 ### Imagery
-- **Files:** `public/textures/` holds about 12 maps at 2K: sun, earth day, earth night, earth clouds, moon, mars, jupiter, saturn, saturn ring (alpha), neptune, and the Milky Way. The 1K copies used by Home live in `public/textures/1k/`.
-- **Manifest:** `src/multiverse/fx/textures.ts` (pure, tested) holds each universe's list of texture URLs and a `texturesFor(universe)` helper used for loading and preloading.
+- **Files:** `public/textures/` holds 11 maps at 2K: sun, earth day, earth night, earth clouds, moon, mars, jupiter, saturn, saturn ring (alpha), neptune, and the Milky Way.
+  - **Source:** they come from Wikimedia Commons (`Solarsystemscope_texture_2k_*`), which hosts the same Solar System Scope maps under CC BY 4.0. Total ≈ 5.5 MB.
+  - **Licence file:** `public/textures/CREDITS.txt` records source and licence.
+- **Manifest:** `src/multiverse/fx/textures.ts` (pure, tested) maps texture keys to URLs and lists which keys each universe uses.
 - **Credit:** a small "Credits" note on the desktop site reads "Planet imagery: Solar System Scope (CC BY 4.0), based on NASA data", with a link.
 
 ### Reusable 3D pieces (`src/multiverse/fx/`)
-- **`RealPlanet`:** a textured sphere with `meshStandardMaterial` (colour map; the same map used as a bump map for relief).
-  - Lit by the universe's star.
+- **`RealPlanet`:** a textured sphere with a custom shader (colour map, plus bump relief derived from the map's brightness).
+  - Lit by its universe's star through an explicit light position, as today's `Planet` is. That way one universe's sun never lights another's planets: all universes stay mounted in one scene, so scene `pointLight`s would leak across them.
   - Optional atmosphere: a slightly larger back-face sphere with a fresnel rim shader in a given colour, brightest on the lit limb.
   - Optional ring: a ring geometry with the Saturn ring alpha map, receiving the planet's light.
   - It keeps the current `Planet` props for highlight, hover and click, so universes swap it in without behaviour changes.
 - **`RealEarth`:** a custom shader that blends the day map and the night-lights map by the sun angle, adds ocean specular glint, and adds a separate slowly rotating cloud sphere and the blue atmosphere.
-- **`RealSun`:** the sun map on an unlit, emissive sphere, plus a soft corona glow sprite. Its position provides the universe's `pointLight`.
+- **`RealSun`:** the sun map on an unlit, emissive sphere with limb darkening, plus a soft corona glow sprite. Its position is the light position for that universe's bodies.
 - **`MilkyWaySky`:** a large inward-facing sphere with the Milky Way map. Rotation and a faint tint are set per universe. It replaces the coloured `Nebula` haze.
 - **`Asteroid`:** code-shaped rock geometry (a displaced icosahedron, seeded per skill) with the moon map as surface.
 - **`Satellite`:** a box body plus 2 solar-panel planes, with metallic and dark-blue panel materials.
@@ -66,7 +68,9 @@ The desktop multiverse doesn't look realistic. Today's planets are code-drawn bl
 - **`starColor(temperatureK)`:** a pure, tested function giving a realistic blackbody RGB.
 
 ### Lighting and finish
-- **Lights:** one `pointLight` per universe at its star, plus very low ambient light so night sides read as dark.
+- **Lights:**
+  - Celestial bodies use their universe's explicit light position (shader uniform).
+  - The global scene lights (`SceneLights`) drop to a very low ambient level so night sides read as dark. They keep one directional light for small man-made objects (satellites, the radio dish).
 - **Colour:** ACES filmic tone mapping with correct colour spaces (sRGB maps).
 - **Bloom:** the existing bloom is tuned so only emissive sources (sun, stars, city lights) glow.
 
@@ -95,11 +99,12 @@ Photos are only surfaces. Everything stays a true 3D object in a 3D scene:
   - Both are disabled under reduced motion (that path already routes to the classic site).
 
 ## 5. Loading and performance
-- **Per universe:** textures load per universe through drei `useTexture` inside Suspense.
-- **Preloading:** while the visitor is in one universe, the next universe's textures are preloaded (`useTexture.preload`) so the jump stays smooth.
-- **First load:** the existing loading screen waits for Home's textures (the 1K set) before revealing the scene.
+- **One shared set, loaded once (revised during planning).** The world keeps every universe mounted at all times, so jumps never compile shaders or stutter. Each image is therefore requested once at start (drei `useTexture` inside Suspense; one request per URL, shared by every body that uses it).
+  - The existing loading screen ("Igniting the sun…", which already tracks asset progress) waits for the set before revealing the scene.
+  - Per-universe lazy loading and 1K copies were dropped: with every universe mounted they would add requests and bytes rather than save them.
+  - Repeat visits load from the browser cache.
 - **Texture settings:** sRGB colour space, mipmaps, anisotropy 4, and at most 2K per map.
-- **Geometry budget:** sphere segments stay as today (64), with about 12 asteroids per Skills belt.
+- **Geometry budget:** sphere segments stay as today (64), with one asteroid per skill (today's crystal count).
 - **Routing:** low-end and no-WebGL devices still get the classic site (unchanged routing).
 - **Phone:** the mobile chunk never imports these modules.
 - **Lighthouse:** desktop performance is measured on the commit before this work and after, and both are reported (recorded, not gated).
@@ -111,7 +116,7 @@ Photos are only surfaces. Everything stays a true 3D object in a 3D scene:
 ## 7. Testing
 - **Unit (Jest):**
   - `starColor` (known temperatures map to expected hues, monotonic blue↔red)
-  - the texture manifest (every universe lists existing files; Home uses only `1k/` files)
+  - the texture manifest (every key's file exists in `public/textures/`; every universe lists only known keys)
   - the asteroid layout (count, radius bounds, deterministic seeds)
 - **Headless (puppeteer-core, WebGL via SwiftShader):**
   - a screenshot of every universe for visual review; each must show lit 3D bodies with a visible day/night line, relief and depth (no flat discs or dot sprites for bodies)
