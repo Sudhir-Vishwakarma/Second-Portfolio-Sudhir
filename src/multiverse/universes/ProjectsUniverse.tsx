@@ -5,7 +5,7 @@ import { Html, Line, useCursor } from '@react-three/drei';
 import { easing } from 'maath';
 import { GlowSprite } from '../fx/GlowSprite';
 import { glowTexture } from '../fx/glow';
-import { PALETTES } from '../fx/palettes';
+import { starColor } from '../fx/starColor';
 import { projects, CONSTELLATIONS, Constellation } from '../../data/portfolio';
 import { layoutGalaxy } from './layout';
 import { useJourney } from '../store';
@@ -19,6 +19,16 @@ export const CONSTELLATION_COLORS: Record<Constellation, string> = {
   'Web Apps': '#f472b6',
 };
 
+// Real star temperatures per constellation (featured projects burn hotter and brighter).
+const STAR_TEMPS: Record<Constellation, number> = {
+  'CRM Platforms': 4200,
+  'Salesforce Portals': 9500,
+  'Real Estate': 6000,
+  'Web Apps': 7500,
+};
+const tempOf = (i: number) => STAR_TEMPS[projects[i].constellation] + (projects[i].featured ? 3000 : 0);
+const CORE = new THREE.Color(1.2, 1.05, 0.9);
+
 const { positions, centers } = layoutGalaxy(projects);
 
 const GalaxyDust: React.FC = () => {
@@ -26,16 +36,16 @@ const GalaxyDust: React.FC = () => {
     const n = 6000;
     const pos = new Float32Array(n * 3);
     const col = new Float32Array(n * 3);
-    const a = new THREE.Color(PALETTES.projects.a);
-    const b = new THREE.Color(PALETTES.projects.b);
-    const c = new THREE.Color();
+    const tmp = new THREE.Color();
     for (let i = 0; i < n; i++) {
       const arm = i % 3;
       const d = Math.pow(Math.random(), 0.6) * 34;
       const t = d * 0.18 + (arm * Math.PI * 2) / 3 + (Math.random() - 0.5) * 0.5;
       pos.set([Math.cos(t) * d, (Math.random() - 0.5) * 2.4 * Math.exp(-d / 20), Math.sin(t) * d], i * 3);
-      c.copy(a).lerp(b, d / 34).multiplyScalar(1.4);
-      col.set([c.r, c.g, c.b], i * 3);
+      const [sr, sg, sb] = starColor(3000 + Math.random() * 9000);
+      const { r, g, b: bl } = tmp.setRGB(sr, sg, sb, THREE.SRGBColorSpace);
+      const k = 1.25 * (1 - d / 34) + 0.35;
+      col.set([r * k, g * k, bl * k], i * 3);
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
@@ -52,8 +62,9 @@ const GalaxyDust: React.FC = () => {
 
 const Star: React.FC<{ index: number; interactive: boolean; wasDragged: () => boolean }> = ({ index, interactive, wasDragged }) => {
   const p = projects[index];
-  const color = CONSTELLATION_COLORS[p.constellation];
-  const bright = useMemo(() => new THREE.Color(color).multiplyScalar(3), [color]);
+  const [sr, sg, sb] = useMemo(() => starColor(tempOf(index)), [index]);
+  const color = useMemo(() => new THREE.Color().setRGB(sr, sg, sb, THREE.SRGBColorSpace), [sr, sg, sb]);
+  const bright = useMemo(() => color.clone().multiplyScalar(1.8), [color]);
   const group = useRef<THREE.Group>(null!);
   const [hovered, setHovered] = useState(false);
   const size = p.featured ? 0.55 : 0.32;
@@ -87,7 +98,8 @@ const Star: React.FC<{ index: number; interactive: boolean; wasDragged: () => bo
         <meshBasicMaterial color={bright} toneMapped={false} />
       </mesh>
       <GlowSprite color={color} scale={p.featured ? 5 : 2.6} opacity={0.8} />
-      {p.featured && <GlowSprite color={color} scale={[9, 0.5, 1]} opacity={0.6} />}
+      <GlowSprite color={color} scale={[p.featured ? 8 : 5, 0.16, 1]} opacity={0.55} />
+      <GlowSprite color={color} scale={[0.16, p.featured ? 8 : 5, 1]} opacity={0.55} />
       {interactive && hovered && (
         <Html center position={[0, size + 1.1, 0]} className="mv-label">
           {p.title}
@@ -150,7 +162,7 @@ export const ProjectsUniverse: React.FC<UniverseProps> = ({ active, preview }) =
   return (
     <group ref={galaxy}>
       <GalaxyDust />
-      <GlowSprite color={PALETTES.projects.b} scale={18} opacity={0.5} />
+      <GlowSprite color={CORE} scale={18} opacity={0.45} />
       {lines.map(({ c, pts }) => (
         <Line key={c} points={pts} color={CONSTELLATION_COLORS[c]} lineWidth={1} transparent opacity={0.25} />
       ))}
