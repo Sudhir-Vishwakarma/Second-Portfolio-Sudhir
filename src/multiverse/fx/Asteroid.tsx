@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { ThreeEvent, useFrame } from '@react-three/fiber';
 import { easing } from 'maath';
+import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { displaceRock } from './rock';
 import { bodyUniforms } from './RealPlanet';
 import { bodyShader } from './realShaders';
@@ -23,9 +24,26 @@ interface AsteroidProps {
 
 const useRock = (seed: number, radius: number) => {
   const geo = useMemo(() => {
-    const g = new THREE.IcosahedronGeometry(radius, 3);
-    displaceRock(g.attributes.position.array as Float32Array, seed, 0.32);
+    // Weld the corners (drop the per-face normals/uvs first) so normals are smooth, then lump it up.
+    const raw = new THREE.IcosahedronGeometry(radius, 5);
+    raw.deleteAttribute('normal');
+    raw.deleteAttribute('uv');
+    const g = mergeVertices(raw);
+    raw.dispose();
+    const pos = g.attributes.position;
+    displaceRock(pos.array as Float32Array, seed, 0.32);
     g.computeVertexNormals();
+    // Spherical UVs from each vertex's direction, so the lunar map wraps the lumpy shape.
+    const uv = new Float32Array(pos.count * 2);
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const y = pos.getY(i);
+      const z = pos.getZ(i);
+      const r = Math.hypot(x, y, z) || 1;
+      uv[i * 2] = 0.5 + Math.atan2(z, x) / (2 * Math.PI);
+      uv[i * 2 + 1] = 0.5 + Math.asin(y / r) / Math.PI;
+    }
+    g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
     return g;
   }, [seed, radius]);
   useEffect(() => () => geo.dispose(), [geo]);
@@ -44,7 +62,7 @@ const RockBody: React.FC<AsteroidProps> = ({ seed, radius, color, lightPos, posi
   const [tex] = useRealTextures(['moon']);
   const geo = useRock(seed, radius);
   const mesh = useRef<THREE.Mesh>(null!);
-  const uniforms = useMemo(() => bodyUniforms(tex, lightPos, { atmos: color, atmosStrength: 0, bump: 1.2 }), [tex, lightPos, color]);
+  const uniforms = useMemo(() => bodyUniforms(tex, lightPos, { atmos: color, atmosStrength: 0, bump: 0.25 }), [tex, lightPos, color]);
   useTumble(mesh, seed, hovered);
   useFrame((_, dt) => easing.damp(uniforms.uHover, 'value', hovered ? 1 : 0, 0.15, dt));
   return (

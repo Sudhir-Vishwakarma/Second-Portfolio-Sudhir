@@ -38,7 +38,7 @@ export const CertificationsUniverse: React.FC<UniverseProps> = ({ active, previe
               <lineSegments geometry={edges}>
                 <lineBasicMaterial color={[1.6, 1.6, 1.7]} toneMapped={false} />
               </lineSegments>
-              <Satellite position={[0, -1.9, 0]} scale={0.6} />
+              <Satellite position={[0, -1.9, 0]} scale={0.9} />
               {active && !preview && (
                 <Html center transform distanceFactor={8} className="mv-plaque">{c.title}</Html>
               )}
