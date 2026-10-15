@@ -42,7 +42,8 @@ export function bodyUniforms(tex: THREE.Texture, [lx, ly, lz]: Vec3, o: { atmos?
   return {
     uMap: { value: tex },
     uLightPos: { value: new THREE.Vector3(lx, ly, lz) },
-    uAtmos: { value: new THREE.Color(o.atmos ?? '#000000') },
+    // Without an atmosphere, a neutral rim colour still carries the hover glow (strength 0 keeps it off otherwise).
+    uAtmos: { value: new THREE.Color(o.atmos ?? '#cfd8e3') },
     uAtmosStrength: { value: o.atmos ? o.atmosStrength ?? 0.6 : 0 },
     uBump: { value: o.bump ?? 1.5 },
     uHover: { value: 0 },
@@ -80,6 +81,7 @@ const RealPlanetBody: React.FC<RealPlanetProps> = ({
   const [tex, ringTex] = useRealTextures(ring ? [map, 'saturnRing'] : [map]);
   const body = useRef<THREE.Mesh>(null!);
   const ringMesh = useRef<THREE.Mesh>(null!);
+  const scaleGroup = useRef<THREE.Group>(null!);
   const [lx, ly, lz] = lightPos;
   const uniforms = useMemo(() => {
     const u = bodyUniforms(tex, [lx, ly, lz], { atmos, atmosStrength, bump });
@@ -105,7 +107,8 @@ const RealPlanetBody: React.FC<RealPlanetProps> = ({
   useFrame((_, dt) => {
     easing.damp(uniforms.uHover, 'value', highlight, 0.2, dt);
     body.current.rotation.y += dt * spin;
-    easing.damp3(body.current.scale, 1 + highlight * 0.25, 0.2, dt);
+    // Hover grows body, ring and atmosphere together so the ring stays outside the planet and the rim stays visible.
+    easing.damp3(scaleGroup.current.scale, 1 + highlight * 0.25, 0.2, dt);
     if (ring) {
       const m = ringMesh.current;
       m.getWorldPosition(uniforms.uRingCenter.value);
@@ -114,25 +117,27 @@ const RealPlanetBody: React.FC<RealPlanetProps> = ({
       const s = m.getWorldScale(scale).x;
       uniforms.uRingInner.value = radius * RING_INNER * s;
       uniforms.uRingOuter.value = radius * RING_OUTER * s;
-      ringUniforms.uRadius.value = radius * s * body.current.scale.x;
+      ringUniforms.uRadius.value = radius * body.current.getWorldScale(scale).x;
     }
   });
 
   return (
     <group position={position}>
-      <group rotation-z={tilt}>
-        <mesh ref={body} onPointerOver={onPointerOver} onPointerOut={onPointerOut} onClick={onClick}>
-          <sphereGeometry args={[radius, 64, 64]} />
-          <shaderMaterial args={[bodyShader]} uniforms={uniforms} />
-        </mesh>
-        {ring && (
-          <mesh ref={ringMesh} rotation-x={-Math.PI / 2} raycast={() => null}>
-            <ringGeometry args={[radius * RING_INNER, radius * RING_OUTER, 128]} />
-            <shaderMaterial args={[ringShader]} uniforms={ringUniforms} transparent side={THREE.DoubleSide} depthWrite={false} />
+      <group ref={scaleGroup}>
+        <group rotation-z={tilt}>
+          <mesh ref={body} onPointerOver={onPointerOver} onPointerOut={onPointerOut} onClick={onClick}>
+            <sphereGeometry args={[radius, 64, 64]} />
+            <shaderMaterial args={[bodyShader]} uniforms={uniforms} />
           </mesh>
-        )}
+          {ring && (
+            <mesh ref={ringMesh} rotation-x={-Math.PI / 2} raycast={() => null}>
+              <ringGeometry args={[radius * RING_INNER, radius * RING_OUTER, 128]} />
+              <shaderMaterial args={[ringShader]} uniforms={ringUniforms} transparent side={THREE.DoubleSide} depthWrite={false} />
+            </mesh>
+          )}
+        </group>
+        {atmos && atmosStrength > 0 && <Atmosphere radius={radius} color={atmos} lightPos={lightPos} strength={atmosStrength} />}
       </group>
-      {atmos && atmosStrength > 0 && <Atmosphere radius={radius} color={atmos} lightPos={lightPos} strength={atmosStrength} />}
     </group>
   );
 };
