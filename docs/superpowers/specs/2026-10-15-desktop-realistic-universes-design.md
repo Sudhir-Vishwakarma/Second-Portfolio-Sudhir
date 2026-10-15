@@ -73,6 +73,27 @@ The desktop multiverse doesn't look realistic. Today's planets are code-drawn bl
 ### Universes
 Each `src/multiverse/universes/*Universe.tsx` replaces its current visual objects with the pieces above, following §3. Labels, `Html` plaques, pointer handlers, portal targets and camera paths are kept as they are.
 
+## 4a. Real 3D depth (owner requirement: "it is supposed to look 3D")
+
+Photos are only surfaces. Everything stays a true 3D object in a 3D scene:
+- **No flat stand-ins:** every celestial body is a real lit 3D mesh. Today's flat glowing discs (About moons, unlit `meshBasicMaterial` bodies) and flat dot sprites for project stars become lit spheres. Stars become small emissive spheres with glow, still in 3D space.
+- **Relief:** bump mapping makes craters, mountains and canyons catch the light along the day/night line (the terminator), so surfaces show depth, not a printed picture.
+- **Shadows:**
+  - Saturn's ring casts a shadow band on the planet, and the planet shades the ring behind it (computed in the shaders, cheap).
+  - Moons and satellites pass in front of and behind their planet correctly (depth-tested).
+- **Motion that shows volume:**
+  - Planets spin on tilted axes, and clouds drift slightly faster than the ground.
+  - Asteroids tumble on random axes and satellites slowly rotate.
+  - Rings are tilted so their ellipse reads as 3D.
+- **Layered depth:**
+  - Each universe places bodies at clearly different distances: a foreground body, the main body and distant bodies.
+  - Star layers sit at several depths, with the Milky Way sky at infinity.
+  - Moving the camera therefore produces real parallax.
+- **Camera parallax:**
+  - The existing pointer parallax (`CameraRig`: ±1.6 x, ±1.0 y) is raised to about ±2.4 x and ±1.5 y.
+  - The camera gains a slow idle drift around the focus point, so visitors see around the planets.
+  - Both are disabled under reduced motion (that path already routes to the classic site).
+
 ## 5. Loading and performance
 - **Per universe:** textures load per universe through drei `useTexture` inside Suspense.
 - **Preloading:** while the visitor is in one universe, the next universe's textures are preloaded (`useTexture.preload`) so the jump stays smooth.
@@ -93,7 +114,8 @@ Each `src/multiverse/universes/*Universe.tsx` replaces its current visual object
   - the texture manifest (every universe lists existing files; Home uses only `1k/` files)
   - the asteroid layout (count, radius bounds, deterministic seeds)
 - **Headless (puppeteer-core, WebGL via SwiftShader):**
-  - a screenshot of every universe for visual review
+  - a screenshot of every universe for visual review; each must show lit 3D bodies with a visible day/night line, relief and depth (no flat discs or dot sprites for bodies)
+  - two screenshots of the same universe with the pointer at opposite corners, which must show parallax (near bodies shift more than far ones)
   - the existing `mv-check` journey (10 steps, no console errors) and interactions (hover, click, portals, panels, certificate viewer)
   - a check with one texture request blocked: no page error, and the fallback renders
 - **Regression:** `classic-check`, `mv-interact reduced-motion`, and the mobile `mh-check` and cosmos checks still pass.
