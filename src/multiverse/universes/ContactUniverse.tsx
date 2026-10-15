@@ -13,7 +13,7 @@ export const BEAM_MS = 2500;
 const DISH: [number, number, number] = [0, 3.4, 0];
 const origin = universeOrigin('contact');
 // A low sun off to the right: long shadows on the lunar surface, Earth half-lit.
-const SUN: Vec3 = [origin[0] + 120, origin[1] + 10, origin[2] - 60];
+const SUN: Vec3 = [origin[0] + 130, origin[1] + 25, origin[2] - 100];
 
 export const ContactUniverse: React.FC<UniverseProps> = () => {
   const dish = useRef<THREE.Group>(null!);
