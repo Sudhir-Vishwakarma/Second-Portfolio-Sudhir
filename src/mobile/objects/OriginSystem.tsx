@@ -66,15 +66,16 @@ export const OriginSystem: React.FC<{ onViewCert: (index: number) => void }> = (
           ))}
         </div>
       </ObjectStage>
+      <div aria-live="polite">
       {sel.kind === 'edu' ? (
-        <div className="mb-card mb-orbit-panel mb-origin__panel" aria-live="polite">
+        <div className="mb-card mb-orbit-panel mb-origin__panel">
           <span className="mb-kicker">Education</span>
           <span className="mb-timeline__years">{edu.years}</span>
           <strong>{edu.title}</strong>
           <span className="mb-timeline__place">{edu.school}</span>
         </div>
       ) : (
-        <div className="mb-card mb-cert mb-orbit-panel" aria-live="polite">
+        <div className="mb-card mb-cert mb-orbit-panel">
           <div>
             <span className="mb-kicker">Certification</span>
             <strong>{cert.title}</strong>
@@ -83,6 +84,7 @@ export const OriginSystem: React.FC<{ onViewCert: (index: number) => void }> = (
           <button className="mb-btn mb-btn--ghost" onClick={() => onViewCert(sel.i)}>View</button>
         </div>
       )}
+      </div>
     </div>
   );
 };

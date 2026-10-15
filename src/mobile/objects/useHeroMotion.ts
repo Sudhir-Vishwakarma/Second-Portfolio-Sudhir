@@ -73,7 +73,7 @@ export function useHeroMotion(ref: RefObject<HTMLElement>, enabled: boolean) {
       const all = typeof el.getAnimations === 'function' ? el.getAnimations({ subtree: true }) : [];
       const anims = all.filter((a) => {
         const name = (a as CSSAnimation).animationName;
-        return name === 'mb-spin' || name === 'mb-spin-rev';
+        return name === 'mb-spin' || name === 'mb-spin-rev' || name === 'mb-orbit';
       });
       anims.forEach((a) => {
         a.playbackRate = BOOST_RATE;

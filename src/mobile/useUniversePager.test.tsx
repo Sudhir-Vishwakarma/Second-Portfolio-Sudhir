@@ -155,6 +155,23 @@ test('Forward onto a closed sheet entry does not lock travel', async () => {
   expect(window.location.hash).toBe('#work');
 });
 
+test('Back onto a stale sheet entry (no sheet open) still travels to its universe', async () => {
+  await jump(1);
+  await act(async () => {
+    window.history.pushState({ mbSheet: true }, '', '#about');
+    window.dispatchEvent(new PopStateEvent('popstate', { state: { mbSheet: true } }));
+  });
+  await jump(3);
+  expect(pager.index).toBe(3);
+  await act(async () => {
+    window.history.replaceState({ mbSheet: true }, '', '#about');
+    window.dispatchEvent(new PopStateEvent('popstate', { state: { mbSheet: true } }));
+  });
+  await advance(1700);
+  expect(pager.index).toBe(1);
+  expect(window.location.hash).toBe('#about');
+});
+
 test('far jumps use the black hole timeline; neighbours keep hyperspeed', async () => {
   await travel(5);
   expect(pager.jumpKind).toBe('blackhole');

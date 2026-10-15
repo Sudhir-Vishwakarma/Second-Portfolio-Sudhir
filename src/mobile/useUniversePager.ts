@@ -91,7 +91,7 @@ export function useUniversePager(initialIndex: number, reducedMotion: boolean): 
     window.history.replaceState({ mbUniverse: UNIVERSE_ORDER[indexRef.current] }, '');
     const onPop = () => {
       const st = window.history.state;
-      if (st && st.mbSheet) return; // the open sheet handles its own entry
+      if (st && st.mbSheet && document.querySelector('.mb-sheet')) return; // an open sheet handles its own entry
       const target = universeForHash(window.location.hash);
       travelRef.current(target ? target.index : 0, { push: false, source: 'history' });
     };

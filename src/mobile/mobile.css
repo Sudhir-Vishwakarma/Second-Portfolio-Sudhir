@@ -334,7 +334,7 @@
 .mb-mapbtn svg { width: 20px; height: 20px; color: #ffb15c; }
 
 /* ---------- object stages (map, orbit views, heroes) ---------- */
-.mb-orbit { position: relative; width: min(100%, 360px); aspect-ratio: 1 / 1; margin: 8px auto 16px; touch-action: pan-y; }
+.mb-orbit { position: relative; width: min(100%, 360px); aspect-ratio: 1 / 1; margin: 8px auto 16px; touch-action: pan-y pinch-zoom; }
 .mb-orbit__art { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .mb-orbit__ring { position: absolute; inset: 0; pointer-events: none; animation: mb-spin var(--period, 60s) linear infinite; }
 .mb-orbit__node {

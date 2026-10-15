@@ -14,7 +14,7 @@ export const Beacon: React.FC<{ signal: number }> = ({ signal }) => {
         <path d="M22,22 Q50,-2 78,22" fill="none" stroke="var(--accent)" strokeOpacity="0.45" strokeWidth="1.6" strokeLinecap="round" />
       </svg>
       {key > 0 && <span key={key} className="mb-beacon__pulse" aria-hidden="true" />}
-      <button className="mb-orbit__node mb-beacon__light" style={{ left: '50%', top: '30%' }} aria-label="Send a signal pulse" onClick={() => setPulses((n) => n + 1)}>
+      <button className="mb-orbit__node mb-beacon__light" style={{ left: '50%', top: '30%' }} aria-label="Flash the beacon light (decorative)" onClick={() => setPulses((n) => n + 1)}>
         <span className="mb-beacon__lamp" />
       </button>
     </ObjectStage>

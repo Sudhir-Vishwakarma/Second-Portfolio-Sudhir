@@ -49,9 +49,9 @@ export const ProjectGalaxy: React.FC<{ filter: ProjectFilter; onDetails: (p: Pro
           <span className="mb-galaxy__tag" style={{ left: `${Math.min(78, Math.max(22, sel.x))}%`, top: `${sel.y}%` }} aria-hidden="true">{sel.title}</span>
         </ObjectStage>
         <div className="mb-galaxy__nav">
-          <button className="mb-btn mb-btn--ghost" aria-label="Previous project" onClick={() => step(-1)}>◀</button>
+          <button className="mb-btn mb-btn--ghost" aria-label="Previous project" onClick={() => step(-1)}>◀&#xFE0E;</button>
           <span className="mb-galaxy__count">{pos + 1} / {order.length}</span>
-          <button className="mb-btn mb-btn--ghost" aria-label="Next project" onClick={() => step(1)}>▶</button>
+          <button className="mb-btn mb-btn--ghost" aria-label="Next project" onClick={() => step(1)}>▶&#xFE0E;</button>
         </div>
       </div>
       <div className="mb-card mb-project mb-orbit-panel" aria-live="polite">
