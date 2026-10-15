@@ -1,7 +1,7 @@
 // fx/RealSun.tsx — the Sun: photosphere map, limb darkening and corona (procedural while the map loads)
 import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { easing } from 'maath';
 import { GlowSprite } from './GlowSprite';
 import { sunShader } from './shaders';
@@ -22,6 +22,7 @@ const useIgnite = (mesh: React.MutableRefObject<THREE.Mesh>, ignite: boolean) =>
 const SunBody: React.FC<{ radius: number; ignite: boolean }> = ({ radius, ignite }) => {
   const [map] = useRealTextures(['sun']);
   const mesh = useRef<THREE.Mesh>(null!);
+  const clock = useThree((s) => s.clock);
   const uniforms = useMemo(() => {
     // sunShader2 scrolls u over time; the default clamp wrap would smear the edge texels into streaks past u=1.
     if (map.wrapS !== THREE.RepeatWrapping) {
@@ -35,7 +36,7 @@ const SunBody: React.FC<{ radius: number; ignite: boolean }> = ({ radius, ignite
   });
   useIgnite(mesh, ignite);
   return (
-    <mesh ref={mesh} scale={ignite ? 0.001 : 1}>
+    <mesh ref={mesh} scale={ignite && clock.elapsedTime * 1000 < WARMUP_MS ? 0.001 : 1}>
       <sphereGeometry args={[radius, 96, 96]} />
       <shaderMaterial args={[sunShader2]} uniforms={uniforms} toneMapped={false} />
     </mesh>
@@ -44,13 +45,14 @@ const SunBody: React.FC<{ radius: number; ignite: boolean }> = ({ radius, ignite
 
 const ProceduralSun: React.FC<{ radius: number; ignite: boolean }> = ({ radius, ignite }) => {
   const mesh = useRef<THREE.Mesh>(null!);
+  const clock = useThree((s) => s.clock);
   const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
   useFrame((state) => {
     uniforms.uTime.value = state.clock.elapsedTime;
   });
   useIgnite(mesh, ignite);
   return (
-    <mesh ref={mesh} scale={ignite ? 0.001 : 1}>
+    <mesh ref={mesh} scale={ignite && clock.elapsedTime * 1000 < WARMUP_MS ? 0.001 : 1}>
       <sphereGeometry args={[radius, 96, 96]} />
       <shaderMaterial args={[sunShader]} uniforms={uniforms} toneMapped={false} />
     </mesh>

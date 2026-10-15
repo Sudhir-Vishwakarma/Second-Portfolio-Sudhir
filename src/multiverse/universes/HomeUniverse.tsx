@@ -1,52 +1,37 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { Html, useCursor } from '@react-three/drei';
-import { easing } from 'maath';
-import { sunShader } from '../fx/shaders';
-import { GlowSprite } from '../fx/GlowSprite';
-import { Planet } from '../fx/Planet';
+import { RealSun } from '../fx/RealSun';
+import { RealEarth } from '../fx/RealEarth';
+import { RealPlanet } from '../fx/RealPlanet';
 import { PALETTES } from '../fx/palettes';
-import { UniverseId, UNIVERSE_LABELS, WARMUP_MS, firstStepOf } from '../journey';
+import { UniverseId, UNIVERSE_LABELS, Vec3, firstStepOf, universeOrigin } from '../journey';
 import { useJourney } from '../store';
 import { UniverseProps } from './index';
 
-interface OrbitDef { universe: UniverseId; orbit: number; size: number; speed: number; bands: number; ring?: boolean; tagline: string }
+type BodyKind = 'earth' | 'jupiter' | 'moon' | 'mars' | 'saturn' | 'neptune';
+interface OrbitDef { universe: UniverseId; orbit: number; size: number; speed: number; body: BodyKind; ring?: boolean; tagline: string }
 
 const ORBITS: OrbitDef[] = [
-  { universe: 'about', orbit: 7, size: 0.7, speed: 0.22, bands: 6, tagline: 'Who I am' },
-  { universe: 'skills', orbit: 9.5, size: 0.8, speed: 0.17, bands: 9, tagline: 'What I build with' },
-  { universe: 'certifications', orbit: 12, size: 0.75, speed: 0.13, bands: 7, tagline: "What I've earned" },
-  { universe: 'work', orbit: 14.5, size: 0.95, speed: 0.1, bands: 10, tagline: "Where I've built" },
-  { universe: 'projects', orbit: 17.5, size: 1.25, speed: 0.08, bands: 14, ring: true, tagline: "Everything I've made" },
-  { universe: 'contact', orbit: 20.5, size: 0.8, speed: 0.06, bands: 8, tagline: 'Open a channel' },
+  { universe: 'about', orbit: 7, size: 0.7, speed: 0.22, body: 'earth', tagline: 'Who I am' },
+  { universe: 'skills', orbit: 9.5, size: 0.9, speed: 0.17, body: 'jupiter', tagline: 'What I build with' },
+  { universe: 'certifications', orbit: 12, size: 0.6, speed: 0.13, body: 'moon', tagline: "What I've earned" },
+  { universe: 'work', orbit: 14.5, size: 0.8, speed: 0.1, body: 'mars', tagline: "Where I've built" },
+  { universe: 'projects', orbit: 17.5, size: 1.15, speed: 0.08, body: 'saturn', ring: true, tagline: "Everything I've made" },
+  { universe: 'contact', orbit: 20.5, size: 0.85, speed: 0.06, body: 'neptune', tagline: 'Open a channel' },
 ];
-
-// HDR glow colour (components above 1 are intentional)
-const SUN_GLOW = new THREE.Color(1.3, 0.45, 0.08);
-
-const Sun: React.FC = () => {
-  const mesh = useRef<THREE.Mesh>(null!);
-  const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
-  useFrame((state, dt) => {
-    uniforms.uTime.value = state.clock.elapsedTime;
-    // ignite once the loader lifts
-    easing.damp3(mesh.current.scale, state.clock.elapsedTime * 1000 > WARMUP_MS ? 1 : 0.001, 1.0, dt);
-    mesh.current.rotation.y += dt * 0.03;
-  });
-  return (
-    <group>
-      <mesh ref={mesh} scale={0.001}>
-        <sphereGeometry args={[3, 96, 96]} />
-        <shaderMaterial args={[sunShader]} uniforms={uniforms} toneMapped={false} />
-      </mesh>
-      <GlowSprite color={SUN_GLOW} scale={15} />
-    </group>
-  );
+const ATMOS: Partial<Record<BodyKind, [string, number]>> = {
+  mars: ['#e8a07a', 0.35],
+  jupiter: ['#f0dcb4', 0.25],
+  saturn: ['#f0e0b8', 0.2],
+  neptune: ['#8fb8ff', 0.6],
 };
+// The Sun sits at Home's origin and lights every portal planet.
+const SUN: Vec3 = universeOrigin('home');
 
 const OrbitingPlanet: React.FC<{ def: OrbitDef; index: number; active: boolean; preview?: boolean }> = ({ def, index, active, preview }) => {
-  const pivot = useRef<THREE.Group>(null!);
+  const pivot = React.useRef<THREE.Group>(null!);
   const [hovered, setHovered] = useState(false);
   const interactive = active && !preview;
 
@@ -59,33 +44,45 @@ const OrbitingPlanet: React.FC<{ def: OrbitDef; index: number; active: boolean; 
     pivot.current.rotation.y = index * 1.7 + state.clock.elapsedTime * def.speed;
   });
 
+  const handlers = {
+    onPointerOver: (e: { stopPropagation: () => void }) => {
+      if (!interactive) return;
+      e.stopPropagation();
+      setHovered(true);
+    },
+    onPointerOut: () => setHovered(false),
+    onClick: (e: { stopPropagation: () => void }) => {
+      if (!interactive) return;
+      e.stopPropagation();
+      useJourney.getState().jump(firstStepOf(def.universe));
+    },
+  };
+  const highlight = hovered ? 1 : 0;
+  const fallback = PALETTES[def.universe];
+
   return (
     <>
       <mesh rotation-x={-Math.PI / 2}>
         <ringGeometry args={[def.orbit - 0.015, def.orbit + 0.015, 192]} />
-        <meshBasicMaterial color={PALETTES[def.universe].atmos} transparent opacity={hovered ? 0.55 : 0.14} side={THREE.DoubleSide} />
+        <meshBasicMaterial color="#cbd5e1" transparent opacity={hovered ? 0.45 : 0.08} side={THREE.DoubleSide} />
       </mesh>
       <group ref={pivot}>
         <group position={[def.orbit, 0, 0]}>
-          <Planet
-            radius={def.size}
-            palette={PALETTES[def.universe]}
-            bands={def.bands}
-            ring={def.ring}
-            lightPos={[0, 0, 0]}
-            highlight={hovered ? 1 : 0}
-            onPointerOver={(e) => {
-              if (!interactive) return;
-              e.stopPropagation();
-              setHovered(true);
-            }}
-            onPointerOut={() => setHovered(false)}
-            onClick={(e) => {
-              if (!interactive) return;
-              e.stopPropagation();
-              useJourney.getState().jump(firstStepOf(def.universe));
-            }}
-          />
+          {def.body === 'earth' ? (
+            <RealEarth radius={def.size} lightPos={SUN} highlight={highlight} fallback={fallback} {...handlers} />
+          ) : (
+            <RealPlanet
+              radius={def.size}
+              map={def.body}
+              ring={def.ring}
+              atmos={ATMOS[def.body]?.[0]}
+              atmosStrength={ATMOS[def.body]?.[1]}
+              lightPos={SUN}
+              highlight={highlight}
+              fallback={fallback}
+              {...handlers}
+            />
+          )}
           {interactive && (
             <Html center position={[0, def.size + 0.9, 0]} className="mv-label">
               <span className="mv-label__inner" style={{ display: 'inline-block', transform: hovered ? 'scale(1.15)' : 'none', transition: 'transform 0.2s' }}>
@@ -102,7 +99,7 @@ const OrbitingPlanet: React.FC<{ def: OrbitDef; index: number; active: boolean; 
 
 export const HomeUniverse: React.FC<UniverseProps> = ({ active, preview }) => (
   <group rotation-x={0.08}>
-    <Sun />
+    <RealSun radius={3} ignite />
     {ORBITS.map((def, i) => (
       <OrbitingPlanet key={def.universe} def={def} index={i} active={active} preview={preview} />
     ))}
