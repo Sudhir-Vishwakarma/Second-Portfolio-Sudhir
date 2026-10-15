@@ -29,6 +29,9 @@ const UiLayer: React.FC = () => {
       <Progress />
       <ScrollHint />
       <ModalHost />
+      <a className="mv-credits" href="https://www.solarsystemscope.com/textures/" target="_blank" rel="noopener noreferrer">
+        Planet imagery: Solar System Scope (CC BY 4.0)
+      </a>
     </div>
   );
 };
