@@ -7,6 +7,7 @@ import { Hyperspace } from './fx/Hyperspace';
 import { PostFX } from './fx/PostFX';
 import { World } from './world/World';
 import { SceneLights } from './fx/SceneLights';
+import { MilkyWaySky } from './fx/MilkyWaySky';
 import { useJourney } from './store';
 import { stepForHash } from './journey';
 import { useJourneyInput } from './input';
@@ -82,6 +83,7 @@ const Multiverse: React.FC<MultiverseProps> = ({ onFail }) => {
         <color attach="background" args={['#000004']} />
         <SceneLights />
         <CameraRig />
+        <MilkyWaySky />
         <Starfield />
         <Hyperspace />
         <World />

@@ -4,6 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { RenderTexture, Sparkles } from '@react-three/drei';
 import { PALETTES } from './palettes';
 import { SceneLights } from './SceneLights';
+import { MilkyWaySky } from './MilkyWaySky';
 import { UniverseId, portalCenter, universeOrigin } from '../journey';
 
 const PORTAL_RADIUS = 5;
@@ -59,6 +60,7 @@ export const Portal: React.FC<PortalProps> = ({ universe, warm, children }) => {
           <RenderTexture attach="uniforms-map-value" width={PREVIEW_SIZE} height={PREVIEW_SIZE} samples={0} frames={near ? Infinity : 0}>
             <color attach="background" args={['#020108']} />
             <SceneLights />
+            <MilkyWaySky universe={universe} />
             {/* RenderTexture's scene is detached from this mesh, so place the preview at the universe's world origin
                 (the parent offset plus the -center undo); it then lines up with the real universe */}
             <group position={origin}>{near && children}</group>

@@ -16,7 +16,7 @@ export const PostFX: React.FC<{ bloom: boolean }> = ({ bloom }) => {
   const vignette = <Vignette eskil={false} offset={0.25} darkness={0.85} />;
   return bloom ? (
     <EffectComposer multisampling={0}>
-      <Bloom mipmapBlur intensity={1.15} luminanceThreshold={0.85} luminanceSmoothing={0.2} radius={0.75} />
+      <Bloom mipmapBlur intensity={1.15} luminanceThreshold={1.0} luminanceSmoothing={0.2} radius={0.75} />
       {aberration}
       {vignette}
     </EffectComposer>

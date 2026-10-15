@@ -9,7 +9,7 @@ export const Starfield: React.FC = () => {
   useFrame(({ camera }) => group.current.position.copy(camera.position));
   return (
     <group ref={group}>
-      <Stars radius={120} depth={60} count={6000} factor={4} saturation={0.4} fade speed={0.6} />
+      <Stars radius={120} depth={60} count={6000} factor={4} saturation={0.1} fade speed={0.6} />
     </group>
   );
 };

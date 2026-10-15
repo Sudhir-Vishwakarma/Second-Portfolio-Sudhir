@@ -26,7 +26,11 @@ export const CameraRig: React.FC = () => {
       ready.current = true;
     }
 
-    target.set(pose.pos[0] + state.pointer.x * 1.6, pose.pos[1] + state.pointer.y * 1.0, pose.pos[2]);
+    // Stronger pointer parallax plus a slow idle drift, so near bodies visibly move against far ones.
+    const t = state.clock.elapsedTime;
+    const driftX = s.moving ? 0 : Math.sin(t * 0.11) * 1.2;
+    const driftY = s.moving ? 0 : Math.cos(t * 0.09) * 0.6;
+    target.set(pose.pos[0] + state.pointer.x * 2.4 + driftX, pose.pos[1] + state.pointer.y * 1.5 + driftY, pose.pos[2]);
     goalLook.set(...pose.look);
     const warping = s.moving && s.moveKind === 'warp';
     easing.damp3(cam.position, target, warping ? 0.85 : 0.6, dt);
