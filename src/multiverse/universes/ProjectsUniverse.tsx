@@ -21,12 +21,12 @@ export const CONSTELLATION_COLORS: Record<Constellation, string> = {
 
 // Real star temperatures per constellation (featured projects burn hotter and brighter).
 const STAR_TEMPS: Record<Constellation, number> = {
-  'CRM Platforms': 4200,
-  'Salesforce Portals': 9500,
-  'Real Estate': 6000,
+  'CRM Platforms': 3600,
+  'Salesforce Portals': 12000,
+  'Real Estate': 5500,
   'Web Apps': 7500,
 };
-const tempOf = (i: number) => STAR_TEMPS[projects[i].constellation] + (projects[i].featured ? 3000 : 0);
+const tempOf = (i: number) => STAR_TEMPS[projects[i].constellation] + (projects[i].featured ? 800 : 0);
 const CORE = new THREE.Color(1.2, 1.05, 0.9);
 
 const { positions, centers } = layoutGalaxy(projects);
@@ -63,8 +63,11 @@ const GalaxyDust: React.FC = () => {
 const Star: React.FC<{ index: number; interactive: boolean; wasDragged: () => boolean }> = ({ index, interactive, wasDragged }) => {
   const p = projects[index];
   const [sr, sg, sb] = useMemo(() => starColor(tempOf(index)), [index]);
-  const color = useMemo(() => new THREE.Color().setRGB(sr, sg, sb, THREE.SRGBColorSpace), [sr, sg, sb]);
-  const bright = useMemo(() => color.clone().multiplyScalar(1.8), [color]);
+  const color = useMemo(() => {
+    const m = Math.max(sr, sg, sb) || 1;
+    return new THREE.Color().setRGB(sr / m, sg / m, sb / m, THREE.SRGBColorSpace);
+  }, [sr, sg, sb]);
+  const bright = useMemo(() => color.clone().multiplyScalar(1.1), [color]);
   const group = useRef<THREE.Group>(null!);
   const [hovered, setHovered] = useState(false);
   const size = p.featured ? 0.55 : 0.32;
@@ -97,9 +100,9 @@ const Star: React.FC<{ index: number; interactive: boolean; wasDragged: () => bo
         <sphereGeometry args={[size, 24, 24]} />
         <meshBasicMaterial color={bright} toneMapped={false} />
       </mesh>
-      <GlowSprite color={color} scale={p.featured ? 5 : 2.6} opacity={0.8} />
-      <GlowSprite color={color} scale={[p.featured ? 8 : 5, 0.16, 1]} opacity={0.55} />
-      <GlowSprite color={color} scale={[0.16, p.featured ? 8 : 5, 1]} opacity={0.55} />
+      <GlowSprite color={color} scale={p.featured ? 5 : 2.6} opacity={0.55} />
+      <GlowSprite color={color} scale={[p.featured ? 8 : 5, 0.16, 1]} opacity={0.35} />
+      <GlowSprite color={color} scale={[0.16, p.featured ? 8 : 5, 1]} opacity={0.35} />
       {interactive && hovered && (
         <Html center position={[0, size + 1.1, 0]} className="mv-label">
           {p.title}
