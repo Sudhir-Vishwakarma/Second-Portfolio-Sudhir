@@ -190,7 +190,7 @@
   border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.06); color: #fff; font-size: 1.4rem;
 }
 .mb-sheet--full .mb-sheet__close { top: calc(8px + env(safe-area-inset-top)); }
-.mb-sheet__body { overflow-y: auto; overscroll-behavior: contain; padding-top: 12px; -webkit-overflow-scrolling: touch; }
+.mb-sheet__body { overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding-top: 12px; -webkit-overflow-scrolling: touch; }
 .mb-cert-viewer { display: flex; flex-direction: column; gap: 14px; align-items: center; padding-top: 32px; }
 .mb-cert-viewer h3 { margin: 0; text-align: center; font-size: 1rem; padding: 0 44px; }
 .mb-cert-viewer img { max-width: 100%; border-radius: 10px; background: #fff; }
@@ -269,7 +269,7 @@
 .mb--pager { height: 100vh; height: 100dvh; min-height: 0; overflow: hidden; }
 .mb-universe { position: fixed; inset: 0; z-index: 1; will-change: transform, opacity; }
 .mb-universe__scroll {
-  position: absolute; inset: 0; overflow-y: auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch;
+  position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch;
   z-index: 1;
 }
 .mb-universe .mb-section { padding-bottom: 0; }

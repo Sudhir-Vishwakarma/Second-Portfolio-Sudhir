@@ -41,6 +41,10 @@ export function useHeroMotion(ref: RefObject<HTMLElement>, enabled: boolean) {
     };
     const onMove = (e: PointerEvent) => {
       if (!start || e.pointerId !== start.id) return;
+      if (e.pointerType === 'mouse' && e.buttons === 0) {
+        onEnd(); // mouse released outside the stage
+        return;
+      }
       const dx = e.clientX - start.x;
       const dy = e.clientY - start.y;
       if (!dragged && !isDrag(dx, dy)) return;
@@ -66,7 +70,11 @@ export function useHeroMotion(ref: RefObject<HTMLElement>, enabled: boolean) {
     };
     const onClick = (e: MouseEvent) => {
       if ((e.target as Element).closest('button, a')) return;
-      const anims = typeof el.getAnimations === 'function' ? el.getAnimations({ subtree: true }) : [];
+      const all = typeof el.getAnimations === 'function' ? el.getAnimations({ subtree: true }) : [];
+      const anims = all.filter((a) => {
+        const name = (a as CSSAnimation).animationName;
+        return name === 'mb-spin' || name === 'mb-spin-rev';
+      });
       anims.forEach((a) => {
         a.playbackRate = BOOST_RATE;
       });

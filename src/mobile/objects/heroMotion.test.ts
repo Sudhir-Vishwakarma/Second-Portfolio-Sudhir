@@ -7,9 +7,10 @@ test('constants', () => {
 test('scrollHero drifts at 0.4x the scroll (the hero moves 0.6x as fast as the page), clamped, and tilts back up to 8 degrees', () => {
   expect(scrollHero(0, 300)).toEqual({ y: 0, rx: 0 });
   const mid = scrollHero(100, 300);
-  expect(mid.y).toBeCloseTo(40);
+  expect(mid.y).toBe(16);
   expect(mid.rx).toBeCloseTo(8 / 3);
-  expect(scrollHero(1000, 300)).toEqual({ y: 75, rx: 8 });
+  expect(scrollHero(20, 300).y).toBeCloseTo(8);
+  expect(scrollHero(1000, 300)).toEqual({ y: 16, rx: 8 });
   expect(scrollHero(-50, 300)).toEqual({ y: 0, rx: 0 });
   expect(scrollHero(100, 0)).toEqual({ y: 0, rx: 0 });
 });

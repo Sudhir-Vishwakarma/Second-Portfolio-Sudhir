@@ -1,7 +1,8 @@
 export const DRAG_THRESHOLD = 8;
 export const MAX_DRAG_TILT = 12;
 export const MAX_SCROLL_TILT = 8;
-const DRIFT = 0.4; // the hero lags the page: it moves at 0.6x the scroll speed
+export const MAX_DRIFT_PX = 16; // small, so the hero never paints over or takes taps from content below it
+const DRIFT = 0.4; // the hero lags the page: 0.6x the scroll speed until the cap
 const MAX_DRIFT = 0.25; // of the hero's height
 
 const clamp = (v: number, lo = -1, hi = 1) => Math.max(lo, Math.min(hi, v));
@@ -10,7 +11,7 @@ const clamp = (v: number, lo = -1, hi = 1) => Math.max(lo, Math.min(hi, v));
 export function scrollHero(scrollTop: number, heroHeight: number): { y: number; rx: number } {
   if (heroHeight <= 0 || scrollTop <= 0) return { y: 0, rx: 0 };
   return {
-    y: Math.min(scrollTop * DRIFT, heroHeight * MAX_DRIFT),
+    y: Math.min(scrollTop * DRIFT, heroHeight * MAX_DRIFT, MAX_DRIFT_PX),
     rx: clamp(scrollTop / heroHeight, 0, 1) * MAX_SCROLL_TILT,
   };
 }
