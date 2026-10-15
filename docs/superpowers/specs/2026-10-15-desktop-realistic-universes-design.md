@@ -1,0 +1,105 @@
+# Desktop Realistic Universes: Design Spec
+
+**Date:** 2026-10-15
+**Status:** Approved in conversation; awaiting written-spec review
+**Owner:** Sudhir Vishwakarma
+**Builds on:** `docs/superpowers/specs/2026-10-14-multiverse-portfolio-design.md` (the desktop 3D multiverse)
+**Branch:** `worktree-multiverse` (local only; the owner pushes and deploys)
+
+## 1. Goal
+
+The desktop multiverse doesn't look realistic. Today's planets are code-drawn blotches lit evenly all round, moons are flat glowing discs, and every universe sits in coloured haze. The owner wants **every universe to look like real space, NASA-photo style**: real planet surfaces, lit by a star (a bright day side and a dark night side), thin atmospheres, a real Milky Way sky and a real Sun.
+
+### Success criteria
+- **Real look:** every one of the 7 desktop universes uses real planet imagery and physically based lighting, following the mapping in §3.
+- **Unchanged behaviour:** content, panels, navigation, hyperspeed/portal jumps, camera paths, labels, hover and click interactions all work as before.
+- **No regressions:** the phone site and classic site are untouched. The phone site downloads none of the new images.
+- **Graceful failure:** a missing or slow image never breaks or blanks the scene; that object falls back to today's procedural look.
+- **Build and tests:** `CI=true npm run build` → "Compiled successfully.", all tests pass, and the existing desktop, classic and mobile headless checks pass.
+- **Speed:** desktop Lighthouse performance is measured before and after and reported.
+
+### Non-goals
+- No content changes; strings stay in `src/data/portfolio.ts`.
+- No changes to the phone or classic sites.
+- No cinematic extras (lens flare, film grain, depth of field), no new dependencies, and no deployment.
+
+## 2. Decisions made
+
+| Decision | Choice |
+|---|---|
+| Style | Photoreal, like NASA (not cinematic sci-fi) |
+| Imagery | Free planet maps from Solar System Scope (CC BY 4.0, based on NASA data), downloaded only after the owner approves the exact file list |
+| Resolution | 2K maps; Home uses 1K copies (it shows many small planets at once) |
+| Colour identity | Each universe keeps its feel through which real bodies and sky orientation it shows, not through coloured haze |
+
+## 3. Universe mapping
+
+| Universe | Realistic version |
+|---|---|
+| **Home** | The Sun (textured, corona) orbited by real planets that are the universe portals: Earth, Mars, Jupiter, Saturn (rings), Neptune, the Moon. Each portal planet keeps its current universe, label, hover and click. |
+| **About** | Earth (day/night, city lights, ocean glint, clouds, atmosphere) orbited by 4 real cratered moons, one per education entry, with their current labels and interactions |
+| **Skills** | A gas giant (Jupiter) with a rocky asteroid belt; each skill is a lit asteroid carrying its existing label and hover behaviour |
+| **Certifications** | The Moon, orbited by metal satellites with solar panels; each carries its existing certificate plaque and viewer behaviour |
+| **Work** | 3 real planets in career order: Mars (oldest), Jupiter, Saturn with rings (newest, Realatte), with the existing labels |
+| **Projects** | A real star field: each project is a star coloured by a realistic star temperature (blue-white to orange; featured = hotter and brighter), with subtle diffraction spikes; existing labels, constellations and interactions stay |
+| **Contact** | A radio telescope dish on the Moon's surface with Earth rising behind it; the existing signal and beam behaviour stays |
+
+## 4. Architecture
+
+### Imagery
+- **Files:** `public/textures/` holds about 12 maps at 2K: sun, earth day, earth night, earth clouds, moon, mars, jupiter, saturn, saturn ring (alpha), neptune, and the Milky Way. The 1K copies used by Home live in `public/textures/1k/`.
+- **Manifest:** `src/multiverse/fx/textures.ts` (pure, tested) holds each universe's list of texture URLs and a `texturesFor(universe)` helper used for loading and preloading.
+- **Credit:** a small "Credits" note on the desktop site reads "Planet imagery: Solar System Scope (CC BY 4.0), based on NASA data", with a link.
+
+### Reusable 3D pieces (`src/multiverse/fx/`)
+- **`RealPlanet`:** a textured sphere with `meshStandardMaterial` (colour map; the same map used as a bump map for relief).
+  - Lit by the universe's star.
+  - Optional atmosphere: a slightly larger back-face sphere with a fresnel rim shader in a given colour, brightest on the lit limb.
+  - Optional ring: a ring geometry with the Saturn ring alpha map, receiving the planet's light.
+  - It keeps the current `Planet` props for highlight, hover and click, so universes swap it in without behaviour changes.
+- **`RealEarth`:** a custom shader that blends the day map and the night-lights map by the sun angle, adds ocean specular glint, and adds a separate slowly rotating cloud sphere and the blue atmosphere.
+- **`RealSun`:** the sun map on an unlit, emissive sphere, plus a soft corona glow sprite. Its position provides the universe's `pointLight`.
+- **`MilkyWaySky`:** a large inward-facing sphere with the Milky Way map. Rotation and a faint tint are set per universe. It replaces the coloured `Nebula` haze.
+- **`Asteroid`:** code-shaped rock geometry (a displaced icosahedron, seeded per skill) with the moon map as surface.
+- **`Satellite`:** a box body plus 2 solar-panel planes, with metallic and dark-blue panel materials.
+- **`RadioDish`:** a lathe-geometry dish on a mast, metallic.
+- **`starColor(temperatureK)`:** a pure, tested function giving a realistic blackbody RGB.
+
+### Lighting and finish
+- **Lights:** one `pointLight` per universe at its star, plus very low ambient light so night sides read as dark.
+- **Colour:** ACES filmic tone mapping with correct colour spaces (sRGB maps).
+- **Bloom:** the existing bloom is tuned so only emissive sources (sun, stars, city lights) glow.
+
+### Universes
+Each `src/multiverse/universes/*Universe.tsx` replaces its current visual objects with the pieces above, following §3. Labels, `Html` plaques, pointer handlers, portal targets and camera paths are kept as they are.
+
+## 5. Loading and performance
+- **Per universe:** textures load per universe through drei `useTexture` inside Suspense.
+- **Preloading:** while the visitor is in one universe, the next universe's textures are preloaded (`useTexture.preload`) so the jump stays smooth.
+- **First load:** the existing loading screen waits for Home's textures (the 1K set) before revealing the scene.
+- **Texture settings:** sRGB colour space, mipmaps, anisotropy 4, and at most 2K per map.
+- **Geometry budget:** sphere segments stay as today (64), with about 12 asteroids per Skills belt.
+- **Routing:** low-end and no-WebGL devices still get the classic site (unchanged routing).
+- **Phone:** the mobile chunk never imports these modules.
+- **Lighthouse:** desktop performance is measured on the commit before this work and after, and both are reported (recorded, not gated).
+
+## 6. Error handling
+- **Failed image:** each textured object sits in its own error boundary plus Suspense fallback. If its texture fails to load, the object renders today's procedural `Planet` (or equivalent), so the scene stays complete with no uncaught errors.
+- **Crash:** the existing app-level ErrorBoundary still falls back to the classic site.
+
+## 7. Testing
+- **Unit (Jest):**
+  - `starColor` (known temperatures map to expected hues, monotonic blue↔red)
+  - the texture manifest (every universe lists existing files; Home uses only `1k/` files)
+  - the asteroid layout (count, radius bounds, deterministic seeds)
+- **Headless (puppeteer-core, WebGL via SwiftShader):**
+  - a screenshot of every universe for visual review
+  - the existing `mv-check` journey (10 steps, no console errors) and interactions (hover, click, portals, panels, certificate viewer)
+  - a check with one texture request blocked: no page error, and the fallback renders
+- **Regression:** `classic-check`, `mv-interact reduced-motion`, and the mobile `mh-check` and cosmos checks still pass.
+- **Build:** `CI=true npm run build` → "Compiled successfully."
+
+## 8. Constraints
+- Work on branch `worktree-multiverse` with local commits only. Never push or deploy.
+- CRA 5, React 18, TypeScript 4.9, three 0.165, @react-three/fiber 8, drei 9. No new dependencies.
+- Downloading the imagery requires the owner's explicit approval of the exact file list (names, source, sizes) at build time.
