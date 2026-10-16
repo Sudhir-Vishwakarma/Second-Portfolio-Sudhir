@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { RenderTexture, Sparkles } from '@react-three/drei';
@@ -6,14 +6,16 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 import { SceneLights } from './SceneLights';
 import { MilkyWaySky } from './MilkyWaySky';
 import { glowTexture } from './glow';
-import { edgeSegments, honeycombRing, openEdges, perimeterPath, Segment } from './hexGate';
+import { edgeSegments, honeycombRing, openEdges, perimeterPath, Segment, sharedEdge } from './hexGate';
 import { UniverseId, portalCenter, universeOrigin } from '../journey';
 
 const PORTAL_RADIUS = 5;
 const VISIBLE_RANGE = 260;
 const PREVIEW_SIZE = 512;
-const APPROACH = 120; // camera distance over which the honeycomb lights up
-const OPEN_AT = 18; // camera distance at which the outer cells start sliding away
+// Portals are only ever seen mid-warp (resting poses sit beyond VISIBLE_RANGE), so these span most of the visible run.
+const APPROACH = 240; // camera distance over which the honeycomb lights up
+const OPEN_AT = 35; // camera distance at which the outer cells start sliding away
+const IDLE_LIGHT = 0.5; // cell brightness before its light-up, so the gate already glows at first sight
 const BAR_WIDTH = 0.14;
 const BAR_DEPTH = 0.05;
 
@@ -36,10 +38,11 @@ function barGeometry(segs: { seg: Segment; cell: number }[]): THREE.BufferGeomet
   return mergeGeometries(parts)!;
 }
 
-// Built once and shared by all six portals (the gate is identical everywhere).
+// Built once and shared by all six portals (the gate is identical everywhere): app-lifetime singletons, never disposed.
 const RIM_GEOMETRY = barGeometry(edgeSegments([0, 0], R, []).map((seg) => ({ seg, cell: -1 })));
+// Each edge shared by neighbours k and k+1 is drawn once, by k+1.
 const CELL_EDGE_GEOMETRY = barGeometry(
-  RING.flatMap((c, k) => edgeSegments(c, R, openEdges(k)).map((seg) => ({ seg, cell: k })))
+  RING.flatMap((c, k) => edgeSegments(c, R, [...openEdges(k), sharedEdge(k)]).map((seg) => ({ seg, cell: k })))
 );
 const NET_GEOMETRY = mergeGeometries(
   RING.map(([x, y], k) => {
@@ -59,7 +62,7 @@ void main() {
 }`;
 
 // The preview is rendered with the main camera, so sampling it in screen space makes the hexagon a window.
-// A faint orange haze hugs the hexagonal rim (kept below 1.0 so it never blooms).
+// A faint orange haze (at most 0.35) is added on top of the preview, hugging the hexagonal rim.
 const previewFragment = /* glsl */ `
 uniform sampler2D map;
 uniform vec2 uResolution;
@@ -144,7 +147,8 @@ export const Portal: React.FC<PortalProps> = ({ universe, warm, children }) => {
     }),
     []
   );
-  const rim = useMemo(() => new THREE.MeshBasicMaterial({ color: new THREE.Color(ORANGE.x, ORANGE.y, ORANGE.z),toneMapped: false }), []);
+  const rim = useMemo(() => new THREE.MeshBasicMaterial({ color: new THREE.Color(ORANGE.x, ORANGE.y, ORANGE.z), toneMapped: false }), []);
+  useEffect(() => () => rim.dispose(), [rim]);
   const cells = useMemo(
     () => ({
       uLight: { value: [0, 0, 0, 0, 0, 0] },
@@ -174,7 +178,7 @@ export const Portal: React.FC<PortalProps> = ({ universe, warm, children }) => {
     const pulse = 1 + 0.15 * Math.sin(t * 2.2);
     for (let k = 0; k < 6; k++) {
       const on = (k / 6) * 0.8;
-      cells.uLight.value[k] = (0.25 + 0.75 * smooth(on, on + 0.12, a)) * pulse;
+      cells.uLight.value[k] = (IDLE_LIGHT + (1 - IDLE_LIGHT) * smooth(on, on + 0.12, a)) * pulse;
     }
     cells.uSpread.value = open * 1.5 * R;
     cells.uFade.value = 1 - 0.9 * open;
@@ -193,9 +197,9 @@ export const Portal: React.FC<PortalProps> = ({ universe, warm, children }) => {
   return (
     <group ref={group} position={center}>
       {/* nebula wisp: dark teal smoke behind the gate (normal blending, so it never glows) */}
-      {([[-6, 4, -6, 46, 0.42], [7, -3, -8, 40, 0.35], [1, 8, -10, 34, 0.3]] as const).map(([x, y, z, s, o], i) => (
+      {([[-6, 4, -6, 46, 0.6], [7, -3, -8, 40, 0.5], [1, 8, -10, 34, 0.45]] as const).map(([x, y, z, s, o], i) => (
         <sprite key={i} position={[x, y, z]} scale={[s, s * 0.6, 1]}>
-          <spriteMaterial map={glowTexture} color="#0e3a44" transparent opacity={o} depthWrite={false} />
+          <spriteMaterial map={glowTexture} color="#1b5c68" transparent opacity={o} depthWrite={false} />
         </sprite>
       ))}
       <mesh>

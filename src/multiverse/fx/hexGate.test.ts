@@ -1,4 +1,4 @@
-import { hexCorners, honeycombRing, edgeSegments, openEdges, facingEdge, perimeterPath } from './hexGate';
+import { hexCorners, honeycombRing, edgeSegments, openEdges, facingEdge, perimeterPath, sharedEdge } from './hexGate';
 
 const close = (a: number, b: number) => expect(a).toBeCloseTo(b, 6);
 
@@ -63,6 +63,18 @@ test('openEdges is deterministic; cells 1 and 4 miss one extra edge', () => {
     new Set(openEdges(k)).forEach((e) => expect(e).toBeGreaterThanOrEqual(0));
     openEdges(k).forEach((e) => expect(e).toBeLessThan(6));
   }
+});
+
+test('sharedEdge(k) is the edge neighbour k shares with neighbour k+1', () => {
+  const ring = honeycombRing(5);
+  const same = (a: number[][], b: number[][]) =>
+    (Math.hypot(a[0][0] - b[1][0], a[0][1] - b[1][1]) < 1e-6 && Math.hypot(a[1][0] - b[0][0], a[1][1] - b[0][1]) < 1e-6);
+  ring.forEach((c, k) => {
+    const mine = edgeSegments(c, 5, [])[sharedEdge(k)];
+    const next = edgeSegments(ring[(k + 1) % 6], 5, []);
+    expect(next.some((s) => same(mine, s))).toBe(true);
+    expect(openEdges(k)).not.toContain(sharedEdge(k));
+  });
 });
 
 test('perimeterPath: closed 18-corner outline of the honeycomb, every step one edge long', () => {

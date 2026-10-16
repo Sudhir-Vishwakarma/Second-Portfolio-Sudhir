@@ -27,6 +27,9 @@ export function edgeSegments(center: P2, r: number, skip: number[]): Segment[] {
 /** Edge j's midpoint lies at angle 30 + j*60deg from its cell centre; neighbour k sits at 30 + k*60deg, so edge k+3 faces the centre. */
 export const facingEdge = (cell: number): number => (cell + 3) % 6;
 
+/** Neighbour k+1 sits at 150 + k*60deg from neighbour k, so k's edge k+2 is the one shared with k+1 (draw it once). */
+export const sharedEdge = (cell: number): number => (cell + 2) % 6;
+
 /** Deterministic missing edges of neighbour `cell`: the one shared with the centre (drawn orange), plus one outer edge for cells 1 and 4. */
 export const openEdges = (cell: number): number[] =>
   cell === 1 || cell === 4 ? [facingEdge(cell), (cell + 1) % 6] : [facingEdge(cell)];
