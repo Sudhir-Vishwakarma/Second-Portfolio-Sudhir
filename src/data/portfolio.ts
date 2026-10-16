@@ -380,6 +380,17 @@ export const projects: Project[] = [
     demoUrl: 'https://crm.shubhdhanam.com/dashboard',
     featured: true
   },
+  {
+    title: 'BrewHouse — AI-Powered Multi-Tenant SaaS CRM',
+    shortDescription: 'AI-powered multi-tenant SaaS CRM for real estate developers',
+    description: 'Tech Stack: React 19, Supabase, PostgreSQL, Node.js, Anthropic Claude Haiku 4.5, MiniLM embeddings, pgvector, Gupshup WhatsApp, React Flow, Salesforce, Google Ads, Meta Ads, Exotel. BrewHouse is an AI-powered, multi-tenant SaaS platform for real estate developers, built at Realatte, integrating intelligent chatbots, WhatsApp automation and CRM workflows. Key Highlights: Built an AI website chatbot using Anthropic Claude Haiku 4.5, featuring Retrieval-Augmented Generation (RAG), streaming responses, tool calling, prompt caching and contextual responses grounded in client-specific knowledge bases. Engineered a RAG pipeline using MiniLM embeddings and PostgreSQL pgvector, enabling semantic search across websites, PDFs, DOCX files, YouTube transcripts and other knowledge sources. Developed an AI-powered WhatsApp assistant with Gupshup integration, knowledge-base retrieval, automated FAQ handling, brochure and document delivery, multi-bot routing and human-controlled conversation handover. Implemented AI chatbot capabilities including EMI calculations, project recommendations, price and configuration filtering, lead capture, site-visit booking and Google Maps integrations through 14 callable tools. Integrated AI-generated lead workflows with Salesforce, Google Sheets and CRM pipelines, alongside SMS OTP verification, session-level deduplication and marketing attribution. Built Agentic Drip, a visual automation engine using React Flow to orchestrate WhatsApp, email and CRM actions through configurable customer journeys, conditional logic, retries and engagement tracking. Architected multi-tenant data security using Supabase and PostgreSQL Row-Level Security (RLS), with 82 database tables, 267 security policies and automated workflows for lead assignment and deduplication. Integrated Google Ads, Meta Ads and Exotel to connect marketing campaigns, lead management, click-to-call functionality and call tracking.',
+    technologies: ['React 19', 'Supabase', 'PostgreSQL', 'Node.js', 'Claude Haiku 4.5', 'RAG', 'pgvector', 'WhatsApp (Gupshup)', 'React Flow', 'Salesforce'],
+    status: 'Completed',
+    type: 'Web App',
+    constellation: 'CRM Platforms',
+    demoUrl: 'https://db.brewhouse.realatte.com/app/dashboard',
+    featured: true
+  },
 ];
 
 /** Reversed copy — never mutates the shared array. */

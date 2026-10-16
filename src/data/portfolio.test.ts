@@ -31,8 +31,8 @@ describe('portfolio data', () => {
     expect(experience[0]).toMatchObject({ start: 'Feb 2026', end: 'Nov 2026' });
   });
 
-  it('has 23 complete projects in 4 constellations', () => {
-    expect(projects).toHaveLength(23);
+  it('has 24 complete projects in 4 constellations', () => {
+    expect(projects).toHaveLength(24);
     projects.forEach((p) => {
       expect(p.title.length).toBeGreaterThan(0);
       expect(p.description.length).toBeGreaterThan(0);
@@ -40,13 +40,13 @@ describe('portfolio data', () => {
       expect(CONSTELLATIONS).toContain(p.constellation);
     });
     const count = (c: string) => projects.filter((p) => p.constellation === c).length;
-    expect(CONSTELLATIONS.map(count)).toEqual([2, 4, 4, 13]);
+    expect(CONSTELLATIONS.map(count)).toEqual([3, 4, 4, 13]);
   });
 
   it('newestFirst returns a reversed copy and never mutates the source', () => {
     const before = projects.map((p) => p.title);
     const reversed = newestFirst(projects);
-    expect(reversed[0].title).toBe('Shubhdhanam CRM');
+    expect(reversed[0].title).toBe('BrewHouse — AI-Powered Multi-Tenant SaaS CRM');
     newestFirst(projects);
     expect(projects.map((p) => p.title)).toEqual(before);
   });

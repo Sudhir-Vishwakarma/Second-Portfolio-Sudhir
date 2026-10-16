@@ -5,9 +5,9 @@ import { galaxyLayout, nearestStar } from './galaxyLayout';
 const stars = galaxyLayout(projects);
 
 test('every project is a star on its category arm', () => {
-  expect(stars).toHaveLength(23);
+  expect(stars).toHaveLength(24);
   const count = (arm: string) => stars.filter((s) => s.arm === arm).length;
-  expect(CONSTELLATIONS.map(count)).toEqual([2, 4, 4, 13]);
+  expect(CONSTELLATIONS.map(count)).toEqual([3, 4, 4, 13]);
   stars.forEach((s) => {
     expect(s.x - s.r).toBeGreaterThanOrEqual(5);
     expect(s.x + s.r).toBeLessThanOrEqual(95);
