@@ -89,3 +89,16 @@ test('a details sheet can be opened for a specific step', () => {
   expect(S().modal).toEqual({ kind: 'details', step: 6 });
   expect(S().step).toBe(0);
 });
+
+test('galaxy zoom is clamped, remembers where the pinch started, and resets on travel', () => {
+  S().reset(8);
+  S().setZoom(0.01, [0.2, -0.1]);
+  expect(S().zoom).toBe(0.3);
+  expect(S().zoomAnchor).toEqual([0.2, -0.1]);
+  S().setZoomFocus([4, 0, -6]);
+  expect(S().zoomAnchor).toBeNull();
+  expect(S().zoomFocus).toEqual([4, 0, -6]);
+  S().jump(9, 10_000);
+  expect(S().zoom).toBe(1);
+  expect(S().zoomFocus).toEqual([0, 0, 0]);
+});

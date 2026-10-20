@@ -15,6 +15,7 @@ import { TopBar } from './overlay/TopBar';
 import { Progress } from './overlay/Progress';
 import { ScrollHint } from './overlay/ScrollHint';
 import { Caption } from './overlay/Caption';
+import { ZoomControls } from './overlay/ZoomControls';
 import { Loader } from './overlay/Loader';
 import { Panels } from './overlay/Panels';
 import { ModalHost } from './overlay/ModalHost';
@@ -28,6 +29,7 @@ const UiLayer: React.FC = () => {
       <TopBar />
       <Panels />
       <Caption />
+      <ZoomControls />
       <Progress />
       <ScrollHint />
       <ModalHost />

@@ -124,8 +124,16 @@ export const ProjectsUniverse: React.FC<UniverseProps> = ({ active, preview }) =
   useEffect(() => {
     if (!interactive) return;
     const state = drag.current;
+    const pointers = new Set<number>();
     const onDown = (e: PointerEvent) => {
       if ((e.target as HTMLElement).tagName !== 'CANVAS') return;
+      pointers.add(e.pointerId);
+      if (pointers.size > 1) {
+        // Second finger: a pinch zoom, not a turn (and not a star tap).
+        drag.current.down = false;
+        drag.current.moved = true;
+        return;
+      }
       drag.current.down = true;
       drag.current.x = e.clientX;
       drag.current.startX = e.clientX;
@@ -139,7 +147,8 @@ export const ProjectsUniverse: React.FC<UniverseProps> = ({ active, preview }) =
       d.target = THREE.MathUtils.clamp(d.target + (e.clientX - d.x) * 0.004, -0.8, 0.8);
       d.x = e.clientX;
     };
-    const onUp = () => {
+    const onUp = (e: PointerEvent) => {
+      pointers.delete(e.pointerId);
       drag.current.down = false;
     };
     window.addEventListener('pointerdown', onDown);

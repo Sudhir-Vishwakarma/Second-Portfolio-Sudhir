@@ -23,7 +23,7 @@ export function stepCaption(i: number): Caption {
       return { kicker: `Work · ${job.company}`, title: job.role, tip: 'Tap the planet for the full role' };
     }
     case 'projects':
-      return { kicker: 'My Projects', title: 'Project Galaxy', tip: 'Tap a star to open a project' };
+      return { kicker: 'My Projects', title: 'Project Galaxy', tip: 'Tap a star · Pinch to zoom' };
     case 'contact':
       return { kicker: 'Contact', title: "Let's Connect" };
   }

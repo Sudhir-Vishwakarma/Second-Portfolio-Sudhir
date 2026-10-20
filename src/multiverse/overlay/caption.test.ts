@@ -34,6 +34,6 @@ test('stops with tappable objects tell the visitor what to tap', () => {
   expect(stepCaption(firstStepOf('skills')).tip).toBe('Tap an asteroid');
   expect(stepCaption(firstStepOf('certifications')).tip).toBe('Tap a satellite');
   expect(stepCaption(firstStepOf('work')).tip).toBe('Tap the planet for the full role');
-  expect(stepCaption(firstStepOf('projects')).tip).toBe('Tap a star to open a project');
+  expect(stepCaption(firstStepOf('projects')).tip).toBe('Tap a star · Pinch to zoom');
   expect(stepCaption(firstStepOf('contact')).tip).toBeUndefined();
 });

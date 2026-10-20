@@ -2,9 +2,12 @@ import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { easing } from 'maath';
-import { framePose, universeAtZ } from '../journey';
+import { framePose, universeAtZ, universeOf, universeOrigin, Vec3 } from '../journey';
 import { useJourney } from '../store';
 import { rig } from '../fx/rig';
+import { GALAXY_RADIUS, clampFocus, zoomedPose } from '../zoom';
+
+const GALAXY_PLANE = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
 
 /** Mount FIRST inside <Canvas> so camera-following objects never lag a frame behind. */
 export const CameraRig: React.FC = () => {
@@ -13,12 +16,29 @@ export const CameraRig: React.FC = () => {
   const goalLook = useMemo(() => new THREE.Vector3(), []);
   const target = useMemo(() => new THREE.Vector3(), []);
   const last = useMemo(() => new THREE.Vector3(), []);
+  const zoom = useRef(1);
+  const ray = useMemo(() => new THREE.Raycaster(), []);
+  const hit = useMemo(() => new THREE.Vector3(), []);
 
   useFrame((state, dt) => {
     const cam = state.camera as THREE.PerspectiveCamera;
     const s = useJourney.getState();
     const aspect = state.size.width / Math.max(state.size.height, 1);
-    const pose = framePose(s.step, aspect);
+    let pose = framePose(s.step, aspect);
+
+    // Project Galaxy pinch zoom: a new pinch picks the galaxy point under the fingers, then the camera closes in on it.
+    easing.damp(zoom, 'current', s.zoom, 0.2, dt);
+    if (universeOf(s.step) === 'projects') {
+      const o = universeOrigin('projects');
+      if (s.zoomAnchor) {
+        ray.setFromCamera(new THREE.Vector2(...s.zoomAnchor), cam);
+        GALAXY_PLANE.constant = -o[1];
+        if (ray.ray.intersectPlane(GALAXY_PLANE, hit)) s.setZoomFocus(clampFocus([hit.x - o[0], 0, hit.z - o[2]], GALAXY_RADIUS));
+        else s.setZoomFocus(s.zoomFocus);
+      }
+      const f: Vec3 = [o[0] + s.zoomFocus[0], o[1] + s.zoomFocus[1], o[2] + s.zoomFocus[2]];
+      pose = { ...pose, ...zoomedPose(pose, zoom.current, f) };
+    }
 
     if (!ready.current) {
       cam.position.set(...pose.pos);

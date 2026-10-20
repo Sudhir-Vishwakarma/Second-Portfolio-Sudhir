@@ -1,5 +1,6 @@
 import create from 'zustand';
-import { STEPS, isWarp, universeIndex, universeOf } from './journey';
+import { STEPS, Vec3, isWarp, universeIndex, universeOf } from './journey';
+import { clampZoom } from './zoom';
 
 export type Modal = { kind: 'cv' } | { kind: 'details'; step?: number } | { kind: 'certificate'; index: number } | { kind: 'project'; index: number };
 export type MoveKind = 'glide' | 'warp';
@@ -18,6 +19,12 @@ export interface JourneyState {
   booted: boolean;
   /** Tapped 3D object showing its info card (e.g. 'moon-2', 'skill-5', 'cert-1'). */
   picked: string | null;
+  /** Project Galaxy zoom: 1 = normal view, smaller = closer (see zoom.ts). */
+  zoom: number;
+  /** Galaxy-local point the zoom closes in on. */
+  zoomFocus: Vec3;
+  /** Screen point (NDC) of a pinch that just started; CameraRig turns it into zoomFocus. */
+  zoomAnchor: [number, number] | null;
   go: (dir: 1 | -1, now?: number) => void;
   jump: (target: number, now?: number) => void;
   arrive: (now?: number) => void;
@@ -27,6 +34,8 @@ export interface JourneyState {
   fireBeam: (now?: number) => void;
   setBooted: () => void;
   pick: (id: string | null) => void;
+  setZoom: (level: number, anchor?: [number, number]) => void;
+  setZoomFocus: (focus: Vec3) => void;
   reset: (step: number) => void;
 }
 
@@ -42,6 +51,9 @@ export const useJourney = create<JourneyState>((set, get) => ({
   beamAt: -Infinity,
   booted: false,
   picked: null,
+  zoom: 1,
+  zoomFocus: [0, 0, 0],
+  zoomAnchor: null,
 
   go: (dir, now = performance.now()) => {
     const s = get();
@@ -53,7 +65,7 @@ export const useJourney = create<JourneyState>((set, get) => ({
     const s = get();
     const to = clampStep(target);
     if (s.moving || to === s.step || now - s.arrivedAt < SETTLE_MS) return;
-    set({ step: to, moving: true, moveKind: isWarp(s.step, to) ? 'warp' : 'glide', modal: null, picked: null });
+    set({ step: to, moving: true, moveKind: isWarp(s.step, to) ? 'warp' : 'glide', modal: null, picked: null, zoom: 1, zoomFocus: [0, 0, 0], zoomAnchor: null });
   },
 
   arrive: (now = performance.now()) => {
@@ -68,6 +80,8 @@ export const useJourney = create<JourneyState>((set, get) => ({
   closeModal: () => set({ modal: null }),
   fireBeam: (now = performance.now()) => set({ beamAt: now }),
   setBooted: () => set({ booted: true }),
+  setZoom: (level, anchor) => (anchor ? set({ zoom: clampZoom(level), zoomAnchor: anchor }) : set({ zoom: clampZoom(level) })),
+  setZoomFocus: (focus) => set({ zoomFocus: focus, zoomAnchor: null }),
   pick: (id) => set({ picked: id !== null && get().picked === id ? null : id }),
 
   reset: (step) => {
@@ -81,6 +95,9 @@ export const useJourney = create<JourneyState>((set, get) => ({
       modal: null,
       booted: false,
       picked: null,
+      zoom: 1,
+      zoomFocus: [0, 0, 0],
+      zoomAnchor: null,
     });
   },
 }));
