@@ -46,7 +46,7 @@ export const profile: Profile = {
   typingWords: ['FULL-STACK DEVELOPER', 'REACT.JS/NEXT.JS', 'STRAPI/FIREBASE'],
   bio: 'A highly driven Front-End Engineer specializing in React.js and Next.js, focused on building scalable, production-grade applications that power real business ecosystems. Proven expertise in crafting advanced CRM platforms, integrating complex APIs, and deploying secure, high-performance solutions at scale. Committed to pushing technical boundaries, delivering impactful user experiences, and evolving into a full-stack leader who engineers products that drive measurable growth and innovation.',
   photo: '/Images/crop4.png',
-  cvUrl: '/Sudhir-Profile2.pdf',
+  cvUrl: '/Sudhir-Vishwakarma-Resume-2026-10.pdf',
   cvDownloadName: 'Sudhir_Vishwakarma_Resume.pdf',
   email: 'karmasudhir48@gmail.com',
   phone: '+91 7710945924',

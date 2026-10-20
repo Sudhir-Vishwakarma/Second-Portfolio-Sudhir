@@ -8,7 +8,7 @@ describe('portfolio data', () => {
     expect(profile.firstName).toBe('SUDHIR');
     expect(profile.lastName).toBe('VISHWAKARMA');
     expect(profile.typingWords).toEqual(['FULL-STACK DEVELOPER', 'REACT.JS/NEXT.JS', 'STRAPI/FIREBASE']);
-    expect(profile.cvUrl).toBe('/Sudhir-Profile2.pdf');
+    expect(profile.cvUrl).toBe('/Sudhir-Vishwakarma-Resume-2026-10.pdf');
     expect(profile.bio.startsWith('A highly driven Front-End Engineer')).toBe(true);
     expect(aboutSummary.startsWith('Results-driven developer')).toBe(true);
   });
