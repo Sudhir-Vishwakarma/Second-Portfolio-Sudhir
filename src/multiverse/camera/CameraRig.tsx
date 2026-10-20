@@ -2,7 +2,7 @@ import React, { useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { easing } from 'maath';
-import { worldPose, universeAtZ } from '../journey';
+import { framePose, universeAtZ } from '../journey';
 import { useJourney } from '../store';
 import { rig } from '../fx/rig';
 
@@ -17,20 +17,24 @@ export const CameraRig: React.FC = () => {
   useFrame((state, dt) => {
     const cam = state.camera as THREE.PerspectiveCamera;
     const s = useJourney.getState();
-    const pose = worldPose(s.step);
+    const aspect = state.size.width / Math.max(state.size.height, 1);
+    const pose = framePose(s.step, aspect);
 
     if (!ready.current) {
       cam.position.set(...pose.pos);
+      cam.fov = pose.fov;
       look.set(...pose.look);
       last.copy(cam.position);
       ready.current = true;
     }
 
     // Stronger pointer parallax plus a slow idle drift, so near bodies visibly move against far ones.
+    // Touch screens move the pointer on every tap, so portrait keeps the parallax subtle.
+    const sway = aspect < 1 ? 0.3 : 1;
     const t = state.clock.elapsedTime;
     const driftX = s.moving ? 0 : Math.sin(t * 0.11) * 1.2;
     const driftY = s.moving ? 0 : Math.cos(t * 0.09) * 0.6;
-    target.set(pose.pos[0] + state.pointer.x * 2.4 + driftX, pose.pos[1] + state.pointer.y * 1.5 + driftY, pose.pos[2]);
+    target.set(pose.pos[0] + state.pointer.x * 2.4 * sway + driftX, pose.pos[1] + state.pointer.y * 1.5 * sway + driftY, pose.pos[2]);
     goalLook.set(...pose.look);
     const warping = s.moving && s.moveKind === 'warp';
     easing.damp3(cam.position, target, warping ? 0.85 : 0.6, dt);
@@ -40,7 +44,7 @@ export const CameraRig: React.FC = () => {
     const speed = cam.position.distanceTo(last) / Math.max(dt, 1e-4);
     last.copy(cam.position);
     easing.damp(rig, 'warp', warping ? THREE.MathUtils.clamp((speed - 25) / 160, 0, 1) : 0, 0.15, dt);
-    easing.damp(cam, 'fov', 55 + rig.warp * 38, 0.25, dt);
+    easing.damp(cam, 'fov', pose.fov + rig.warp * 38, 0.25, dt);
     cam.rotation.z += (Math.random() - 0.5) * 0.012 * rig.warp;
     cam.updateProjectionMatrix();
 

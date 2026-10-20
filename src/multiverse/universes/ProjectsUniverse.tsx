@@ -11,6 +11,7 @@ import { layoutGalaxy } from './layout';
 import { useJourney } from '../store';
 import { Vec3 } from '../journey';
 import { UniverseProps } from './index';
+import { HitArea, onTap } from './Tappable';
 
 export const CONSTELLATION_COLORS: Record<Constellation, string> = {
   'CRM Platforms': '#f97316',
@@ -82,6 +83,9 @@ const Star: React.FC<{ index: number; interactive: boolean; wasDragged: () => bo
     easing.damp3(group.current.scale, (hovered ? 1.8 : 1) * twinkle, 0.15, dt);
   });
 
+  const open = onTap(interactive, () => {
+    if (!wasDragged()) useJourney.getState().openModal({ kind: 'project', index });
+  });
   return (
     <group ref={group} position={positions[index]}>
       <mesh
@@ -91,20 +95,18 @@ const Star: React.FC<{ index: number; interactive: boolean; wasDragged: () => bo
           setHovered(true);
         }}
         onPointerOut={() => setHovered(false)}
-        onClick={(e) => {
-          if (!interactive || wasDragged()) return;
-          e.stopPropagation();
-          useJourney.getState().openModal({ kind: 'project', index });
-        }}
+        onClick={open}
       >
         <sphereGeometry args={[size, 24, 24]} />
         <meshBasicMaterial color={bright} toneMapped={false} />
       </mesh>
+      {/* Stars are tiny on a phone; a fingertip-sized target around each one. */}
+      <HitArea radius={1.8} onClick={open} />
       <GlowSprite color={color} scale={p.featured ? 5 : 2.6} opacity={0.55} />
       <GlowSprite color={color} scale={[p.featured ? 8 : 5, 0.16, 1]} opacity={0.35} />
       <GlowSprite color={color} scale={[0.16, p.featured ? 8 : 5, 1]} opacity={0.35} />
       {interactive && hovered && (
-        <Html center position={[0, size + 1.1, 0]} className="mv-label">
+        <Html center position={[0, size + 1.1, 0]} className="mv-label" pointerEvents="none">
           {p.title}
           <small>{p.shortDescription}</small>
         </Html>
@@ -174,7 +176,7 @@ export const ProjectsUniverse: React.FC<UniverseProps> = ({ active, preview }) =
       ))}
       {interactive &&
         CONSTELLATIONS.map((c) => (
-          <Html key={c} center position={[centers[c][0], centers[c][1] + 6, centers[c][2]]} className="mv-label">
+          <Html key={c} center position={[centers[c][0], centers[c][1] + 6, centers[c][2]]} className="mv-label" pointerEvents="none">
             <span style={{ color: CONSTELLATION_COLORS[c] }}>{c}</span>
           </Html>
         ))}

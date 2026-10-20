@@ -3,9 +3,11 @@ import { Html, Line } from '@react-three/drei';
 import { RealPlanet } from '../fx/RealPlanet';
 import { Palette, PALETTES } from '../fx/palettes';
 import { TextureKey } from '../fx/textures';
-import { WORK_STOPS, universeOrigin, Vec3 } from '../journey';
+import { WORK_STOPS, firstStepOf, universeOrigin, Vec3 } from '../journey';
+import { useJourney } from '../store';
 import { experience } from '../../data/portfolio';
 import { UniverseProps } from './index';
+import { onTap } from './Tappable';
 
 const JOB_PALETTES: Palette[] = [
   PALETTES.work,
@@ -38,9 +40,10 @@ export const WorkUniverse: React.FC<UniverseProps> = ({ active, preview }) => (
             spin={0.1}
             lightPos={lightFor(p)}
             fallback={JOB_PALETTES[i]}
+            onClick={onTap(active && !preview, () => useJourney.getState().openModal({ kind: 'details', step: firstStepOf('work') + i }))}
           />
           {active && !preview && (
-            <Html center position={[0, 4.6, 0]} className="mv-label">
+            <Html center position={[0, 4.6, 0]} className="mv-label" pointerEvents="none">
               {experience[i].company}
               <small>{experience[i].start} – {experience[i].end}</small>
             </Html>

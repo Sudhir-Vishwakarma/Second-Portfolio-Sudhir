@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { projects, newestFirst, CONSTELLATIONS } from '../../../data/portfolio';
 import { CONSTELLATION_COLORS } from '../../universes/ProjectsUniverse';
 import { useJourney } from '../../store';
+import { useCompact } from '../../useCompact';
 import { PanelProps } from './index';
 
 export const ProjectsPanel: React.FC<PanelProps> = () => {
   const openModal = useJourney((s) => s.openModal);
   const [showList, setShowList] = useState(false);
+  const compact = useCompact();
   return (
     <div className="mv-projects">
       <span className="mv-kicker">My Projects</span>
       <h2 className="mv-h2">Project Galaxy</h2>
-      <p className="mv-text">{projects.length} projects across {CONSTELLATIONS.length} constellations. Hover a star to see its name, click to open it, drag to turn the galaxy.</p>
+      <p className="mv-text">{projects.length} projects across {CONSTELLATIONS.length} constellations. {compact ? 'Close this sheet and tap a star to open it, or browse the list below.' : 'Hover a star to see its name, click to open it, drag to turn the galaxy.'}</p>
       <ul className="mv-legend">
         {CONSTELLATIONS.map((c) => (
           <li key={c}><span style={{ background: CONSTELLATION_COLORS[c] }} />{c}</li>

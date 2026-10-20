@@ -15,10 +15,17 @@ test('#classic always wins', () => {
 test.each([
   ['narrow viewport', { width: 767 }],
   ['touch-first device', { coarsePointer: true }],
+  ['phone', { width: 390, coarsePointer: true, deviceMemory: 4 }],
+])('%s gets the multiverse too', (_name, patch) => {
+  expect(chooseMode({ ...desktop, ...patch }, '')).toBe('multiverse');
+});
+
+test.each([
   ['reduced-motion phone', { width: 390, coarsePointer: true, reducedMotion: true }],
   ['phone without WebGL2', { width: 390, coarsePointer: true, webgl2: false }],
-])('%s gets the mobile site', (_name, patch) => {
-  expect(chooseMode({ ...desktop, ...patch }, '')).toBe('mobile');
+  ['low-memory phone', { width: 390, coarsePointer: true, deviceMemory: 2 }],
+])('%s gets the classic site', (_name, patch) => {
+  expect(chooseMode({ ...desktop, ...patch }, '')).toBe('classic');
 });
 
 test.each([

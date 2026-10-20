@@ -14,6 +14,7 @@ import { useJourneyInput } from './input';
 import { TopBar } from './overlay/TopBar';
 import { Progress } from './overlay/Progress';
 import { ScrollHint } from './overlay/ScrollHint';
+import { Caption } from './overlay/Caption';
 import { Loader } from './overlay/Loader';
 import { Panels } from './overlay/Panels';
 import { ModalHost } from './overlay/ModalHost';
@@ -26,6 +27,7 @@ const UiLayer: React.FC = () => {
     <div className={`mv-ui${booted ? ' is-booted' : ''}`}>
       <TopBar />
       <Panels />
+      <Caption />
       <Progress />
       <ScrollHint />
       <ModalHost />
@@ -38,8 +40,9 @@ const UiLayer: React.FC = () => {
 
 interface MultiverseProps { onFail: () => void }
 
-// Start at the device ratio clamped to [1, 1.75], as the old dpr={[1, 1.75]} range did.
-const initialDpr = Math.min(Math.max(window.devicePixelRatio || 1, 1), 1.75);
+// Start at the device ratio clamped to [1, 1.75], as the old dpr={[1, 1.75]} range did; touch screens start at 1.5 at most.
+const coarse = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
+const initialDpr = Math.min(Math.max(window.devicePixelRatio || 1, 1), coarse ? 1.5 : 1.75);
 
 const Multiverse: React.FC<MultiverseProps> = ({ onFail }) => {
   // Start at the universe named in the URL (before the first frame renders).
@@ -78,9 +81,11 @@ const Multiverse: React.FC<MultiverseProps> = ({ onFail }) => {
   return (
     <div className="mv">
       <Canvas
+        className="mv-scene"
         dpr={dpr}
         camera={{ fov: 55, near: 0.1, far: 1200 }}
         gl={{ antialias: false, powerPreference: 'high-performance' }}
+        onPointerMissed={() => useJourney.getState().pick(null)}
         onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', () => { if (alive.current) onFail(); })}
       >
         <color attach="background" args={['#000004']} />

@@ -4,9 +4,13 @@ import { CvModal } from './modals/CvModal';
 import { CertificateModal } from './modals/CertificateModal';
 import { ProjectDetail } from './modals/ProjectDetail';
 import { certifications, projects } from '../../data/portfolio';
+import { STEPS } from '../journey';
+import { PANELS } from './panels';
+import { stepCaption } from './caption';
 
 export const ModalHost: React.FC = () => {
   const modal = useJourney((s) => s.modal);
+  const step = useJourney((s) => s.step);
   const close = useJourney((s) => s.closeModal);
   const closeBtn = useRef<HTMLButtonElement>(null);
 
@@ -39,6 +43,17 @@ export const ModalHost: React.FC = () => {
       body = <CertificateModal index={modal.index} />;
       label = certifications[modal.index]?.title ?? 'Certificate';
       break;
+    case 'details': {
+      // Phones: the full desktop panel for the current stop, in a full-screen sheet.
+      // A tapped object (Earth, a company planet) can open another step's page.
+      const at = modal.step ?? step;
+      const { universe, beat } = STEPS[at];
+      const Panel = PANELS[universe];
+      body = <div className="mv-details"><Panel universe={universe} beat={beat} /></div>;
+      label = stepCaption(at).title;
+      sheet = true;
+      break;
+    }
     case 'project':
       body = <ProjectDetail index={modal.index} />;
       label = projects[modal.index]?.title ?? 'Project';

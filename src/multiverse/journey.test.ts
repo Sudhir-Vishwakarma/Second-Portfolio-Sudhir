@@ -1,6 +1,6 @@
 import {
   STEPS, UNIVERSES, worldPose, universeAtZ, universeIndex, next, prev, firstStepOf, universeOf,
-  isWarp, hashFor, stepForHash, portalCenter, PORTAL_OFFSET, universeOrigin,
+  isWarp, hashFor, stepForHash, portalCenter, PORTAL_OFFSET, universeOrigin, framePose,
 } from './journey';
 
 test('steps follow the agreed order', () => {
@@ -58,5 +58,50 @@ test('each portal sits on the camera line into its universe', () => {
     const first = STEPS[firstStepOf(u)];
     expect(c).toEqual([first.pos[0], first.pos[1], PORTAL_OFFSET]);
     expect(universeOrigin(u)[2]).toBe(-400 * universeIndex(u));
+  });
+});
+
+describe('framePose', () => {
+  const all = STEPS.map((_, i) => i);
+
+  test('landscape screens get the desktop pose unchanged', () => {
+    for (const i of all) expect(framePose(i, 1.6)).toEqual({ ...worldPose(i), fov: 55 });
+  });
+
+  test('tall phones get each step phone pose', () => {
+    for (const i of all) {
+      const o = universeOrigin(STEPS[i].universe);
+      const p = framePose(i, 0.46);
+      const { phone } = STEPS[i];
+      [0, 1, 2].forEach((k) => {
+        expect(p.pos[k]).toBeCloseTo(o[k] + phone.pos[k]);
+        expect(p.look[k]).toBeCloseTo(o[k] + phone.look[k]);
+      });
+      expect(p.fov).toBe(phone.fov);
+    }
+  });
+
+  test('phone poses stay inside their universe and widen the view', () => {
+    for (const i of all) {
+      const { phone } = STEPS[i];
+      expect(phone.fov).toBeGreaterThan(55);
+      expect(phone.pos[2]).toBeLessThanOrEqual(PORTAL_OFFSET - 8);
+    }
+  });
+
+  test('the first phone pose of a universe stays on the portal line', () => {
+    UNIVERSES.slice(1).forEach((u) => {
+      const { phone } = STEPS[firstStepOf(u)];
+      const c = portalCenter(u);
+      expect(Math.hypot(phone.pos[0] - c[0], phone.pos[1] - c[1])).toBeLessThanOrEqual(1);
+    });
+  });
+
+  test('in-between aspects blend from the desktop pose', () => {
+    const desk = framePose(0, 1);
+    const half = framePose(0, 0.75);
+    const phone = framePose(0, 0.5);
+    expect(half.fov).toBeCloseTo((desk.fov + phone.fov) / 2);
+    expect(half.pos[1]).toBeCloseTo((desk.pos[1] + phone.pos[1]) / 2);
   });
 });

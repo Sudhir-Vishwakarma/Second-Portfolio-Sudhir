@@ -111,8 +111,10 @@ export const experience: Experience[] = [
     start: 'Feb 2026',
     end: 'Nov 2026',
     bullets: [
+      'Developed BrewHouse, an AI-powered multi-tenant SaaS platform at Realatte using React, TypeScript, Node.js, and Supabase, integrating Claude-powered website chatbots and WhatsApp AI assistants with RAG, pgvector, tool calling, and automated lead capture',
+      'Engineered multi-tenant AI chatbot capabilities including streaming responses, 14 AI tools, seven knowledge sources, real-time human-agent handoff, Salesforce integration, and per-tenant AI usage monitoring; deployed chatbot solutions for multiple clients',
+      'Built a WhatsApp AI assistant and Agentic Drip automation engine featuring knowledge-based responses, automated brochure delivery, multi-bot routing, and visual workflows; integrated Gupshup, Google Ads, Meta Ads, and Exotel',
       'Built a web application using React and Next.js, integrated with Strapi for dynamic content management',
-      'Managed API integration and nested data flow for efficient frontend & CRM rendering',
       'Deployed and maintained the app on a live server via Ubuntu terminal using SSH (root access)',
     ],
   },

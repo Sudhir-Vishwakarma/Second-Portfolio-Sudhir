@@ -4,7 +4,6 @@ import { CLASSIC_HASH, chooseMode, classicSectionFor, detectEnv } from './routin
 import { ErrorBoundary } from './routing/ErrorBoundary';
 
 const Multiverse = lazy(() => import('./multiverse/Multiverse'));
-const MobileApp = lazy(() => import('./mobile/MobileApp'));
 
 const App: React.FC = () => {
   const [hash, setHash] = useState(window.location.hash);
@@ -25,7 +24,7 @@ const App: React.FC = () => {
   const mode = failed || hash === CLASSIC_HASH ? 'classic' : deviceMode;
 
   if (mode === 'classic') {
-    // The multiverse and mobile sites move the hash without hashchange events, so a fallback reads the live URL.
+    // The multiverse moves the hash without hashchange events, so a fallback reads the live URL.
     const sectionHash = failed && hash !== CLASSIC_HASH ? window.location.hash : hash;
     return <ClassicApp initialSection={classicSectionFor(sectionHash)} />;
   }
@@ -33,7 +32,7 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary onError={() => setFailed(true)}>
       <Suspense fallback={<div className="mv-boot" />}>
-        {mode === 'mobile' ? <MobileApp /> : <Multiverse onFail={() => setFailed(true)} />}
+        <Multiverse onFail={() => setFailed(true)} />
       </Suspense>
     </ErrorBoundary>
   );

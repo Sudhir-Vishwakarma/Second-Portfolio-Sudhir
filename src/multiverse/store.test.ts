@@ -58,3 +58,34 @@ test('reset clears booted so a remounted multiverse waits for its loader', () =>
   S().reset(2);
   expect(S().booted).toBe(false);
 });
+
+test('the Read more sheet blocks swipe travel until it closes', () => {
+  const s = useJourney.getState();
+  s.reset(0);
+  useJourney.getState().openModal({ kind: 'details' });
+  useJourney.getState().go(1, 10_000);
+  expect(useJourney.getState().step).toBe(0);
+  useJourney.getState().closeModal();
+  useJourney.getState().go(1, 10_000);
+  expect(useJourney.getState().step).toBe(1);
+});
+
+test('tapping an object picks it, tapping again or travelling clears it', () => {
+  S().reset(0);
+  S().pick('moon-1');
+  expect(S().picked).toBe('moon-1');
+  S().pick('moon-2');
+  expect(S().picked).toBe('moon-2');
+  S().pick('moon-2');
+  expect(S().picked).toBeNull();
+  S().pick('skill-3');
+  S().jump(1, 10_000);
+  expect(S().picked).toBeNull();
+});
+
+test('a details sheet can be opened for a specific step', () => {
+  S().reset(0);
+  S().openModal({ kind: 'details', step: 6 });
+  expect(S().modal).toEqual({ kind: 'details', step: 6 });
+  expect(S().step).toBe(0);
+});

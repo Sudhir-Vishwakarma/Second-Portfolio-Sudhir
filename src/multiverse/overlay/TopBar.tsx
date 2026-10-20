@@ -1,6 +1,6 @@
 // overlay/TopBar.tsx
 import React from 'react';
-import { UNIVERSES, UNIVERSE_LABELS, firstStepOf, universeOf } from '../journey';
+import { UNIVERSES, UNIVERSE_LABELS, firstStepOf, universeOf, universeIndex } from '../journey';
 import { useJourney } from '../store';
 
 export const TopBar: React.FC = () => {
@@ -22,6 +22,7 @@ export const TopBar: React.FC = () => {
           </button>
         ))}
       </nav>
+      <span className="mv-where" aria-hidden="true">{UNIVERSE_LABELS[current]} · {universeIndex(current) + 1}/{UNIVERSES.length}</span>
       <a className="mv-classic" href="#classic">Classic view</a>
     </header>
   );

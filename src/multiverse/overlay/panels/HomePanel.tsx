@@ -3,11 +3,13 @@ import { profile } from '../../../data/portfolio';
 import { useTypewriter } from '../../../hooks/typewriter';
 import SocialIcons from '../../../components/SocialIcons';
 import { useJourney } from '../../store';
+import { useCompact } from '../../useCompact';
 import { PanelProps } from './index';
 
 export const HomePanel: React.FC<PanelProps> = () => {
   const text = useTypewriter(profile.typingWords);
   const openModal = useJourney((s) => s.openModal);
+  const compact = useCompact();
   return (
     <div className="mv-home">
       <span className="mv-kicker">{profile.greeting}</span>
@@ -18,7 +20,12 @@ export const HomePanel: React.FC<PanelProps> = () => {
       </p>
       <p className="mv-text">{profile.bio}</p>
       <div className="mv-actions">
-        <button className="mv-btn" onClick={() => openModal({ kind: 'cv' })}>View CV</button>
+        {compact ? (
+          // Phone browsers can't show a PDF inside the page; hand it to their own viewer.
+          <a className="mv-btn" href={profile.cvUrl} target="_blank" rel="noopener noreferrer">View CV</a>
+        ) : (
+          <button className="mv-btn" onClick={() => openModal({ kind: 'cv' })}>View CV</button>
+        )}
         <a className="mv-btn mv-btn--ghost" href={profile.cvUrl} download={profile.cvDownloadName}>Download CV</a>
       </div>
       <SocialIcons className="mv-socials" linkClassName="mv-social" size={18} />

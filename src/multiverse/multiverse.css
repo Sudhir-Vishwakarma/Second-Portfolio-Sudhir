@@ -10,6 +10,8 @@
 .mv canvas {
   touch-action: none;
 }
+/* drei <Html> labels carry huge inline z-indexes; keep them stacked inside the scene, below the overlay. */
+.mv-scene { isolation: isolate; }
 
 /* ---------- overlay layer ---------- */
 .mv-ui {
@@ -121,6 +123,16 @@
 
 /* 3D labels (drei <Html>) */
 .mv-label { pointer-events: none; white-space: nowrap; text-align: center; font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.9); }
+.mv-info {
+  pointer-events: auto; display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 150px; max-width: 220px;
+  padding: 10px 14px; border-radius: 12px; text-align: center; white-space: normal; transform: translateY(-50%);
+  background: rgba(14,12,22,0.86); border: 1px solid rgba(255,255,255,0.16); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px); animation: mv-pop 0.25s ease both;
+}
+.mv-info strong { font-size: 0.86rem; line-height: 1.3; color: #fff; }
+.mv-info small { font-size: 0.72rem; color: rgba(255,255,255,0.65); line-height: 1.35; }
+.mv-info__kicker { font-size: 0.64rem; letter-spacing: 0.2em; color: #ff9a3c; }
+.mv-info__btn { margin-top: 6px; padding: 7px 14px; font-size: 0.74rem; }
 .mv-label small { display: block; letter-spacing: 0.05em; text-transform: none; color: rgba(255,255,255,0.65); font-size: 0.68rem; }
 
 @keyframes mv-panel-in { from { opacity: 0; transform: translateY(18px); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
@@ -254,3 +266,60 @@
   font-size: 0.68rem; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.5); text-decoration: none;
 }
 .mv-credits:hover, .mv-credits:focus-visible { color: rgba(255, 255, 255, 0.9); text-decoration: underline; }
+
+/* ---------- phones: full-screen 3D, floating caption, "Read more" sheet ---------- */
+/* Keep the media query in sync with COMPACT_QUERY in useCompact.ts. */
+.mv-caption, .mv-where { display: none; }
+@media (max-width: 767px), (orientation: portrait) and (pointer: coarse) {
+  .mv-panel, .mv-nav, .mv-hint__mouse { display: none; }
+
+  .mv-topbar { gap: 12px; padding: 14px 16px; padding-top: max(14px, env(safe-area-inset-top)); }
+  .mv-where { display: block; font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.8); }
+  .mv-classic { font-size: 0.68rem; }
+
+  .mv-progress { right: 8px; gap: 2px; }
+  .mv-progress__dot { width: 22px; height: 22px; border: 0; position: relative; }
+  .mv-progress__dot::after {
+    content: ''; position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.5); transition: all 0.3s ease;
+  }
+  .mv-progress__dot.is-new-universe { margin-top: 4px; }
+  .mv-progress__dot.is-current { background: none; box-shadow: none; transform: none; }
+  .mv-progress__dot.is-current::after { background: #ff7a00; border-color: #ff7a00; box-shadow: 0 0 10px #ff7a00; transform: scale(1.3); }
+
+  .mv-caption {
+    display: block; position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 96px 20px calc(58px + env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, rgba(0,0,4,0), rgba(0,0,4,0.72) 45%, rgba(0,0,4,0.88));
+    opacity: 0; transform: translateY(12px); transition: opacity 0.25s ease, transform 0.25s ease; pointer-events: none;
+  }
+  .mv-caption.is-shown { opacity: 1; transform: none; pointer-events: auto; animation: mv-panel-in 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+  .mv-caption__title {
+    margin: 8px 0 16px; font-size: clamp(1.7rem, 8.5vw, 2.3rem); line-height: 1; letter-spacing: -0.01em;
+    background: linear-gradient(120deg, #fff 30%, #ffb15c 60%, #ff6a00); -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .mv-caption__tip { margin: -8px 0 14px; font-size: 0.78rem; color: rgba(255,255,255,0.7); }
+  .mv-caption__tip::before { content: '\261D\FE0E  '; color: #ff9a3c; }
+  .mv-caption__actions { display: flex; gap: 10px; }
+  .mv-caption__actions .mv-btn { flex: 1; justify-content: center; padding: 12px 16px; }
+
+  .mv-hint { bottom: calc(20px + env(safe-area-inset-bottom)); font-size: 0.64rem; }
+  .mv-hint::before { content: '↑'; color: #ff9a3c; }
+  .mv-credits { left: 50%; transform: translateX(-50%); bottom: calc(4px + env(safe-area-inset-bottom)); font-size: 0.56rem; white-space: nowrap; }
+
+  /* every modal becomes a full-screen sheet */
+  .mv-modal, .mv-modal--sheet { place-items: stretch; }
+  .mv-modal__box, .mv-modal--sheet .mv-modal__box {
+    width: 100%; height: 100%; max-height: none; border-radius: 0; border: 0;
+    padding: calc(64px + env(safe-area-inset-top)) 20px calc(28px + env(safe-area-inset-bottom));
+    animation: mv-rise 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .mv-modal__close { top: calc(14px + env(safe-area-inset-top)); right: 16px; width: 40px; height: 40px; }
+  .mv-doc__head { flex-wrap: wrap; margin-right: 0; }
+  .mv-doc__frame { height: 72vh; }
+  .mv-details .mv-h1 { font-size: clamp(2rem, 10vw, 2.6rem); }
+  .mv-details .mv-list { max-height: none; }
+  .mv-contact, .mv-form__row { grid-template-columns: 1fr; }
+  .mv-toast { top: auto; right: 16px; left: 16px; bottom: calc(20px + env(safe-area-inset-bottom)); }
+}
+@keyframes mv-rise { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }

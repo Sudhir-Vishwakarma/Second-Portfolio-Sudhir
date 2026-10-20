@@ -84,7 +84,7 @@ const OrbitingPlanet: React.FC<{ def: OrbitDef; index: number; active: boolean; 
             />
           )}
           {interactive && (
-            <Html center position={[0, def.size + 0.9, 0]} className="mv-label">
+            <Html center position={[0, def.size + 0.9, 0]} className="mv-label" pointerEvents="none">
               <span className="mv-label__inner" style={{ display: 'inline-block', transform: hovered ? 'scale(1.15)' : 'none', transition: 'transform 0.2s' }}>
                 {UNIVERSE_LABELS[def.universe]}
                 {hovered && <small>{def.tagline}</small>}
