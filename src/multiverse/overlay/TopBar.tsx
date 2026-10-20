@@ -23,7 +23,6 @@ export const TopBar: React.FC = () => {
         ))}
       </nav>
       <span className="mv-where" aria-hidden="true">{UNIVERSE_LABELS[current]} · {universeIndex(current) + 1}/{UNIVERSES.length}</span>
-      <a className="mv-classic" href="#classic">Classic view</a>
     </header>
   );
 };
