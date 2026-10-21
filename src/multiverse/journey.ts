@@ -55,8 +55,8 @@ export const STEPS: Step[] = [
     phone: { pos: [-4, 14, 36], look: [0, -3, 0], fov: 62 }, hint: 'Scroll to warp to Skills',
   },
   {
-    universe: 'skills', beat: 'belt', pos: [-8, 8, 32], look: [-8, 0, 0],
-    phone: { pos: [-8, 8.5, 46], look: [0, -4, 0], fov: 70 }, hint: 'Scroll to warp to Certifications',
+    universe: 'skills', beat: 'belt', pos: [-8, 8, 44], look: [-8, 0.5, 0],
+    phone: { pos: [-8, 8.5, 46], look: [0, -3, 0], fov: 80 }, hint: 'Click a planet · Scroll to warp to Certifications',
   },
   {
     universe: 'certifications', beat: 'archive', pos: [-7, 3, 28], look: [-7, 0, 0],

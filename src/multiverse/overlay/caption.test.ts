@@ -31,7 +31,7 @@ test('hints are rewritten for touch', () => {
 test('stops with tappable objects tell the visitor what to tap', () => {
   expect(stepCaption(0).tip).toBe('Tap a planet to travel there');
   expect(stepCaption(firstStepOf('about')).tip).toBe('Tap Earth or a moon');
-  expect(stepCaption(firstStepOf('skills')).tip).toBe('Tap an asteroid');
+  expect(stepCaption(firstStepOf('skills')).tip).toBe('Tap a planet, then a skill');
   expect(stepCaption(firstStepOf('certifications')).tip).toBe('Tap a satellite');
   expect(stepCaption(firstStepOf('work')).tip).toBe('Tap the planet for the full role');
   expect(stepCaption(firstStepOf('projects')).tip).toBe('Tap a star · Pinch to zoom');

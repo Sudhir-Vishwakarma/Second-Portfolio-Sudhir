@@ -18,10 +18,17 @@ describe('portfolio data', () => {
     socials.forEach((s) => expect(s.url.startsWith('https://')).toBe(true));
   });
 
-  it('has 20 skills split across the 5 groups', () => {
-    expect(skills).toHaveLength(20);
-    const count = (g: string) => skills.filter((s) => s.group === g).length;
-    expect(SKILL_GROUPS.map(count)).toEqual([5, 7, 3, 2, 3]);
+  it('has the 30 resume skills in the 7 resume groups', () => {
+    expect(SKILL_GROUPS).toEqual(['Languages', 'Database', 'Framework', 'Version Control', 'Tools', 'Operating System', 'AI Tools']);
+    expect(skills).toHaveLength(30);
+    const names = (g: string) => skills.filter((s) => s.group === g).map((s) => s.name);
+    expect(names('Languages')).toEqual(['Python', 'PHP', 'C/C++', 'HTML', 'CSS', 'JavaScript', 'TypeScript']);
+    expect(names('Database')).toEqual(['MongoDB', 'SQL']);
+    expect(names('Framework')).toEqual(['Sass', 'Bootstrap', 'Tailwind CSS', 'Laravel', 'React.js (Redux)', 'Next.js']);
+    expect(names('Version Control')).toEqual(['Git', 'GitHub', 'GitLab']);
+    expect(names('Tools')).toEqual(['Firebase', 'Supabase', 'Strapi', 'Vercel', 'NPM', 'Visual Studio Code', 'Salesforce']);
+    expect(names('Operating System')).toEqual(['Linux']);
+    expect(names('AI Tools')).toEqual(['RAG', 'Claude', 'Codex', 'Amazon Q']);
   });
 
   it('has 4 education entries, 4 certifications and 3 jobs newest first', () => {

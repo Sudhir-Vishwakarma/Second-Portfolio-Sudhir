@@ -1,8 +1,8 @@
 export type SocialId = 'facebook' | 'instagram' | 'linkedin' | 'github';
-export type SkillGroup = 'Frontend' | 'Backend' | 'Database' | 'Cloud & DevOps' | 'Tools';
+export type SkillGroup = 'Languages' | 'Database' | 'Framework' | 'Version Control' | 'Tools' | 'Operating System' | 'AI Tools';
 export type Constellation = 'CRM Platforms' | 'Salesforce Portals' | 'Real Estate' | 'Web Apps';
 
-export const SKILL_GROUPS: SkillGroup[] = ['Frontend', 'Backend', 'Database', 'Cloud & DevOps', 'Tools'];
+export const SKILL_GROUPS: SkillGroup[] = ['Languages', 'Database', 'Framework', 'Version Control', 'Tools', 'Operating System', 'AI Tools'];
 export const CONSTELLATIONS: Constellation[] = ['CRM Platforms', 'Salesforce Portals', 'Real Estate', 'Web Apps'];
 
 export interface Profile {
@@ -64,28 +64,38 @@ export const socials: Social[] = [
 export const aboutSummary =
   'Results-driven developer with hands-on experience in building scalable web applications and CRM systems, including real-time chat, authentication, and multi-service integrations. Proven ability to integrate complex APIs, manage dynamic data flows, and deploy production-ready applications on live servers using secure remote access. Seeking to contribute to impactful, high-growth projects while continuously advancing in full-stack development and solving real-world problems at scale.';
 
-// Same order as the classic About page.
+// The Technical Skills section of the resume, group by group.
 export const skills: Skill[] = [
-  { name: 'Next.js', group: 'Frontend' },
-  { name: 'TypeScript', group: 'Frontend' },
-  { name: 'NodeJS', group: 'Backend' },
-  { name: 'ExpressJS', group: 'Backend' },
-  { name: 'React/Redux', group: 'Frontend' },
-  { name: 'JavaScript', group: 'Frontend' },
-  { name: 'Bootstrap', group: 'Frontend' },
-  { name: 'Firebase', group: 'Database' },
-  { name: 'Git', group: 'Tools' },
-  { name: 'GitHub', group: 'Tools' },
-  { name: 'GitLab', group: 'Tools' },
-  { name: 'PHP', group: 'Backend' },
+  { name: 'Python', group: 'Languages' },
+  { name: 'PHP', group: 'Languages' },
+  { name: 'C/C++', group: 'Languages' },
+  { name: 'HTML', group: 'Languages' },
+  { name: 'CSS', group: 'Languages' },
+  { name: 'JavaScript', group: 'Languages' },
+  { name: 'TypeScript', group: 'Languages' },
   { name: 'MongoDB', group: 'Database' },
-  { name: 'MySQL', group: 'Database' },
-  { name: 'C/C++', group: 'Backend' },
-  { name: 'Google Cloud Server', group: 'Cloud & DevOps' },
-  { name: 'Middleware Serverless REST API', group: 'Backend' },
-  { name: 'API', group: 'Backend' },
-  { name: 'Strapi', group: 'Backend' },
-  { name: 'Linux', group: 'Cloud & DevOps' },
+  { name: 'SQL', group: 'Database' },
+  { name: 'Sass', group: 'Framework' },
+  { name: 'Bootstrap', group: 'Framework' },
+  { name: 'Tailwind CSS', group: 'Framework' },
+  { name: 'Laravel', group: 'Framework' },
+  { name: 'React.js (Redux)', group: 'Framework' },
+  { name: 'Next.js', group: 'Framework' },
+  { name: 'Git', group: 'Version Control' },
+  { name: 'GitHub', group: 'Version Control' },
+  { name: 'GitLab', group: 'Version Control' },
+  { name: 'Firebase', group: 'Tools' },
+  { name: 'Supabase', group: 'Tools' },
+  { name: 'Strapi', group: 'Tools' },
+  { name: 'Vercel', group: 'Tools' },
+  { name: 'NPM', group: 'Tools' },
+  { name: 'Visual Studio Code', group: 'Tools' },
+  { name: 'Salesforce', group: 'Tools' },
+  { name: 'Linux', group: 'Operating System' },
+  { name: 'RAG', group: 'AI Tools' },
+  { name: 'Claude', group: 'AI Tools' },
+  { name: 'Codex', group: 'AI Tools' },
+  { name: 'Amazon Q', group: 'AI Tools' },
 ];
 
 export const education: Education[] = [

@@ -25,6 +25,8 @@ export interface JourneyState {
   zoomFocus: Vec3;
   /** Screen point (NDC) of a pinch that just started; CameraRig turns it into zoomFocus. */
   zoomAnchor: [number, number] | null;
+  /** Skills universe: index of the group planet the camera has flown to (null = all planets). */
+  skillFocus: number | null;
   go: (dir: 1 | -1, now?: number) => void;
   jump: (target: number, now?: number) => void;
   arrive: (now?: number) => void;
@@ -36,6 +38,7 @@ export interface JourneyState {
   pick: (id: string | null) => void;
   setZoom: (level: number, anchor?: [number, number]) => void;
   setZoomFocus: (focus: Vec3) => void;
+  focusSkill: (group: number | null) => void;
   reset: (step: number) => void;
 }
 
@@ -54,6 +57,7 @@ export const useJourney = create<JourneyState>((set, get) => ({
   zoom: 1,
   zoomFocus: [0, 0, 0],
   zoomAnchor: null,
+  skillFocus: null,
 
   go: (dir, now = performance.now()) => {
     const s = get();
@@ -65,7 +69,7 @@ export const useJourney = create<JourneyState>((set, get) => ({
     const s = get();
     const to = clampStep(target);
     if (s.moving || to === s.step || now - s.arrivedAt < SETTLE_MS) return;
-    set({ step: to, moving: true, moveKind: isWarp(s.step, to) ? 'warp' : 'glide', modal: null, picked: null, zoom: 1, zoomFocus: [0, 0, 0], zoomAnchor: null });
+    set({ step: to, moving: true, moveKind: isWarp(s.step, to) ? 'warp' : 'glide', modal: null, picked: null, zoom: 1, zoomFocus: [0, 0, 0], zoomAnchor: null, skillFocus: null });
   },
 
   arrive: (now = performance.now()) => {
@@ -81,6 +85,7 @@ export const useJourney = create<JourneyState>((set, get) => ({
   fireBeam: (now = performance.now()) => set({ beamAt: now }),
   setBooted: () => set({ booted: true }),
   setZoom: (level, anchor) => (anchor ? set({ zoom: clampZoom(level), zoomAnchor: anchor }) : set({ zoom: clampZoom(level) })),
+  focusSkill: (group) => set({ skillFocus: group }),
   setZoomFocus: (focus) => set({ zoomFocus: focus, zoomAnchor: null }),
   pick: (id) => set({ picked: id !== null && get().picked === id ? null : id }),
 
@@ -98,6 +103,7 @@ export const useJourney = create<JourneyState>((set, get) => ({
       zoom: 1,
       zoomFocus: [0, 0, 0],
       zoomAnchor: null,
+      skillFocus: null,
     });
   },
 }));

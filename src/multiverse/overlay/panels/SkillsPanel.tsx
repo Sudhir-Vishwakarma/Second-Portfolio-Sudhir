@@ -1,6 +1,6 @@
 import React from 'react';
 import { skills, SKILL_GROUPS } from '../../../data/portfolio';
-import { SKILL_COLORS } from '../../universes/SkillsUniverse';
+import { SKILL_COLORS } from '../../universes/skillSystems';
 import { PanelProps } from './index';
 
 export const SkillsPanel: React.FC<PanelProps> = () => (

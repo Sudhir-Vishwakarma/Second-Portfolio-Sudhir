@@ -16,6 +16,7 @@ import { Progress } from './overlay/Progress';
 import { ScrollHint } from './overlay/ScrollHint';
 import { Caption } from './overlay/Caption';
 import { ZoomControls } from './overlay/ZoomControls';
+import { SkillsBack } from './overlay/SkillsBack';
 import { Loader } from './overlay/Loader';
 import { Panels } from './overlay/Panels';
 import { ModalHost } from './overlay/ModalHost';
@@ -30,6 +31,7 @@ const UiLayer: React.FC = () => {
       <Panels />
       <Caption />
       <ZoomControls />
+      <SkillsBack />
       <Progress />
       <ScrollHint />
       <ModalHost />
@@ -87,7 +89,12 @@ const Multiverse: React.FC<MultiverseProps> = ({ onFail }) => {
         dpr={dpr}
         camera={{ fov: 55, near: 0.1, far: 1200 }}
         gl={{ antialias: false, powerPreference: 'high-performance' }}
-        onPointerMissed={() => useJourney.getState().pick(null)}
+        onPointerMissed={() => {
+          // Tapping empty space closes an info card first, then flies back out of a skill close-up.
+          const s = useJourney.getState();
+          if (s.picked) s.pick(null);
+          else if (s.skillFocus !== null) s.focusSkill(null);
+        }}
         onCreated={({ gl }) => gl.domElement.addEventListener('webglcontextlost', () => { if (alive.current) onFail(); })}
       >
         <color attach="background" args={['#000004']} />

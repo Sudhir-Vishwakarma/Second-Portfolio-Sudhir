@@ -15,7 +15,7 @@ export function stepCaption(i: number): Caption {
         ? { kicker: 'About · 2 / 2', title: 'Education', tip: 'Tap Earth or a moon' }
         : { kicker: 'About · 1 / 2', title: 'About Me', tip: 'Tap Earth or a moon' };
     case 'skills':
-      return { kicker: 'Technical Skills', title: 'My Tech Belt', tip: 'Tap an asteroid' };
+      return { kicker: 'Technical Skills', title: 'My Tech Belt', tip: 'Tap a planet, then a skill' };
     case 'certifications':
       return { kicker: 'Certifications', title: 'Archive of Light', tip: 'Tap a satellite' };
     case 'work': {

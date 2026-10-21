@@ -102,3 +102,14 @@ test('galaxy zoom is clamped, remembers where the pinch started, and resets on t
   expect(S().zoom).toBe(1);
   expect(S().zoomFocus).toEqual([0, 0, 0]);
 });
+
+test('a tapped skill planet stays in focus until cleared or the visitor travels', () => {
+  S().reset(3);
+  S().focusSkill(2);
+  expect(S().skillFocus).toBe(2);
+  S().focusSkill(null);
+  expect(S().skillFocus).toBeNull();
+  S().focusSkill(4);
+  S().jump(4, 10_000);
+  expect(S().skillFocus).toBeNull();
+});

@@ -24,7 +24,7 @@ export const textureUrl = (key: TextureKey) => `${process.env.PUBLIC_URL ?? ''}/
 export const UNIVERSE_TEXTURES: Record<UniverseId, TextureKey[]> = {
   home: ['sun', 'earthDay', 'earthNight', 'earthClouds', 'jupiter', 'moon', 'mars', 'saturn', 'saturnRing', 'neptune'],
   about: ['earthDay', 'earthNight', 'earthClouds', 'moon'],
-  skills: ['jupiter', 'moon'],
+  skills: ['jupiter', 'neptune', 'saturn', 'saturnRing', 'mars', 'moon', 'earthDay', 'earthNight', 'earthClouds'],
   certifications: ['moon'],
   work: ['saturn', 'saturnRing', 'jupiter', 'mars'],
   projects: [],
