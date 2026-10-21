@@ -1,6 +1,6 @@
 import { stepCaption, touchHint } from './caption';
 import { STEPS, firstStepOf } from '../journey';
-import { experience } from '../../data/portfolio';
+import { experience, SKILL_GROUPS } from '../../data/portfolio';
 
 test('home caption is the greeting and full name', () => {
   expect(stepCaption(0)).toMatchObject({ kicker: "HELLO I'M", title: 'SUDHIR VISHWAKARMA' });
@@ -31,9 +31,15 @@ test('hints are rewritten for touch', () => {
 test('stops with tappable objects tell the visitor what to tap', () => {
   expect(stepCaption(0).tip).toBe('Tap a planet to travel there');
   expect(stepCaption(firstStepOf('about')).tip).toBe('Tap Earth or a moon');
-  expect(stepCaption(firstStepOf('skills')).tip).toBe('Tap a planet, then a skill');
+  expect(stepCaption(firstStepOf('skills')).tip).toBe('Tap a skill');
   expect(stepCaption(firstStepOf('certifications')).tip).toBe('Tap a satellite');
   expect(stepCaption(firstStepOf('work')).tip).toBe('Tap the planet for the full role');
   expect(stepCaption(firstStepOf('projects')).tip).toBe('Tap a star · Pinch to zoom');
   expect(stepCaption(firstStepOf('contact')).tip).toBeUndefined();
+});
+
+test('each skills stop is titled by its group', () => {
+  const i = firstStepOf('skills');
+  expect(stepCaption(i)).toMatchObject({ kicker: 'Skills · 1 / 7', title: 'Languages' });
+  expect(stepCaption(i + 6)).toMatchObject({ kicker: 'Skills · 7 / 7', title: SKILL_GROUPS[6] });
 });

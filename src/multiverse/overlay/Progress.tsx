@@ -2,7 +2,7 @@
 import React from 'react';
 import { STEPS, Step } from '../journey';
 import { useJourney } from '../store';
-import { experience } from '../../data/portfolio';
+import { experience, SKILL_GROUPS } from '../../data/portfolio';
 
 const shortCompany = (name: string) => name.replace(/\s+(Pvt\.?\s*Ltd\.?|Private Limited)$/i, '');
 
@@ -14,7 +14,7 @@ function stepLabel(s: Step): string {
     case 'about':
       return `About: ${s.beat}`;
     case 'skills':
-      return 'Skills';
+      return `Skills: ${SKILL_GROUPS[Number(s.beat.replace('group-', ''))] ?? ''}`;
     case 'certifications':
       return 'Certifications';
     case 'work': {

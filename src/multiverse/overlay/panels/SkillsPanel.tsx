@@ -1,19 +1,22 @@
 import React from 'react';
 import { skills, SKILL_GROUPS } from '../../../data/portfolio';
-import { SKILL_COLORS } from '../../universes/skillSystems';
+import { SKILL_COLORS } from '../../universes/skillColors';
 import { PanelProps } from './index';
 
-export const SkillsPanel: React.FC<PanelProps> = () => (
-  <div>
-    <span className="mv-kicker">Technical Skills</span>
-    <h2 className="mv-h2">My Tech Belt</h2>
-    {SKILL_GROUPS.map((g) => (
-      <div key={g} className="mv-skill-group">
-        <h3 style={{ color: SKILL_COLORS[g] }}>{g}</h3>
-        {skills.filter((s) => s.group === g).map((s) => (
-          <span key={s.name} className="mv-tag">{s.name}</span>
+/** One skill group per stop of the Skills journey, like one job per Work stop. */
+export const SkillsPanel: React.FC<PanelProps> = ({ beat }) => {
+  const index = Number(beat.replace('group-', '')) || 0;
+  const group = SKILL_GROUPS[index];
+  const members = skills.filter((s) => s.group === group);
+  return (
+    <div>
+      <span className="mv-kicker">Technical Skills · {index + 1} / {SKILL_GROUPS.length}</span>
+      <h2 className="mv-h2" style={{ color: SKILL_COLORS[group] }}>{group}</h2>
+      <div className="mv-skill-group">
+        {members.map((s, i) => (
+          <span key={s.name} className="mv-tag mv-tag--in" style={{ '--i': i, borderColor: SKILL_COLORS[group] } as React.CSSProperties}>{s.name}</span>
         ))}
       </div>
-    ))}
-  </div>
-);
+    </div>
+  );
+};

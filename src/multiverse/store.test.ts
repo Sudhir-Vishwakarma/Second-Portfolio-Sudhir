@@ -1,4 +1,8 @@
 import { useJourney, SETTLE_MS } from './store';
+import { STEPS, firstStepOf } from './journey';
+
+const LAST = STEPS.length - 1;
+const WORK_2 = firstStepOf('work') + 1;
 
 const S = () => useJourney.getState();
 beforeEach(() => S().reset(0));
@@ -27,22 +31,22 @@ test('trackpad inertia right after arriving is ignored', () => {
 test('clamps at both ends without starting a move', () => {
   S().go(-1, 1000);
   expect(S()).toMatchObject({ step: 0, moving: false });
-  S().reset(9);
+  S().reset(LAST);
   S().go(1, 1000);
-  expect(S()).toMatchObject({ step: 9, moving: false });
+  expect(S()).toMatchObject({ step: LAST, moving: false });
 });
 
 test('an open modal blocks go, but jump closes it', () => {
   S().openModal({ kind: 'cv' });
   S().go(1, 1000);
   expect(S().step).toBe(0);
-  S().jump(8, 1000);
-  expect(S()).toMatchObject({ step: 8, modal: null, moveKind: 'warp' });
+  S().jump(firstStepOf('projects'), 1000);
+  expect(S()).toMatchObject({ step: firstStepOf('projects'), modal: null, moveKind: 'warp' });
 });
 
 test('reset puts the camera in the step universe', () => {
-  S().reset(6);
-  expect(S()).toMatchObject({ step: 6, cameraUniverse: 4, moving: false, modal: null });
+  S().reset(WORK_2);
+  expect(S()).toMatchObject({ step: WORK_2, cameraUniverse: 4, moving: false, modal: null });
 });
 
 test('setCameraUniverse, fireBeam and setBooted', () => {
@@ -91,25 +95,14 @@ test('a details sheet can be opened for a specific step', () => {
 });
 
 test('galaxy zoom is clamped, remembers where the pinch started, and resets on travel', () => {
-  S().reset(8);
+  S().reset(firstStepOf('projects'));
   S().setZoom(0.01, [0.2, -0.1]);
   expect(S().zoom).toBe(0.3);
   expect(S().zoomAnchor).toEqual([0.2, -0.1]);
   S().setZoomFocus([4, 0, -6]);
   expect(S().zoomAnchor).toBeNull();
   expect(S().zoomFocus).toEqual([4, 0, -6]);
-  S().jump(9, 10_000);
+  S().jump(firstStepOf('contact'), 10_000);
   expect(S().zoom).toBe(1);
   expect(S().zoomFocus).toEqual([0, 0, 0]);
-});
-
-test('a tapped skill planet stays in focus until cleared or the visitor travels', () => {
-  S().reset(3);
-  S().focusSkill(2);
-  expect(S().skillFocus).toBe(2);
-  S().focusSkill(null);
-  expect(S().skillFocus).toBeNull();
-  S().focusSkill(4);
-  S().jump(4, 10_000);
-  expect(S().skillFocus).toBeNull();
 });

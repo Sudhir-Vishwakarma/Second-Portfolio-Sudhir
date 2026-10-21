@@ -9,8 +9,10 @@ describe('portfolio data', () => {
     expect(profile.lastName).toBe('VISHWAKARMA');
     expect(profile.typingWords).toEqual(['FULL-STACK DEVELOPER', 'REACT.JS/NEXT.JS', 'STRAPI/FIREBASE']);
     expect(profile.cvUrl).toBe('/Sudhir-Vishwakarma-Resume-2026-10.pdf');
-    expect(profile.bio.startsWith('A highly driven Front-End Engineer')).toBe(true);
-    expect(aboutSummary.startsWith('Results-driven developer')).toBe(true);
+    // The resume objective, shown on both Home and About.
+    expect(profile.bio.startsWith('Results-driven Full-Stack Developer with experience building scalable SaaS platforms')).toBe(true);
+    expect(profile.bio.endsWith('build efficient, scalable, and business-focused software solutions.')).toBe(true);
+    expect(aboutSummary).toBe(profile.bio);
   });
 
   it('has four https social links in classic order', () => {

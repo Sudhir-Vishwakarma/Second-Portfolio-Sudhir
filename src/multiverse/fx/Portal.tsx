@@ -7,7 +7,8 @@ import { SceneLights } from './SceneLights';
 import { MilkyWaySky } from './MilkyWaySky';
 import { glowTexture } from './glow';
 import { edgeSegments, honeycombRing, openEdges, perimeterPath, Segment, sharedEdge } from './hexGate';
-import { UniverseId, portalCenter, universeOrigin } from '../journey';
+import { UniverseId, firstStepOf, portalCenter, universeOrigin } from '../journey';
+import { useJourney } from '../store';
 
 const PORTAL_RADIUS = 5;
 const VISIBLE_RANGE = 260;
@@ -166,7 +167,9 @@ export const Portal: React.FC<PortalProps> = ({ universe, warm, children }) => {
 
   useFrame((state) => {
     const d = state.camera.position.z - portalZ;
-    const isNear = warm || (d > 0 && d < VISIBLE_RANGE);
+    // A gate shows only from the stop right before it, or during a warp, so mid-universe stops stay clean.
+    const j = useJourney.getState();
+    const isNear = warm || (d > 0 && d < VISIBLE_RANGE && ((j.moving && j.moveKind === 'warp') || j.step === firstStepOf(universe) - 1));
     group.current.visible = isNear;
     if (isNear !== near) setNear(isNear);
     if (!isNear) return;

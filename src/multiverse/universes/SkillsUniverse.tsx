@@ -9,24 +9,23 @@ import { GlowSprite } from '../fx/GlowSprite';
 import { Palette } from '../fx/palettes';
 import { TextureKey } from '../fx/textures';
 import { skills, SkillGroup, SKILL_GROUPS } from '../../data/portfolio';
-import { Vec3, universeOrigin } from '../journey';
+import { SKILL_STOPS, STEPS, Vec3, firstStepOf, universeOrigin } from '../journey';
 import { useJourney } from '../store';
 import { UniverseProps } from './index';
 import { HitArea, InfoCard, onTap } from './Tappable';
-import { RING_TILT, SKILL_COLORS, SYSTEM_RING, systemPositions } from './skillSystems';
+import { SKILL_COLORS } from './skillColors';
 
-export { SKILL_COLORS } from './skillSystems';
+export { SKILL_COLORS } from './skillColors';
 
 const origin = universeOrigin('skills');
-const light: Vec3 = [origin[0] + 30, origin[1] + 18, origin[2] + 26];
-const POSITIONS = systemPositions();
+const lightFor = (p: Vec3): Vec3 => [origin[0] + p[0] + 18, origin[1] + p[1] + 12, origin[2] + p[2] + 22];
 
-const PLANET_RADIUS = 1.3;
-/** Skill asteroids circle their planet in a near-vertical ring, so none hide behind it. */
-const MOON_ORBIT = 2.7;
-const MOON_SPEED = 0.18;
+const PLANET_RADIUS = 2.4;
+/** Skill asteroids circle their planet in a near-upright ring facing the camera, so none hide behind it. */
+const ORBIT = 4.4;
+const ORBIT_SPEED = 0.12;
 
-/** Each group gets its own real body and atmosphere tint (its skill colour). */
+/** Each group gets its own real body; its atmosphere glows in the group colour. */
 const BODIES: Record<SkillGroup, { map: TextureKey | 'earth'; ring?: boolean; atmos: number }> = {
   Languages: { map: 'jupiter', atmos: 0.45 },
   Database: { map: 'neptune', atmos: 0.6 },
@@ -39,9 +38,15 @@ const BODIES: Record<SkillGroup, { map: TextureKey | 'earth'; ring?: boolean; at
 
 const paletteOf = (color: string): Palette => ({ a: '#111827', b: color, atmos: color });
 
-interface RockProps { id: string; name: string; group: SkillGroup; groupIndex: number; angle: number; seed: number; interactive: boolean; focused: boolean }
+/** Index of the skill stop the journey is at, or -1 outside the Skills universe. */
+const currentStop = (step: number) => {
+  const s = STEPS[step];
+  return s && s.universe === 'skills' ? Number(s.beat.replace('group-', '')) : -1;
+};
 
-const SkillRock: React.FC<RockProps> = ({ id, name, group, groupIndex, angle, seed, interactive, focused }) => {
+interface RockProps { id: string; name: string; group: SkillGroup; angle: number; seed: number; light: Vec3; interactive: boolean; here: boolean }
+
+const SkillRock: React.FC<RockProps> = ({ id, name, group, angle, seed, light, interactive, here }) => {
   const color = SKILL_COLORS[group];
   const holder = useRef<THREE.Group>(null!);
   const [hovered, setHovered] = useState(false);
@@ -50,23 +55,19 @@ const SkillRock: React.FC<RockProps> = ({ id, name, group, groupIndex, angle, se
     if (!interactive) setHovered(false);
   }, [interactive]);
   useFrame((state) => {
-    const a = angle + state.clock.elapsedTime * MOON_SPEED;
-    holder.current.position.set(Math.cos(a) * MOON_ORBIT, Math.sin(a) * MOON_ORBIT, 0);
+    const a = angle + state.clock.elapsedTime * ORBIT_SPEED;
+    holder.current.position.set(Math.cos(a) * ORBIT, Math.sin(a) * ORBIT, 0);
   });
-  const select = () => {
-    useJourney.getState().focusSkill(groupIndex);
-    useJourney.getState().pick(id);
-  };
   const lit = hovered || picked;
   return (
     <group ref={holder}>
       <Asteroid
         seed={seed}
-        radius={0.4 + (seed % 3) * 0.06}
+        radius={0.36 + (seed % 3) * 0.05}
         color={color}
         lightPos={light}
         position={[0, 0, 0]}
-        hovered={lit || focused}
+        hovered={lit || here}
         onPointerOver={(e) => {
           if (!interactive) return;
           e.stopPropagation();
@@ -74,16 +75,16 @@ const SkillRock: React.FC<RockProps> = ({ id, name, group, groupIndex, angle, se
         }}
         onPointerOut={() => setHovered(false)}
       />
-      <GlowSprite color={color} scale={lit ? 2.6 : 1.5} opacity={lit ? 0.75 : 0.35} />
-      <HitArea radius={0.85} onClick={onTap(interactive, select)} />
+      <GlowSprite color={color} scale={lit ? 2.6 : 1.5} opacity={lit ? 0.75 : 0.3} />
+      <HitArea radius={1.1} onClick={onTap(interactive, () => useJourney.getState().pick(id))} />
       {interactive && lit && (
         <InfoCard position={[0, 1.3, 0]}>
           <strong style={{ color }}>{name}</strong>
           <small>{group}</small>
         </InfoCard>
       )}
-      {interactive && focused && !lit && (
-        <Html center position={[0, 0.95, 0]} className="mv-label mv-label--skill" pointerEvents="none">
+      {interactive && here && !lit && (
+        <Html center position={[0, 0.9, 0]} className="mv-label mv-label--skill" pointerEvents="none">
           <span style={{ color }}>{name}</span>
         </Html>
       )}
@@ -91,56 +92,47 @@ const SkillRock: React.FC<RockProps> = ({ id, name, group, groupIndex, angle, se
   );
 };
 
-const SkillSystem: React.FC<{ index: number; group: SkillGroup; interactive: boolean }> = ({ index, group, interactive }) => {
+const SkillStop: React.FC<{ index: number; group: SkillGroup; interactive: boolean; here: boolean; visible: boolean }> = ({ index, group, interactive, here, visible }) => {
   const color = SKILL_COLORS[group];
   const body = BODIES[group];
-  const focus = useJourney((s) => s.skillFocus);
-  const focused = focus === index;
+  const stop = SKILL_STOPS[index];
+  const light = lightFor(stop);
   const members = useMemo(() => skills.filter((s) => s.group === group), [group]);
-  const [hovered, setHovered] = useState(false);
-  const fly = onTap(interactive, () => {
-    useJourney.getState().pick(null);
-    useJourney.getState().focusSkill(index);
-  });
-  const hover = {
-    onPointerOver: (e: { stopPropagation: () => void }) => {
-      if (!interactive) return;
-      e.stopPropagation();
-      setHovered(true);
-    },
-    onPointerOut: () => setHovered(false),
-  };
-  const shared = { radius: PLANET_RADIUS, lightPos: light, highlight: hovered || focused ? 1 : 0, fallback: paletteOf(color), onClick: fly, ...hover };
+  // Tapping a planet further along the path travels to it.
+  const travel = onTap(interactive && !here, () => useJourney.getState().jump(firstStepOf('skills') + index));
+  const shared = { radius: PLANET_RADIUS, lightPos: light, fallback: paletteOf(color), onClick: travel };
   return (
-    <group position={POSITIONS[index]}>
+    <group position={stop} visible={visible}>
       {body.map === 'earth' ? (
         <RealEarth {...shared} />
       ) : (
         <RealPlanet {...shared} map={body.map} ring={body.ring} atmos={color} atmosStrength={body.atmos} tilt={body.ring ? 0.47 : 0.15} spin={0.1} />
       )}
-      {group === 'AI Tools' && <GlowSprite color={color} scale={6} opacity={0.35} />}
-      <HitArea radius={2} onClick={fly} />
-      <group rotation-x={0.28}>
+      {group === 'AI Tools' && <GlowSprite color={color} scale={9} opacity={0.35} />}
+      <group rotation-x={0.25}>
         <mesh>
-          <ringGeometry args={[MOON_ORBIT - 0.015, MOON_ORBIT + 0.015, 96]} />
-          <meshBasicMaterial color={color} transparent opacity={focused ? 0.35 : 0.14} side={THREE.DoubleSide} />
+          <ringGeometry args={[ORBIT - 0.02, ORBIT + 0.02, 128]} />
+          <meshBasicMaterial color={color} transparent opacity={here ? 0.3 : 0.12} side={THREE.DoubleSide} />
         </mesh>
-        {members.map((s, k) => (
-          <SkillRock
-            key={s.name}
-            id={`skill-${skills.indexOf(s)}`}
-            name={s.name}
-            group={group}
-            groupIndex={index}
-            angle={(k / members.length) * Math.PI * 2}
-            seed={skills.indexOf(s) * 7 + 3}
-            interactive={interactive}
-            focused={focused}
-          />
-        ))}
+        {members.map((s, k) => {
+          const n = skills.indexOf(s);
+          return (
+            <SkillRock
+              key={s.name}
+              id={`skill-${n}`}
+              name={s.name}
+              group={group}
+              angle={(k / members.length) * Math.PI * 2 + Math.PI / 2}
+              seed={n * 7 + 3}
+              light={light}
+              interactive={interactive}
+              here={here}
+            />
+          );
+        })}
       </group>
-      {interactive && (
-        <Html center position={[0, -(MOON_ORBIT + 1.1), 0]} className="mv-label" pointerEvents="none">
+      {here && (
+        <Html center position={[0, ORBIT + 2.6, 0]} className="mv-label" pointerEvents="none">
           <span style={{ color }}>{group}</span>
           <small>{members.length} {members.length === 1 ? 'skill' : 'skills'}</small>
         </Html>
@@ -151,17 +143,24 @@ const SkillSystem: React.FC<{ index: number; group: SkillGroup; interactive: boo
 
 export const SkillsUniverse: React.FC<UniverseProps> = ({ active, preview }) => {
   const interactive = active && !preview;
+  const stop = useJourney((s) => currentStop(s.step));
+  const moving = useJourney((s) => s.moving);
+  // Only the current planet is drawn, so each stop is clean. While gliding, the planet being left stays
+  // until arrival, so the move still reads as travel. Outside Skills (portal preview, warping in) it's the first.
+  const settled = useRef(0);
+  if (!moving && stop >= 0) settled.current = stop;
+  const target = stop >= 0 ? stop : 0;
   return (
     <>
-      <GlowSprite color="#5eead4" scale={16} opacity={0.18} />
-      <group rotation-x={RING_TILT}>
-        <mesh rotation-x={-Math.PI / 2}>
-          <ringGeometry args={[SYSTEM_RING - 0.02, SYSTEM_RING + 0.02, 192]} />
-          <meshBasicMaterial color="#cbd5e1" transparent opacity={0.1} side={THREE.DoubleSide} />
-        </mesh>
-      </group>
       {SKILL_GROUPS.map((g, i) => (
-        <SkillSystem key={g} index={i} group={g} interactive={interactive} />
+        <SkillStop
+          key={g}
+          index={i}
+          group={g}
+          interactive={interactive && i === target}
+          here={interactive && stop === i}
+          visible={i === target || (moving && i === settled.current)}
+        />
       ))}
     </>
   );

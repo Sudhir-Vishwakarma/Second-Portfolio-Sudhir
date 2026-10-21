@@ -6,10 +6,8 @@ import { framePose, universeAtZ, universeOf, universeOrigin, Vec3 } from '../jou
 import { useJourney } from '../store';
 import { rig } from '../fx/rig';
 import { GALAXY_RADIUS, clampFocus, zoomedPose } from '../zoom';
-import { CLOSE_UP_DISTANCE, closeUpPose, systemPositions } from '../universes/skillSystems';
 
 const GALAXY_PLANE = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-const SKILL_SYSTEMS = systemPositions();
 
 /** Mount FIRST inside <Canvas> so camera-following objects never lag a frame behind. */
 export const CameraRig: React.FC = () => {
@@ -19,8 +17,6 @@ export const CameraRig: React.FC = () => {
   const target = useMemo(() => new THREE.Vector3(), []);
   const last = useMemo(() => new THREE.Vector3(), []);
   const zoom = useRef(1);
-  const closeUp = useRef(0);
-  const skillFocus = useMemo(() => new THREE.Vector3(), []);
   const ray = useMemo(() => new THREE.Raycaster(), []);
   const hit = useMemo(() => new THREE.Vector3(), []);
 
@@ -42,20 +38,6 @@ export const CameraRig: React.FC = () => {
       }
       const f: Vec3 = [o[0] + s.zoomFocus[0], o[1] + s.zoomFocus[1], o[2] + s.zoomFocus[2]];
       pose = { ...pose, ...zoomedPose(pose, zoom.current, f) };
-    }
-
-    // Skills: a tapped group planet pulls the camera in close. Desktop keeps the planet right of the text panel;
-    // portrait lifts it above the caption. The last focus is kept so flying back out starts from that planet.
-    easing.damp(closeUp, 'current', s.skillFocus !== null && universeOf(s.step) === 'skills' ? 1 : 0, 0.3, dt);
-    if (s.skillFocus !== null) {
-      const o = universeOrigin('skills');
-      const p = SKILL_SYSTEMS[s.skillFocus];
-      const shift: Vec3 = aspect >= 1 ? [-4.5, 0, 0] : [0, -1.6, 0];
-      skillFocus.set(o[0] + p[0] + shift[0], o[1] + p[1] + shift[1], o[2] + p[2] + shift[2]);
-    }
-    if (closeUp.current > 0.001 && universeOf(s.step) === 'skills') {
-      const f: Vec3 = [skillFocus.x, skillFocus.y, skillFocus.z];
-      pose = { ...pose, ...closeUpPose(pose, f, aspect >= 1 ? CLOSE_UP_DISTANCE.desktop : CLOSE_UP_DISTANCE.phone, closeUp.current) };
     }
 
     if (!ready.current) {

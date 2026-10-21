@@ -1,3 +1,5 @@
+import { SKILL_GROUPS } from '../data/portfolio';
+
 export type UniverseId = 'home' | 'about' | 'skills' | 'certifications' | 'work' | 'projects' | 'contact';
 export type Vec3 = [number, number, number];
 
@@ -18,6 +20,8 @@ export const PORTAL_OFFSET = 60;
 export const WARMUP_MS = 1600;
 /** Company planets in the Work universe, newest first (local coordinates). */
 export const WORK_STOPS: Vec3[] = [[0, 0, 0], [-16, 3, -70], [14, -2, -140]];
+/** One planet per resume skill group, zig-zagging away from the portal (local coordinates). */
+export const SKILL_STOPS: Vec3[] = [[0, 0, 0], [-14, 3, -36], [14, -2, -72], [-14, 2, -108], [14, -3, -144], [-14, 3, -180], [14, 0, -216]];
 
 /** A camera pose local to the universe origin, with its vertical field of view. */
 export interface Phone { pos: Vec3; look: Vec3; fov: number }
@@ -40,6 +44,22 @@ const workStep = (i: number, hint: string): Step => ({
   hint,
 });
 
+const skillStep = (i: number): Step => {
+  const stop = SKILL_STOPS[i];
+  const next = SKILL_STOPS[i + 1];
+  // Phones view each planet from the side away from the next one, so it isn't lined up behind;
+  // the first stays on the portal line (desktop x/y).
+  const side = i > 0 && next ? -Math.sign(next[0] - stop[0]) * 9 : -9;
+  return {
+    universe: 'skills',
+    beat: `group-${i}`,
+    pos: add(stop, [-9, 2.5, 22]),
+    look: add(stop, [-6, 0, 0]),
+    phone: { pos: add(stop, [side, 2.5, 30]), look: add(stop, [0, -2.6, 0]), fov: 62 },
+    hint: next ? `Scroll for ${SKILL_GROUPS[i + 1]}` : 'Scroll to warp to Certifications',
+  };
+};
+
 /** Camera poses are local to each universe's origin. */
 export const STEPS: Step[] = [
   {
@@ -54,10 +74,7 @@ export const STEPS: Step[] = [
     universe: 'about', beat: 'education', pos: [-4, 9, 22], look: [-4, 0, 0],
     phone: { pos: [-4, 14, 36], look: [0, -3, 0], fov: 62 }, hint: 'Scroll to warp to Skills',
   },
-  {
-    universe: 'skills', beat: 'belt', pos: [-8, 8, 44], look: [-8, 0.5, 0],
-    phone: { pos: [-8, 8.5, 46], look: [0, -3, 0], fov: 80 }, hint: 'Click a planet · Scroll to warp to Certifications',
-  },
+  ...SKILL_STOPS.map((_, i) => skillStep(i)),
   {
     universe: 'certifications', beat: 'archive', pos: [-7, 3, 28], look: [-7, 0, 0],
     phone: { pos: [-7, 3.5, 36], look: [0, -2.5, 0], fov: 62 }, hint: 'Scroll to warp to Work',

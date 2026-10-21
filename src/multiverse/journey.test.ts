@@ -1,11 +1,14 @@
 import {
   STEPS, UNIVERSES, worldPose, universeAtZ, universeIndex, next, prev, firstStepOf, universeOf,
-  isWarp, hashFor, stepForHash, portalCenter, PORTAL_OFFSET, universeOrigin, framePose,
+  isWarp, hashFor, stepForHash, portalCenter, PORTAL_OFFSET, universeOrigin, framePose, SKILL_STOPS, UNIVERSE_SPACING,
 } from './journey';
+import { SKILL_GROUPS } from '../data/portfolio';
 
 test('steps follow the agreed order', () => {
   expect(STEPS.map((s) => `${s.universe}:${s.beat}`)).toEqual([
-    'home:hero', 'about:summary', 'about:education', 'skills:belt', 'certifications:archive',
+    'home:hero', 'about:summary', 'about:education',
+    'skills:group-0', 'skills:group-1', 'skills:group-2', 'skills:group-3', 'skills:group-4', 'skills:group-5', 'skills:group-6',
+    'certifications:archive',
     'work:job-0', 'work:job-1', 'work:job-2', 'projects:galaxy', 'contact:station',
   ]);
 });
@@ -31,8 +34,9 @@ test('next/prev clamp at the ends', () => {
 test('warps only between universes', () => {
   expect(isWarp(0, 1)).toBe(true);
   expect(isWarp(1, 2)).toBe(false);
-  expect(isWarp(5, 7)).toBe(false);
-  expect(isWarp(0, 9)).toBe(true);
+  expect(isWarp(firstStepOf('skills'), firstStepOf('skills') + 6)).toBe(false);
+  expect(isWarp(firstStepOf('skills') + 6, firstStepOf('certifications'))).toBe(true);
+  expect(isWarp(0, STEPS.length - 1)).toBe(true);
 });
 
 test('hash round trip for every universe', () => {
@@ -41,7 +45,8 @@ test('hash round trip for every universe', () => {
     expect(universeOf(i)).toBe(u);
     expect(stepForHash(hashFor(i))).toBe(i);
   });
-  expect(hashFor(6)).toBe('#work');
+  expect(hashFor(firstStepOf('work') + 1)).toBe('#work');
+  expect(hashFor(firstStepOf('skills') + 3)).toBe('#skills');
 });
 
 test('empty hash is home, unknown hashes are ignored', () => {
@@ -104,4 +109,20 @@ describe('framePose', () => {
     expect(half.fov).toBeCloseTo((desk.fov + phone.fov) / 2);
     expect(half.pos[1]).toBeCloseTo((desk.pos[1] + phone.pos[1]) / 2);
   });
+});
+
+test('the skills journey has one stop per resume skill group, in order', () => {
+  const skillSteps = STEPS.filter((s) => s.universe === 'skills');
+  expect(skillSteps).toHaveLength(SKILL_GROUPS.length);
+  expect(SKILL_STOPS).toHaveLength(SKILL_GROUPS.length);
+  expect(skillSteps[0].hint).toBe(`Scroll for ${SKILL_GROUPS[1]}`);
+  expect(skillSteps[SKILL_GROUPS.length - 1].hint).toBe('Scroll to warp to Certifications');
+});
+
+test('skill planets zig-zag away from the portal and stay inside the Skills universe', () => {
+  for (let i = 1; i < SKILL_STOPS.length; i++) {
+    expect(SKILL_STOPS[i][2]).toBeLessThan(SKILL_STOPS[i - 1][2] - 30);
+    expect(Math.sign(SKILL_STOPS[i][0])).not.toBe(Math.sign(SKILL_STOPS[i - 1][0]) || 0);
+  }
+  expect(SKILL_STOPS[SKILL_STOPS.length - 1][2]).toBeGreaterThan(PORTAL_OFFSET - UNIVERSE_SPACING + 40);
 });

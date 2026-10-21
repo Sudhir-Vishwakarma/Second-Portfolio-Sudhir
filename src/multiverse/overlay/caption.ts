@@ -1,6 +1,6 @@
 // overlay/caption.ts — the short title a phone shows over the 3D scene for each stop
 import { STEPS } from '../journey';
-import { experience, profile } from '../../data/portfolio';
+import { experience, profile, SKILL_GROUPS } from '../../data/portfolio';
 
 /** tip: what the visitor can tap in this stop's 3D scene. */
 export interface Caption { kicker: string; title: string; tip?: string }
@@ -14,8 +14,10 @@ export function stepCaption(i: number): Caption {
       return beat === 'education'
         ? { kicker: 'About · 2 / 2', title: 'Education', tip: 'Tap Earth or a moon' }
         : { kicker: 'About · 1 / 2', title: 'About Me', tip: 'Tap Earth or a moon' };
-    case 'skills':
-      return { kicker: 'Technical Skills', title: 'My Tech Belt', tip: 'Tap a planet, then a skill' };
+    case 'skills': {
+      const k = Number(beat.replace('group-', '')) || 0;
+      return { kicker: `Skills · ${k + 1} / ${SKILL_GROUPS.length}`, title: SKILL_GROUPS[k], tip: 'Tap a skill' };
+    }
     case 'certifications':
       return { kicker: 'Certifications', title: 'Archive of Light', tip: 'Tap a satellite' };
     case 'work': {

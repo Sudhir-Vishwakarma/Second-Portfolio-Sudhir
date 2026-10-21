@@ -38,13 +38,17 @@ export interface Project {
   constellation: Constellation;
 }
 
+/** Objective from the resume (Home and About). */
+const objective =
+  'Results-driven Full-Stack Developer with experience building scalable SaaS platforms and enterprise CRM applications. Experienced in developing AI-powered solutions using Anthropic Claude, RAG, LLM tool calling, embeddings, and semantic search. Skilled in building AI chatbots, WhatsApp automation, REST APIs, and intelligent workflow automation. Experienced in third-party API integrations, real-time applications, and production deployments. Passionate about leveraging AI and modern technologies to build efficient, scalable, and business-focused software solutions.';
+
 export const profile: Profile = {
   firstName: 'SUDHIR',
   lastName: 'VISHWAKARMA',
   greeting: "HELLO I'M",
   titlePrefix: 'A PASSIONATE',
   typingWords: ['FULL-STACK DEVELOPER', 'REACT.JS/NEXT.JS', 'STRAPI/FIREBASE'],
-  bio: 'A highly driven Front-End Engineer specializing in React.js and Next.js, focused on building scalable, production-grade applications that power real business ecosystems. Proven expertise in crafting advanced CRM platforms, integrating complex APIs, and deploying secure, high-performance solutions at scale. Committed to pushing technical boundaries, delivering impactful user experiences, and evolving into a full-stack leader who engineers products that drive measurable growth and innovation.',
+  bio: objective,
   photo: '/Images/crop4.png',
   cvUrl: '/Sudhir-Vishwakarma-Resume-2026-10.pdf',
   cvDownloadName: 'Sudhir_Vishwakarma_Resume.pdf',
@@ -61,8 +65,8 @@ export const socials: Social[] = [
   { id: 'github', label: 'GitHub', url: 'https://github.com/Sudhir-Vishwakarma' },
 ];
 
-export const aboutSummary =
-  'Results-driven developer with hands-on experience in building scalable web applications and CRM systems, including real-time chat, authentication, and multi-service integrations. Proven ability to integrate complex APIs, manage dynamic data flows, and deploy production-ready applications on live servers using secure remote access. Seeking to contribute to impactful, high-growth projects while continuously advancing in full-stack development and solving real-world problems at scale.';
+/** The About page shows the same resume objective as Home. */
+export const aboutSummary = objective;
 
 // The Technical Skills section of the resume, group by group.
 export const skills: Skill[] = [

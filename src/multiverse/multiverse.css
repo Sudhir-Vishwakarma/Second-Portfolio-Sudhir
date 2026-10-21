@@ -131,12 +131,8 @@
 .mv-info small { font-size: 0.72rem; color: rgba(255,255,255,0.65); line-height: 1.35; }
 .mv-info__kicker { font-size: 0.64rem; letter-spacing: 0.2em; color: #ff9a3c; }
 .mv-info__btn { margin-top: 6px; padding: 7px 14px; font-size: 0.74rem; }
+.mv-tag--in { opacity: 0; animation: mv-stagger 0.5s ease both; animation-delay: calc(150ms + var(--i) * 90ms); }
 .mv-label--skill { font-size: 0.66rem; letter-spacing: 0.08em; text-transform: none; font-weight: 600; }
-.mv-skills-back {
-  position: absolute; right: 64px; top: 92px; padding: 9px 16px; font-size: 0.78rem;
-  background: rgba(14,12,22,0.7); backdrop-filter: blur(6px); animation: mv-fade 0.4s ease both;
-}
-.mv-skills-back__group { color: rgba(255,255,255,0.6); font-weight: 400; }
 .mv-label small { display: block; letter-spacing: 0.05em; text-transform: none; color: rgba(255,255,255,0.65); font-size: 0.68rem; }
 
 @keyframes mv-panel-in { from { opacity: 0; transform: translateY(18px); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
@@ -301,7 +297,6 @@
     margin: 8px 0 16px; font-size: clamp(1.7rem, 8.5vw, 2.3rem); line-height: 1; letter-spacing: -0.01em;
     background: linear-gradient(120deg, #fff 30%, #ffb15c 60%, #ff6a00); -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .mv-skills-back { right: auto; left: 16px; top: calc(76px + env(safe-area-inset-top)); }
   .mv-zoom {
     position: absolute; left: 16px; top: calc(76px + env(safe-area-inset-top));
     display: flex; gap: 10px; animation: mv-fade 0.4s ease both;
