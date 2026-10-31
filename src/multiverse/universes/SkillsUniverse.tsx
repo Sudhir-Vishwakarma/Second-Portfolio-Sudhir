@@ -6,7 +6,6 @@ import { RealPlanet } from '../fx/RealPlanet';
 import { RealEarth } from '../fx/RealEarth';
 import { Asteroid } from '../fx/Asteroid';
 import { GlowSprite } from '../fx/GlowSprite';
-import { Palette } from '../fx/palettes';
 import { TextureKey } from '../fx/textures';
 import { skills, SkillGroup, SKILL_GROUPS } from '../../data/portfolio';
 import { SKILL_STOPS, STEPS, Vec3, firstStepOf, universeOrigin } from '../journey';
@@ -23,6 +22,9 @@ const lightFor = (p: Vec3): Vec3 => [origin[0] + p[0] + 18, origin[1] + p[1] + 1
 const PLANET_RADIUS = 2.4;
 /** Skill asteroids circle their planet in a near-upright ring facing the camera, so none hide behind it. */
 const ORBIT = 4.4;
+// Saturn's visual rings extend beyond the default orbit (2.4 × 2.27 = 5.45),
+// so Framework asteroids need a wider path to remain clearly outside them.
+const SATURN_ORBIT = 6.7;
 const ORBIT_SPEED = 0.12;
 
 /** Each group gets its own real body; its atmosphere glows in the group colour. */
@@ -36,7 +38,9 @@ const BODIES: Record<SkillGroup, { map: TextureKey | 'earth'; ring?: boolean; at
   'AI Tools': { map: 'neptune', atmos: 0.9 },
 };
 
-const paletteOf = (color: string): Palette => ({ a: '#111827', b: color, atmos: color });
+// Keep the planets visually consistent; skill colours are reserved for labels and asteroid selection cues.
+const NEUTRAL_PLANET_PALETTE = { a: '#111827', b: '#94a3b8', atmos: '#cbd5e1' };
+const NEUTRAL_ATMOSPHERE = '#cbd5e1';
 
 /** Index of the skill stop the journey is at, or -1 outside the Skills universe. */
 const currentStop = (step: number) => {
@@ -44,9 +48,9 @@ const currentStop = (step: number) => {
   return s && s.universe === 'skills' ? Number(s.beat.replace('group-', '')) : -1;
 };
 
-interface RockProps { id: string; name: string; group: SkillGroup; angle: number; seed: number; light: Vec3; interactive: boolean; here: boolean }
+interface RockProps { id: string; name: string; group: SkillGroup; angle: number; orbit: number; seed: number; light: Vec3; interactive: boolean; here: boolean }
 
-const SkillRock: React.FC<RockProps> = ({ id, name, group, angle, seed, light, interactive, here }) => {
+const SkillRock: React.FC<RockProps> = ({ id, name, group, angle, orbit, seed, light, interactive, here }) => {
   const color = SKILL_COLORS[group];
   const holder = useRef<THREE.Group>(null!);
   const [hovered, setHovered] = useState(false);
@@ -56,7 +60,7 @@ const SkillRock: React.FC<RockProps> = ({ id, name, group, angle, seed, light, i
   }, [interactive]);
   useFrame((state) => {
     const a = angle + state.clock.elapsedTime * ORBIT_SPEED;
-    holder.current.position.set(Math.cos(a) * ORBIT, Math.sin(a) * ORBIT, 0);
+    holder.current.position.set(Math.cos(a) * orbit, Math.sin(a) * orbit, 0);
   });
   const lit = hovered || picked;
   return (
@@ -98,22 +102,18 @@ const SkillStop: React.FC<{ index: number; group: SkillGroup; interactive: boole
   const stop = SKILL_STOPS[index];
   const light = lightFor(stop);
   const members = useMemo(() => skills.filter((s) => s.group === group), [group]);
+  const orbit = body.ring ? SATURN_ORBIT : ORBIT;
   // Tapping a planet further along the path travels to it.
   const travel = onTap(interactive && !here, () => useJourney.getState().jump(firstStepOf('skills') + index));
-  const shared = { radius: PLANET_RADIUS, lightPos: light, fallback: paletteOf(color), onClick: travel };
+  const shared = { radius: PLANET_RADIUS, lightPos: light, fallback: NEUTRAL_PLANET_PALETTE, onClick: travel };
   return (
     <group position={stop} visible={visible}>
       {body.map === 'earth' ? (
         <RealEarth {...shared} />
       ) : (
-        <RealPlanet {...shared} map={body.map} ring={body.ring} atmos={color} atmosStrength={body.atmos} tilt={body.ring ? 0.47 : 0.15} spin={0.1} />
+        <RealPlanet {...shared} map={body.map} ring={body.ring} atmos={NEUTRAL_ATMOSPHERE} atmosStrength={body.atmos} tilt={body.ring ? 0.47 : 0.15} spin={0.1} />
       )}
-      {group === 'AI Tools' && <GlowSprite color={color} scale={9} opacity={0.35} />}
       <group rotation-x={0.25}>
-        <mesh>
-          <ringGeometry args={[ORBIT - 0.02, ORBIT + 0.02, 128]} />
-          <meshBasicMaterial color={color} transparent opacity={here ? 0.3 : 0.12} side={THREE.DoubleSide} />
-        </mesh>
         {members.map((s, k) => {
           const n = skills.indexOf(s);
           return (
@@ -123,6 +123,7 @@ const SkillStop: React.FC<{ index: number; group: SkillGroup; interactive: boole
               name={s.name}
               group={group}
               angle={(k / members.length) * Math.PI * 2 + Math.PI / 2}
+              orbit={orbit}
               seed={n * 7 + 3}
               light={light}
               interactive={interactive}
@@ -132,7 +133,7 @@ const SkillStop: React.FC<{ index: number; group: SkillGroup; interactive: boole
         })}
       </group>
       {here && (
-        <Html center position={[0, ORBIT + 2.6, 0]} className="mv-label" pointerEvents="none">
+        <Html center position={[0, orbit + 2.6, 0]} className="mv-label" pointerEvents="none">
           <span style={{ color }}>{group}</span>
           <small>{members.length} {members.length === 1 ? 'skill' : 'skills'}</small>
         </Html>
