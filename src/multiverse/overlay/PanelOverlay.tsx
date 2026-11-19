@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { STEPS } from '../journey';
 import { useJourney } from '../store';
-import { PANELS } from './panels';
+import { PANELS } from './panels/index';
 import { PanelFrame } from './PanelFrame';
 
 export const Panels: React.FC = () => {

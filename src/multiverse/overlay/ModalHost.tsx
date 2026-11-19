@@ -5,7 +5,7 @@ import { CertificateModal } from './modals/CertificateModal';
 import { ProjectDetail } from './modals/ProjectDetail';
 import { certifications, projects } from '../../data/portfolio';
 import { STEPS } from '../journey';
-import { PANELS } from './panels';
+import { PANELS } from './panels/index';
 import { stepCaption } from './caption';
 
 export const ModalHost: React.FC = () => {

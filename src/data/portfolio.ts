@@ -50,11 +50,11 @@ export const profile: Profile = {
   typingWords: ['FULL-STACK DEVELOPER', 'REACT.JS/NEXT.JS', 'STRAPI/FIREBASE'],
   bio: objective,
   photo: '/Images/crop4.png',
-  cvUrl: '/Sudhir-Vishwakarma-Resume-2026-10.pdf',
+  cvUrl: '/Sudhir-Vishwakarma-Resume-2026-11.pdf',
   cvDownloadName: 'Sudhir_Vishwakarma_Resume.pdf',
   email: 'karmasudhir48@gmail.com',
   phone: '+91 7710945924',
-  location: 'Mumbai, India',
+  location: 'Kandivali (East), Mumbai',
   linkedinUrl: 'https://www.linkedin.com/in/sudhir-vishwakarma-6b660017b/',
 };
 
@@ -138,11 +138,9 @@ export const experience: Experience[] = [
     start: 'Mar 2025',
     end: 'Dec 2025',
     bullets: [
-      'Developed high-performance web applications using front-end technologies with responsive UI',
-      'Created and deployed a custom Serverless Middleware REST API on Google Cloud',
-      'Integrated multiple APIs to improve data flow and system reliability across the app',
-      'Managed Firebase Database to securely handle and sync client data in real time',
-      'Collaborated with teams to troubleshoot, optimize workflows, and deliver production-ready solutions',
+      'Built responsive and high-quality UI using Next.js, React, TypeScript, HTML, CSS, and JavaScript',
+      'Created serverless REST APIs using Google Cloud and integrated them with front-end features',
+      'Worked with Firebase for authentication, database, hosting, and backend support',
     ],
   },
   {

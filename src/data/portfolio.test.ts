@@ -8,7 +8,7 @@ describe('portfolio data', () => {
     expect(profile.firstName).toBe('SUDHIR');
     expect(profile.lastName).toBe('VISHWAKARMA');
     expect(profile.typingWords).toEqual(['FULL-STACK DEVELOPER', 'REACT.JS/NEXT.JS', 'STRAPI/FIREBASE']);
-    expect(profile.cvUrl).toBe('/Sudhir-Vishwakarma-Resume-2026-10.pdf');
+    expect(profile.cvUrl).toBe('/Sudhir-Vishwakarma-Resume-2026-11.pdf');
     // The resume objective, shown on both Home and About.
     expect(profile.bio.startsWith('Results-driven Full-Stack Developer with experience building scalable SaaS platforms')).toBe(true);
     expect(profile.bio.endsWith('build efficient, scalable, and business-focused software solutions.')).toBe(true);
